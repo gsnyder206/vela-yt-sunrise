@@ -390,14 +390,16 @@ if __name__ == "__main__":
                 if not os.path.lexists(snap_dir):
                     os.mkdir(snap_dir)        
 
-                os.symlink(os.path.abspath(sn),os.path.join(snap_dir,sn))
-                os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
-                os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
-                os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
-                new_snapfiles.append(os.path.join(snap_dir,sn))
+                newf = os.path.join(snap_dir,sn)
+                new_snapfiles.append(newf)
+                if not os.path.lexists(newf):
+                        os.symlink(os.path.abspath(sn),newf)
+                        os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
+                        os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
+                        os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
 
-        exit()
 
+        new_snapfiles = np.asarray(new_snapfiles)
 	galaxy_props = {}
 	fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
 	          'stars_rhalf', 'stars_mass_profile', 'stars_L',
@@ -410,17 +412,8 @@ if __name__ == "__main__":
 
 	ts = yt.DatasetSeries(new_snapfiles, limit_level = 4)
 
-	for ds in reversed(ts):
-
-                aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
-        
-                print "Timestep name: ", aname
-
-                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
-
-                print "Sunrise directory: ", snap_dir
-                if not os.path.lexists(snap_dir):
-                    os.mkdir(snap_dir)
+	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
+                print ds._file_amr, snap_dir
 
                 continue
 
