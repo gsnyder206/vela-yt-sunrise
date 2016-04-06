@@ -427,7 +427,7 @@ if __name__ == "__main__":
 
 		
 		#Find Galaxy Properties
-		galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
+		#galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
 
 		#Making Figures
 		if False:

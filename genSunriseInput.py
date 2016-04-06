@@ -193,7 +193,7 @@ if __name__ == "__main__":
                 continue
 
                     
-                galprops_file = snap_dir+'/input/'+snap_name+'_galprops.npy'
+                galprops_file = simname+'_galprops.npy'
 
                 out_dir = snap_dir+'/input/'
                 galprops = np.load(galprops_file)[()]
@@ -215,8 +215,7 @@ if __name__ == "__main__":
 		#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
 		#This function is important for generating the cameras that we will be using
 		cameras = generate_cameras(L, distance = cam_dist, fov = cam_fov)
-		prefix = galprops_file.replace('_galprops.npy', '')
-		prefix = prefix#.replace('/Volumes/wd/yt_pipeline/Runs/VELA_v2/VELA27/VELA27_a0.370_sunrise/input','/Users/raymond/Desktop')
+                prefix = os.path.join(out_dir,simname+'_'+aname)
 		write_cameras(prefix, cameras)
 
 
@@ -226,6 +225,11 @@ if __name__ == "__main__":
 	# Send one snapshots to each processor to export 
 
 	for ds in ts.piter():
+                aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
+                print "Timestep name: ", aname
+                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+                out_dir = snap_dir+'/input/'
+                prefix = os.path.join(out_dir,simname+'_'+aname)
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		idx = np.argwhere(galprops['scale'] == scale)[0][0]		
@@ -243,9 +247,9 @@ if __name__ == "__main__":
 
 
 
-		export_info['sim_name'] = prefix.split('_')[0]
+		export_info['sim_name'] = simname
 		export_info['scale'] = scale
-		export_info_file = galprops_file.replace('galprops', 'export_info')
+		export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
 		np.save(export_info_file, export_info)
 
 	b = time.time()
