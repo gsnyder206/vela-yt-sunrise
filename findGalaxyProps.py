@@ -400,7 +400,6 @@ if __name__ == "__main__":
                 if not os.path.lexists(snap_dir):
                     os.mkdir(snap_dir)
 
-                exit()
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
