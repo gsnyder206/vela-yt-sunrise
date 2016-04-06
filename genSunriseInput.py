@@ -190,8 +190,9 @@ if __name__ == "__main__":
                 if not os.path.lexists(snap_dir):
                     os.mkdir(snap_dir)
 
-                exit()
+                continue
 
+                    
                 galprops_file = snap_dir+'/input/'+snap_name+'_galprops.npy'
 
                 out_dir = snap_dir+'/input/'
@@ -220,6 +221,7 @@ if __name__ == "__main__":
 
 
 
+        exit()
 
 	# Send one snapshots to each processor to export 
 
