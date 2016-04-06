@@ -389,10 +389,10 @@ if __name__ == "__main__":
                 if not os.path.lexists(snap_dir):
                     os.mkdir(snap_dir)        
 
-                os.symlink(sn,os.path.join(snap_dir,sn))
-                os.symlink(sn,os.path.join(snap_dir,particle_headers[-1]))
-                os.symlink(sn,os.path.join(snap_dir,particle_data[-1]))
-                os.symlink(sn,os.path.join(snap_dir,stars_data[-1]))
+                os.symlink(os.path.abspath(sn),os.path.join(snap_dir,sn))
+                os.symlink(os.path.abspath(sn),os.path.join(snap_dir,particle_headers[-1]))
+                os.symlink(os.path.abspath(sn),os.path.join(snap_dir,particle_data[-1]))
+                os.symlink(os.path.abspath(sn),os.path.join(snap_dir,stars_data[-1]))
 
 
         exit()
