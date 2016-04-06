@@ -129,17 +129,29 @@ if __name__ == "__main__":
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2.1', 'VELA10', 'VELA10_a0.330', '../data/VELA10_v2.1/10MpcBox_csf512_a0.330.d'
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.560', '../data/VELA27_v2/a0.560/10MpcBox_csf512_a0.560.d'	
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.500', '../data/VELA27_v2/a0.500/10MpcBox_csf512_a0.500.d'
-	gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
+	
+        if len(sys.argv)==2:
+            snaps = np.asarray([sys.argv[1]])
+        else:
+            snaps = np.asarray(glob.glob("*.d"))
 
+
+
+        print snaps
+        exit()
+
+
+        gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
+        
 	snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
 
 	assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
 
-
-
+        
+        
 	a = time.time()
 	import yt
-	import sunrise_octree_exporter_rcs as sunrise_octree_exporter
+	import sunrise_octree_exporter
 	reload(sunrise_octree_exporter)
 
 	galprops_file = snap_dir+'/input/'+snap_name+'_galprops.npy'
