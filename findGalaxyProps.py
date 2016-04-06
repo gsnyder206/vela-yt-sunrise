@@ -342,17 +342,34 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
 if __name__ == "__main__":
 	#Should read these in from an initialization file
-	gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
+	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
 
-	snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
+	#snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
 
-	if not os.path.isdir(snap_dir):
-		os.system('mkdir '+'/Volumes/wd/yt_pipeline/Runs/%s/%s'%(gen_name, gal_name))		
-		os.system('mkdir '+snap_dir)
-		os.system('mkdir '+snap_dir+'/input')
+	#if not os.path.isdir(snap_dir):
+	#	os.system('mkdir '+'/Volumes/wd/yt_pipeline/Runs/%s/%s'%(gen_name, gal_name))		
+	#	os.system('mkdir '+snap_dir)
+	#	os.system('mkdir '+snap_dir+'/input')
 
 
-	assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
+	#assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
+
+	
+        if len(sys.argv)==2:
+            snaps = np.asarray([sys.argv[1]])
+        else:
+            snaps = np.asarray(glob.glob("*.d"))
+
+
+
+        print "Calculating Galaxy Props for: ", snaps
+
+        abssnap = os.path.abspath(snaps[0])
+        assert os.path.lexists(abssnap)
+
+        dirname = os.path.dirname(abssnap)
+        simname = os.path.basename(dirname) #assumes directory name for simulation name
+        print "Simulation name:  ", simname
 
 
 
@@ -369,6 +386,19 @@ if __name__ == "__main__":
 
 	ts = yt.DatasetSeries(snaps, limit_level = 12)
 	for ds in reversed(ts):
+
+                aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
+        
+                print "Timestep name: ", aname
+
+                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+
+                print "Sunrise directory: ", snap_dir
+                if not os.path.lexists(snap_dir):
+                    os.mkdir(snap_dir)
+
+                exit()
+
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
 
