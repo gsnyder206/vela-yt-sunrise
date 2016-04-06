@@ -9,6 +9,7 @@ import sys
 import os
 import yt
 import numpy as np
+from numpy import *
 import astropy
 from astropy.cosmology import Planck13 as cosmo
 reload(yt)
