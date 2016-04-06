@@ -378,6 +378,7 @@ if __name__ == "__main__":
         particle_headers = []
         particle_data = []
         stars_data = []
+        new_snapfiles = []
         for sn in snaps:
                 aname = sn.split('_')[-1].rstrip('.d')
                 particle_headers.append('PMcrd'+aname+'.DAT')
@@ -393,7 +394,7 @@ if __name__ == "__main__":
                 os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
                 os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
                 os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
-
+                new_snapfiles.append(os.path.join(snap_dir,sn))
 
         exit()
 
@@ -407,7 +408,7 @@ if __name__ == "__main__":
 	    else :
 	        galaxy_props[field] = []
 
-	ts = yt.DatasetSeries(snaps, limit_level = 4)
+	ts = yt.DatasetSeries(new_snapfiles, limit_level = 4)
 
 	for ds in reversed(ts):
 
