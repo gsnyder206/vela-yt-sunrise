@@ -139,8 +139,21 @@ if __name__ == "__main__":
 
 
 
-        print snaps
+        print "Generating Sunrise Input for: ", snaps
+
+        abssnap = os.path.abspath(snaps[0])
+        assert os.path.lexists(abssnap)
+
+        dirname = os.path.dirname(abssnap)
+        simname = os.path.basename(dirname) #assumes directory name for simulation name
+        print "Simulation name:  ", simname
+        snap_dir = os.path.join(simname+"_sunrise")
+        print "Sunrise directory: ", snap_dir
+        if not os.path.lexists(snap_dir):
+            os.mkdir(snap_dir)
+
         exit()
+
 
 
         gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
