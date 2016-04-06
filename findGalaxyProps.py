@@ -5,6 +5,8 @@ at the peak in the stellar number density. Generate galaxy properties.
 
 '''
 
+import sys
+import os
 import yt
 import astropy
 from astropy.cosmology import Planck13 as cosmo
