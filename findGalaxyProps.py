@@ -383,7 +383,19 @@ if __name__ == "__main__":
                 particle_headers.append('PMcrd'+aname+'.DAT')
                 particle_data.append('PMcrs0'+aname+'.DAT')
                 stars_data.append('stars_'+aname+'.DAT')
-        
+                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+
+                print "Sunrise directory: ", snap_dir
+                if not os.path.lexists(snap_dir):
+                    os.mkdir(snap_dir)        
+
+                os.symlink(sn,os.path.join(snap_dir,sn))
+                os.symlink(sn,os.path.join(snap_dir,particle_headers[-1]))
+                os.symlink(sn,os.path.join(snap_dir,particle_data[-1]))
+                os.symlink(sn,os.path.join(snap_dir,stars_data[-1]))
+
+
+        exit()
 
 	galaxy_props = {}
 	fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
@@ -395,7 +407,7 @@ if __name__ == "__main__":
 	    else :
 	        galaxy_props[field] = []
 
-	ts = yt.DatasetSeries(snaps, limit_level = 4, file_particle_header=particle_headers, file_particle_data=particle_data, file_particle_stars = stars_data)
+	ts = yt.DatasetSeries(snaps, limit_level = 4)
 
 	for ds in reversed(ts):
 
