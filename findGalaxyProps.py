@@ -375,8 +375,15 @@ if __name__ == "__main__":
         simname = os.path.basename(dirname) #assumes directory name for simulation name
         print "Simulation name:  ", simname
 
-
-
+        particle_headers = []
+        particle_data = []
+        stars_data = []
+        for sn in snaps:
+                aname = sn.split('_')[-1].rstrip('.d')
+                particle_headers.append('PMcrd'+aname+'.DAT')
+                particle_data.append('PMcrs0'+aname+'.DAT')
+                stars_data.append('stars_'+aname+'.DAT')
+        
 
 	galaxy_props = {}
 	fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
@@ -388,7 +395,8 @@ if __name__ == "__main__":
 	    else :
 	        galaxy_props[field] = []
 
-	ts = yt.DatasetSeries(snaps, limit_level = 12)
+	ts = yt.DatasetSeries(snaps, limit_level = 4, file_particle_header=particle_headers, file_particle_data=particle_data, file_particle_stars = stars_data)
+
 	for ds in reversed(ts):
 
                 aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
@@ -401,6 +409,7 @@ if __name__ == "__main__":
                 if not os.path.lexists(snap_dir):
                     os.mkdir(snap_dir)
 
+                continue
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
