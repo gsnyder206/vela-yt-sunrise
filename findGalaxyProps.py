@@ -451,12 +451,12 @@ if __name__ == "__main__":
 		del (hc_sphere)
 
 
-# Save galaxy props file
-galaxy_props_file = snap_dir+'/input/'+snap_name+'_galprops.npy'
-print '\nSuccessfully computed galaxy properties'
-print 'Saving galaxy properties to ', galaxy_props_file
-print
-np.save(galaxy_props_file, galaxy_props)  
+        # Save galaxy props file
+        galaxy_props_file = simname+'_galprops.npy'
+        print '\nSuccessfully computed galaxy properties'
+        print 'Saving galaxy properties to ', galaxy_props_file
+        print
+        np.save(galaxy_props_file, galaxy_props)  
 
 
 
