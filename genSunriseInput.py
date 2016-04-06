@@ -10,6 +10,8 @@ import os, sys
 from collections import OrderedDict
 import time
 from blist import blist
+import glob
+
 
 def generate_cameras(normal_vector, distance=100.0, fov=50.0, mov_ang = 0.):
     '''
