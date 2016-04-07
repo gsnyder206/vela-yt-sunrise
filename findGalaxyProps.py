@@ -225,9 +225,9 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
 
 
-	stars_maxdens_loc = np.array([stars_maxdens[2].in_units('kpc').value[()], 
-	                              stars_maxdens[3].in_units('kpc').value[()], 
-	                              stars_maxdens[4].in_units('kpc').value[()]])
+	stars_maxdens_loc = np.array([stars_maxdens[1].in_units('kpc').value[()], 
+	                              stars_maxdens[2].in_units('kpc').value[()], 
+	                              stars_maxdens[3].in_units('kpc').value[()]])
 	galaxy_props['stars_maxdens'].append((stars_maxdens_val, stars_maxdens_loc))
 	print '\t Max Stellar Density = ', stars_maxdens_loc
 
