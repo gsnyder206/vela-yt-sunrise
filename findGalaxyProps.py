@@ -411,7 +411,7 @@ if __name__ == "__main__":
 	    else :
 	        galaxy_props[field] = []
 
-	ts = yt.DatasetSeries(new_snapfiles, limit_level = 8)
+	ts = yt.DatasetSeries(new_snapfiles)
 
 	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print "Getting galaxy props: ", ds._file_amr, snap_dir
