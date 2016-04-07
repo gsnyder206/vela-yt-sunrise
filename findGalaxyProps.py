@@ -221,7 +221,8 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	stars_maxdens = hc_sphere.quantities.max_location(('deposit', 'stars_cic'))
 	stars_maxdens_val = stars_maxdens[0].in_units('Msun/kpc**3').value[()]
 
-        print stars_maxdens.shape, stars_maxdens_val.shape
+        print stars_maxdens, stars_maxdens_val
+
 
 
 	stars_maxdens_loc = np.array([stars_maxdens[2].in_units('kpc').value[()], 
