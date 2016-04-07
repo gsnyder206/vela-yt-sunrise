@@ -411,13 +411,10 @@ if __name__ == "__main__":
 	    else :
 	        galaxy_props[field] = []
 
-	ts = yt.DatasetSeries(new_snapfiles, limit_level = 4)
+	ts = yt.DatasetSeries(new_snapfiles, limit_level = 8)
 
 	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print "Getting galaxy props: ", ds._file_amr, snap_dir
-
-
-                continue
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
