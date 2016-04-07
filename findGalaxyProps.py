@@ -427,6 +427,8 @@ if __name__ == "__main__":
 		ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
 		print ds.index.get_smallest_dx()
 
+                #need to exit gracefully here if there's no stars.
+
 		print 'Determining center...'
 		max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
 		print '\tCenter = ', max_ndens_arr
