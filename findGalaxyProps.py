@@ -384,7 +384,7 @@ if __name__ == "__main__":
                 aname = sn.split('_')[-1].rstrip('.d')
                 particle_headers.append('PMcrd'+aname+'.DAT')
                 particle_data.append('PMcrs0'+aname+'.DAT')
-                stars_data.append('stars_'+aname+'.DAT')
+                stars_data.append('stars_'+aname+'.dat')
                 snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
 
                 print "Sunrise directory: ", snap_dir
