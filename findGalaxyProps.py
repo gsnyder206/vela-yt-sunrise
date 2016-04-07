@@ -7,6 +7,7 @@ at the peak in the stellar number density. Generate galaxy properties.
 
 import sys
 import os
+import glob
 import yt
 import numpy as np
 from numpy import *
@@ -413,7 +414,8 @@ if __name__ == "__main__":
 	ts = yt.DatasetSeries(new_snapfiles, limit_level = 4)
 
 	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
-                print ds._file_amr, snap_dir
+                print "Getting galaxy props: ", ds._file_amr, snap_dir
+
 
                 continue
 
