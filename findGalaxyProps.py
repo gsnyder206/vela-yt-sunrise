@@ -363,7 +363,7 @@ if __name__ == "__main__":
         if len(sys.argv)==2:
             snaps = np.asarray([sys.argv[1]])
         else:
-            snaps = np.asarray(glob.glob("*.d"))
+            snaps = np.sort(np.asarray(glob.glob("*.d")))
 
 
 
