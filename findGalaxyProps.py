@@ -5,7 +5,12 @@ at the peak in the stellar number density. Generate galaxy properties.
 
 '''
 
+import sys
+import os
+import glob
 import yt
+import numpy as np
+from numpy import *
 import astropy
 from astropy.cosmology import Planck13 as cosmo
 reload(yt)
@@ -215,9 +220,12 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	# Get max density of stars (value, location)
 	stars_maxdens = hc_sphere.quantities.max_location(('deposit', 'stars_cic'))
 	stars_maxdens_val = stars_maxdens[0].in_units('Msun/kpc**3').value[()]
-	stars_maxdens_loc = np.array([stars_maxdens[2].in_units('kpc').value[()], 
-	                              stars_maxdens[3].in_units('kpc').value[()], 
-	                              stars_maxdens[4].in_units('kpc').value[()]])
+
+        print stars_maxdens
+        #difference bt yt-3.2.3 and yt-3.3dev: stars_maxdens has different # elements; this works for both
+	stars_maxdens_loc = np.array([stars_maxdens[-3].in_units('kpc').value[()], 
+	                              stars_maxdens[-2].in_units('kpc').value[()], 
+	                              stars_maxdens[-1].in_units('kpc').value[()]])
 	galaxy_props['stars_maxdens'].append((stars_maxdens_val, stars_maxdens_loc))
 	print '\t Max Stellar Density = ', stars_maxdens_loc
 
@@ -227,9 +235,9 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	# Get max density of gas
 	gas_maxdens = hc_sphere.quantities.max_location(('gas', 'density'))
 	gas_maxdens_val = gas_maxdens[0].in_units('Msun/kpc**3').value[()]
-	gas_maxdens_loc = np.array([gas_maxdens[2].in_units('kpc').value[()], 
-	                            gas_maxdens[3].in_units('kpc').value[()], 
-	                            gas_maxdens[4].in_units('kpc').value[()]])
+	gas_maxdens_loc = np.array([gas_maxdens[-3].in_units('kpc').value[()], 
+	                            gas_maxdens[-2].in_units('kpc').value[()], 
+	                            gas_maxdens[-1].in_units('kpc').value[()]])
 	galaxy_props['gas_maxdens'].append((gas_maxdens_val, gas_maxdens_loc)) 
 	print '\t Max Gas Density = ', stars_maxdens_loc
 
@@ -342,21 +350,60 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
 if __name__ == "__main__":
 	#Should read these in from an initialization file
-	gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
+	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
 
-	snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
+	#snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
 
-	if not os.path.isdir(snap_dir):
-		os.system('mkdir '+'/Volumes/wd/yt_pipeline/Runs/%s/%s'%(gen_name, gal_name))		
-		os.system('mkdir '+snap_dir)
-		os.system('mkdir '+snap_dir+'/input')
-
-
-	assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
+	#if not os.path.isdir(snap_dir):
+	#	os.system('mkdir '+'/Volumes/wd/yt_pipeline/Runs/%s/%s'%(gen_name, gal_name))		
+	#	os.system('mkdir '+snap_dir)
+	#	os.system('mkdir '+snap_dir+'/input')
 
 
+	#assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
+
+	
+        if len(sys.argv)==2:
+            snaps = np.asarray([sys.argv[1]])
+        else:
+            snaps = np.sort(np.asarray(glob.glob("*.d")))
 
 
+
+        print "Calculating Galaxy Props for: ", snaps
+
+        abssnap = os.path.abspath(snaps[0])
+        assert os.path.lexists(abssnap)
+
+        dirname = os.path.dirname(abssnap)
+        simname = os.path.basename(dirname) #assumes directory name for simulation name
+        print "Simulation name:  ", simname
+
+        particle_headers = []
+        particle_data = []
+        stars_data = []
+        new_snapfiles = []
+        for sn in snaps:
+                aname = sn.split('_')[-1].rstrip('.d')
+                particle_headers.append('PMcrd'+aname+'.DAT')
+                particle_data.append('PMcrs0'+aname+'.DAT')
+                stars_data.append('stars_'+aname+'.dat')
+                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+
+                print "Sunrise directory: ", snap_dir
+                if not os.path.lexists(snap_dir):
+                    os.mkdir(snap_dir)        
+
+                newf = os.path.join(snap_dir,sn)
+                new_snapfiles.append(newf)
+                if not os.path.lexists(newf):
+                        os.symlink(os.path.abspath(sn),newf)
+                        os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
+                        os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
+                        os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
+
+
+        new_snapfiles = np.asarray(new_snapfiles)
 	galaxy_props = {}
 	fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
 	          'stars_rhalf', 'stars_mass_profile', 'stars_L',
@@ -367,8 +414,11 @@ if __name__ == "__main__":
 	    else :
 	        galaxy_props[field] = []
 
-	ts = yt.DatasetSeries(snaps, limit_level = 12)
-	for ds in reversed(ts):
+	ts = yt.DatasetSeries(new_snapfiles)
+
+	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
+                print "Getting galaxy props: ", ds._file_amr, snap_dir
+
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
 
@@ -376,6 +426,8 @@ if __name__ == "__main__":
 		ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
 		ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
 		print ds.index.get_smallest_dx()
+
+                #need to exit gracefully here if there's no stars.
 
 		print 'Determining center...'
 		max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
@@ -418,12 +470,12 @@ if __name__ == "__main__":
 		del (hc_sphere)
 
 
-# Save galaxy props file
-galaxy_props_file = snap_dir+'/input/'+snap_name+'_galprops.npy'
-print '\nSuccessfully computed galaxy properties'
-print 'Saving galaxy properties to ', galaxy_props_file
-print
-np.save(galaxy_props_file, galaxy_props)  
+        # Save galaxy props file
+        galaxy_props_file = simname+'_galprops.npy'
+        print '\nSuccessfully computed galaxy properties'
+        print 'Saving galaxy properties to ', galaxy_props_file
+        print
+        np.save(galaxy_props_file, galaxy_props)  
 
 
 

@@ -8,7 +8,8 @@ Code to export from yt to Sunrise
 import time
 import numpy as np
 from numpy import *
-import pyfits
+import astropy
+import astropy.io.fits as pyfits
 import yt
 from yt.funcs import get_pbar
 from blist import blist

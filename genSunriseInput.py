@@ -10,6 +10,8 @@ import os, sys
 from collections import OrderedDict
 import time
 from blist import blist
+import glob
+
 
 def generate_cameras(normal_vector, distance=100.0, fov=50.0, mov_ang = 0.):
     '''
@@ -129,23 +131,42 @@ if __name__ == "__main__":
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2.1', 'VELA10', 'VELA10_a0.330', '../data/VELA10_v2.1/10MpcBox_csf512_a0.330.d'
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.560', '../data/VELA27_v2/a0.560/10MpcBox_csf512_a0.560.d'	
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.500', '../data/VELA27_v2/a0.500/10MpcBox_csf512_a0.500.d'
-	gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
+	
+        if len(sys.argv)==2:
+            snaps = np.asarray([sys.argv[1]])
+        else:
+            snaps = np.asarray(glob.glob("*.d"))
 
-	snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
-
-	assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
 
 
+        print "Generating Sunrise Input for: ", snaps
 
+        abssnap = os.path.abspath(snaps[0])
+        assert os.path.lexists(abssnap)
+
+        dirname = os.path.dirname(abssnap)
+        simname = os.path.basename(dirname) #assumes directory name for simulation name
+        print "Simulation name:  ", simname
+
+
+        #exit()
+
+
+
+        #gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
+        
+	#snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
+
+	#assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
+
+        
+        
 	a = time.time()
 	import yt
-	import sunrise_octree_exporter_rcs as sunrise_octree_exporter
+	import sunrise_octree_exporter
 	reload(sunrise_octree_exporter)
 
-	galprops_file = snap_dir+'/input/'+snap_name+'_galprops.npy'
 
-	out_dir = snap_dir+'/input/'
-	galprops = np.load(galprops_file)[()]
 	cam_dist = 100000
 	cam_fov  = 50
 
@@ -158,6 +179,25 @@ if __name__ == "__main__":
 	# Loop over snapshot to generate cameras and projection plots, 
     # parallelization happens while generating the plots.
 	for ds in reversed(ts):
+
+                aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
+        
+                print "Timestep name: ", aname
+
+                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+
+                print "Sunrise directory: ", snap_dir
+                if not os.path.lexists(snap_dir):
+                    os.mkdir(snap_dir)
+
+                continue
+
+                    
+                galprops_file = simname+'_galprops.npy'
+
+                out_dir = snap_dir+'/input/'
+                galprops = np.load(galprops_file)[()]
+
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		if scale not in galprops['scale']: continue
 		idx = np.argwhere(galprops['scale'] == scale)[0][0]
@@ -175,16 +215,21 @@ if __name__ == "__main__":
 		#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
 		#This function is important for generating the cameras that we will be using
 		cameras = generate_cameras(L, distance = cam_dist, fov = cam_fov)
-		prefix = galprops_file.replace('_galprops.npy', '')
-		prefix = prefix#.replace('/Volumes/wd/yt_pipeline/Runs/VELA_v2/VELA27/VELA27_a0.370_sunrise/input','/Users/raymond/Desktop')
+                prefix = os.path.join(out_dir,simname+'_'+aname)
 		write_cameras(prefix, cameras)
 
 
 
+        exit()
 
 	# Send one snapshots to each processor to export 
 
 	for ds in ts.piter():
+                aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
+                print "Timestep name: ", aname
+                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+                out_dir = snap_dir+'/input/'
+                prefix = os.path.join(out_dir,simname+'_'+aname)
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		idx = np.argwhere(galprops['scale'] == scale)[0][0]		
@@ -202,9 +247,9 @@ if __name__ == "__main__":
 
 
 
-		export_info['sim_name'] = prefix.split('_')[0]
+		export_info['sim_name'] = simname
 		export_info['scale'] = scale
-		export_info_file = galprops_file.replace('galprops', 'export_info')
+		export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
 		np.save(export_info_file, export_info)
 
 	b = time.time()
