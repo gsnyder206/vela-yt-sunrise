@@ -66,7 +66,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
 	mf.write('output_file          %s\n'%(run_dir+'/mcrx.fits'))
 	mf.write('nthreads          		'+nthreads+'\n')
-	mf.write('camera_position      %s\n'%(cam_file))
+	mf.write('camera_positions      %s\n'%(cam_file))
 
 	if run_type != 'ifu':
 		mf.write('use_kinematics	   %s\n'%('false #True for IFU'))
