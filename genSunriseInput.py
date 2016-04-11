@@ -225,6 +225,8 @@ if __name__ == "__main__":
 
                 galprops = np.load(galprops_file)[()]
 
+                print snapfile
+                print galprops['snap_files']
 
                 if snapfile not in galprops['snap_files']: continue
                 idx = np.argwhere(galprops['snap_files'==snapfile])[0][0]
