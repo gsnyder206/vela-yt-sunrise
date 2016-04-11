@@ -225,9 +225,13 @@ if __name__ == "__main__":
 
                 galprops = np.load(galprops_file)[()]
 
-		scale = round(1.0/(ds.current_redshift+1.0),4)
-		if scale not in galprops['scale']: continue
-		idx = np.argwhere(galprops['scale'] == scale)[0][0]
+
+                if snapfile not in galprops['snap_files']: continue
+                idx = np.argwhere(galprops['snap_files'==snapfile])[0][0]
+
+		#scale = round(1.0/(ds.current_redshift+1.0),4)
+		#if scale not in galprops['scale']: continue
+		#idx = np.argwhere(galprops['scale'] == scale)[0][0]
 
 		stars_L = galprops['stars_L'][idx]
 		gas_L 	= galprops['gas_L'][idx]
@@ -247,7 +251,7 @@ if __name__ == "__main__":
 
 
 
-        #exit()
+        exit()
 	ts = yt.DatasetSeries(new_snapfiles)
 
 	# Send one snapshots to each processor to export 
@@ -261,7 +265,8 @@ if __name__ == "__main__":
                 prefix = os.path.join(out_dir,simname+'_'+aname)
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
-		idx = np.argwhere(galprops['scale'] == scale)[0][0]		
+		idx = np.argwhere(galprops['scale'] == scale)[0][0]
+		
 		gal_center = galprops['stars_center'][idx]
 		gal_center = ds.arr(gal_center, 'kpc')
 
