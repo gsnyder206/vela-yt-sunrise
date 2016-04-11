@@ -407,7 +407,7 @@ if __name__ == "__main__":
 	galaxy_props = {}
 	fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
 	          'stars_rhalf', 'stars_mass_profile', 'stars_L',
-	          'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center']
+	          'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files']
 	for field in fields: 
 	    if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
 	        galaxy_props[field] = np.array([])                
@@ -421,6 +421,8 @@ if __name__ == "__main__":
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
 		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
+
+                galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 		dd = ds.all_data()
 		ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
