@@ -419,10 +419,6 @@ if __name__ == "__main__":
 	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print "Getting galaxy props: ", ds._file_amr, snap_dir
 
-		scale = round(1.0/(ds.current_redshift+1.0),4)
-		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
-
-                galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 		dd = ds.all_data()
 		ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
@@ -430,8 +426,19 @@ if __name__ == "__main__":
 		print ds.index.get_smallest_dx()
 
                 #need to exit gracefully here if there's no stars.
-                units = 'kpc' 
-                stars_pos_x = dd['stars', 'particle_position_x'].in_units(units)
+                try:
+                        stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
+                        assert stars_pos_x.shape > 0
+                except AttributeError,AssertionError as e:
+                        print "No star particles found, skipping: ", ds._file_amr
+                        continue
+
+
+		scale = round(1.0/(ds.current_redshift+1.0),4)
+		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
+
+                galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
+
 
 		print 'Determining center...'
 		max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
