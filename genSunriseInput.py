@@ -229,7 +229,7 @@ if __name__ == "__main__":
                 print galprops['snap_files']
 
                 if os.path.abspath(snapfile) not in galprops['snap_files']: continue
-                idx = np.argwhere(galprops['snap_files'==os.path.abspath(snapfile)])[0][0]
+                idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
 
 		#scale = round(1.0/(ds.current_redshift+1.0),4)
 		#if scale not in galprops['scale']: continue
@@ -266,8 +266,13 @@ if __name__ == "__main__":
                 out_dir = os.path.join(snap_dir, 'input')
                 prefix = os.path.join(out_dir,simname+'_'+aname)
 
-		scale = round(1.0/(ds.current_redshift+1.0),4)
-		idx = np.argwhere(galprops['scale'] == scale)[0][0]
+                snapfile = ds._file_amr
+
+                if os.path.abspath(snapfile) not in galprops['snap_files']: continue
+                idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
+
+		#scale = round(1.0/(ds.current_redshift+1.0),4)
+		#idx = np.argwhere(galprops['scale'] == scale)[0][0]
 		
 		gal_center = galprops['stars_center'][idx]
 		gal_center = ds.arr(gal_center, 'kpc')
@@ -284,7 +289,8 @@ if __name__ == "__main__":
 
 
 		export_info['sim_name'] = simname
-		export_info['scale'] = scale
+		#export_info['scale'] = scale
+                export_info['snap_file'] = snapfile
 		export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
 		np.save(export_info_file, export_info)
 
