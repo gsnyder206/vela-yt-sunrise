@@ -195,7 +195,7 @@ if __name__ == "__main__":
 
 	cam_dist = 100000
 	cam_fov  = 50
-
+        max_level = 7
 
 
 
@@ -203,7 +203,7 @@ if __name__ == "__main__":
 	ts = yt.DatasetSeries(new_snapfiles)
 
 	# Loop over snapshot to generate cameras and projection plots, 
-    # parallelization happens while generating the plots.
+        # parallelization happens while generating the plots.
 	for ds in reversed(ts):
 
                 aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
@@ -247,15 +247,16 @@ if __name__ == "__main__":
 
 
 
-        exit()
+        #exit()
 
 	# Send one snapshots to each processor to export 
 
 	for ds in ts.piter():
                 aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
                 print "Timestep name: ", aname
-                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
-                out_dir = snap_dir+'/input/'
+                snap_dir = os.path.dirname(ds._file_amr)
+
+                out_dir = os.path.join(snap_dir, 'input')
                 prefix = os.path.join(out_dir,simname+'_'+aname)
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
@@ -269,8 +270,8 @@ if __name__ == "__main__":
 		print export_radius
 
 		export_info,  output, output_array= export_fits(ds, gal_center, export_radius, 
-                                          prefix, star_particles = 'stars', 
-                                          max_level=None)
+                                                                prefix, star_particles = 'stars', 
+                                                                max_level=max_level)
 
 
 
