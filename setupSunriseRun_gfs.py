@@ -226,7 +226,7 @@ if __name__ == "__main__":
       
                 newf = os.path.join(snap_dir,sn)
                 new_snapfiles.append(newf)
-                assert os.path.lexists(newf):
+                assert os.path.lexists(newf)
 
 
         new_snapfiles = np.asarray(new_snapfiles)
