@@ -249,6 +249,7 @@ if __name__ == "__main__":
 		cameras = generate_cameras(L, distance = cam_dist, fov = cam_fov)
                 prefix = os.path.join(out_dir,simname+'_'+aname)
 		write_cameras(prefix, cameras)
+                sys.stdout.flush()
 
 
 
@@ -295,6 +296,7 @@ if __name__ == "__main__":
 
 		export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
 		np.save(export_info_file, export_info)
+                sys.stdout.flush()
 
 	b = time.time()
 	print 'Final time in seconds: ', b - a

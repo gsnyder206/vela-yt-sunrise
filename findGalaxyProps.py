@@ -479,6 +479,7 @@ if __name__ == "__main__":
 			#print 'Took %.2f minutes'%((t1-t0)/60.)
 
 		del (hc_sphere)
+                sys.stdout.flush()
 
 
         # Save galaxy props file

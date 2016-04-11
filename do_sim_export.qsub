@@ -9,5 +9,5 @@
 #PBS -o sunrise_export_pbs.out
 #PBS -e sunrise_export_pbs.err
 #PBS -V
-python $VELAYTSUNRISE_CODE/findGalaxyProps.py 10MpcBox_csf512_a0.370.d  #use without snapshot name input to do whole folder
-python $VELAYTSUNRISE_CODE/genSunriseInput.py 10MpcBox_csf512_a0.370.d  #use without snapshot name input to do whole folder
+python $VELAYTSUNRISE_CODE/findGalaxyProps.py 10MpcBox_csf512_a0.370.d > props_test.out 2> props_test.err #use without snapshot name input to do whole folder
+python $VELAYTSUNRISE_CODE/genSunriseInput.py 10MpcBox_csf512_a0.370.d > export_test.out 2> export_test.err  #use without snapshot name input to do whole folder
