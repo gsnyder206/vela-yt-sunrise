@@ -148,6 +148,32 @@ if __name__ == "__main__":
         simname = os.path.basename(dirname) #assumes directory name for simulation name
         print "Simulation name:  ", simname
 
+        particle_headers = []
+        particle_data = []
+        stars_data = []
+        new_snapfiles = []
+        for sn in snaps:
+                aname = sn.split('_')[-1].rstrip('.d')
+                particle_headers.append('PMcrd'+aname+'.DAT')
+                particle_data.append('PMcrs0'+aname+'.DAT')
+                stars_data.append('stars_'+aname+'.dat')
+                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+
+                print "Sunrise directory: ", snap_dir
+                if not os.path.lexists(snap_dir):
+                    os.mkdir(snap_dir)        
+
+                newf = os.path.join(snap_dir,sn)
+                new_snapfiles.append(newf)
+                if not os.path.lexists(newf):
+                        os.symlink(os.path.abspath(sn),newf)
+                        os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
+                        os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
+                        os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
+
+
+        new_snapfiles = np.asarray(new_snapfiles)
+
 
         #exit()
 
@@ -174,7 +200,7 @@ if __name__ == "__main__":
 
 
 
-	ts = yt.DatasetSeries(snaps)
+	ts = yt.DatasetSeries(new_snapfiles)
 
 	# Loop over snapshot to generate cameras and projection plots, 
     # parallelization happens while generating the plots.
@@ -184,18 +210,18 @@ if __name__ == "__main__":
         
                 print "Timestep name: ", aname
 
-                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+                snap_dir = os.path.dirname(ds._file_amr) #os.path.join(simname+'_'+aname+'_sunrise')
 
                 print "Sunrise directory: ", snap_dir
-                if not os.path.lexists(snap_dir):
-                    os.mkdir(snap_dir)
+                assert os.path.lexists(snap_dir)
 
                 continue
 
                     
                 galprops_file = simname+'_galprops.npy'
 
-                out_dir = snap_dir+'/input/'
+                out_dir = os.path.join(snap_dir,'input')
+
                 galprops = np.load(galprops_file)[()]
 
 		scale = round(1.0/(ds.current_redshift+1.0),4)
