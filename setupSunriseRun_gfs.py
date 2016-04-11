@@ -18,7 +18,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 	sf.write('include_file        		%s\n\n'%stub_name)
 	sf.write('snapshot_file       		%s\n'%fits_file)
 	sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
-	sf.write('nthreads          		'+nthreads+'\n')
+	sf.write('n_threads          		'+nthreads+'\n')
 
 	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['stars_maxndens'][0], galprops_data['stars_maxndens'][1], galprops_data['stars_maxndens'][2]))
 	#sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(nan, nan, nan))
@@ -65,7 +65,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	mf.write('include_file         %s\n\n'%stub_name)
 	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
 	mf.write('output_file          %s\n'%(run_dir+'/mcrx.fits'))
-	mf.write('nthreads          		'+nthreads+'\n')
+	mf.write('n_threads          		'+nthreads+'\n')
 	mf.write('camera_positions      %s\n'%(cam_file))
 
 	if run_type != 'ifu':
