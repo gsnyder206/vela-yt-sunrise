@@ -240,7 +240,7 @@ if __name__ == "__main__":
 
                 fits_file = snap_dir+'/input/%s.fits'%(snap_name)
                 info_file = fits_file.replace('.fits', '_export_info.npy')
-                prop_file = fits_file.replace('.fits', '_galprops.npy')
+                prop_file = simname+'_galprops.npy'
                 assert os.path.lexists(fits_file), 'Fits file %s not found'%fits_file
                 assert os.path.lexists(info_file), 'Info file %s not found'%info_file
                 assert os.path.lexists(prop_file), 'Prop file %s not found'%prop_file
