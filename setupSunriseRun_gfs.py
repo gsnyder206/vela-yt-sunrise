@@ -234,13 +234,13 @@ if __name__ == "__main__":
         new_snapfiles = np.asarray(new_snapfiles)
 
         for snapfile in new_snapfiles:
-                snap_dir = os.path.dirname(snapfile)
+                snap_dir = os.path.abspath(os.path.dirname(snapfile))
                 sunrise_dir = os.path.basename(snap_dir)
                 snap_name = sunrise_dir.rstrip('_sunrise')
 
                 fits_file = snap_dir+'/input/%s.fits'%(snap_name)
                 info_file = fits_file.replace('.fits', '_export_info.npy')
-                prop_file = simname+'_galprops.npy'
+                prop_file = os.path.abspath(simname+'_galprops.npy')
                 assert os.path.lexists(fits_file), 'Fits file %s not found'%fits_file
                 assert os.path.lexists(info_file), 'Info file %s not found'%info_file
                 assert os.path.lexists(prop_file), 'Prop file %s not found'%prop_file
