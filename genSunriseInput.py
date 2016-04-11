@@ -229,7 +229,7 @@ if __name__ == "__main__":
                 print galprops['snap_files']
 
                 if os.path.abspath(snapfile) not in galprops['snap_files']: continue
-                idx = np.argwhere(galprops['snap_files'==snapfile])[0][0]
+                idx = np.argwhere(galprops['snap_files'==os.path.abspath(snapfile)])[0][0]
 
 		#scale = round(1.0/(ds.current_redshift+1.0),4)
 		#if scale not in galprops['scale']: continue
