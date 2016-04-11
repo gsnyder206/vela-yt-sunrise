@@ -216,6 +216,7 @@ if __name__ == "__main__":
         simname = os.path.basename(dirname) #assumes directory name for simulation name
         print "Simulation name:  ", simname
 
+        new_snapfiles = []
 
         for sn in snaps:
                 aname = sn.split('_')[-1].rstrip('.d')
