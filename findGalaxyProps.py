@@ -430,6 +430,8 @@ if __name__ == "__main__":
 		print ds.index.get_smallest_dx()
 
                 #need to exit gracefully here if there's no stars.
+                units = 'kpc' 
+                stars_pos_x = dd['stars', 'particle_position_x'].in_units(units)
 
 		print 'Determining center...'
 		max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
