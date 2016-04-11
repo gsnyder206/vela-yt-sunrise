@@ -316,7 +316,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	refined = grid_structure['refined']
 
 	np.savez('grid_structure.npz',grid_structure)
-
+        np.save('grid_structure.npy',grid_structure)
 
 	create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge)
 
