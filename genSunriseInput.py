@@ -215,7 +215,6 @@ if __name__ == "__main__":
                 print "Sunrise directory: ", snap_dir
                 assert os.path.lexists(snap_dir)
 
-                continue
 
                     
                 galprops_file = simname+'_galprops.npy'
