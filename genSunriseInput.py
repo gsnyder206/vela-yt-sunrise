@@ -225,8 +225,6 @@ if __name__ == "__main__":
 
                 galprops = np.load(galprops_file)[()]
 
-                print os.path.abspath(snapfile)
-                print galprops['snap_files']
 
                 if os.path.abspath(snapfile) not in galprops['snap_files']: continue
                 idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
@@ -253,7 +251,6 @@ if __name__ == "__main__":
 
 
 
-        exit()
 	ts = yt.DatasetSeries(new_snapfiles)
 
 	# Send one snapshots to each processor to export 
