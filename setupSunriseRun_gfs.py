@@ -11,13 +11,15 @@ necessary to submit.
 '''
 
 
-def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_data, run_type):
+def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_data, run_type, nthreads='1'):
 
 	sf = open(run_dir+'/'+filename,'w+')
 	sf.write('#Parameter File for Sunrise, sfrhist\n\n')
 	sf.write('include_file        		%s\n\n'%stub_name)
 	sf.write('snapshot_file       		%s\n'%fits_file)
 	sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
+	sf.write('nthreads          		'+nthreads+'\n')
+
 	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['stars_maxndens'][0], galprops_data['stars_maxndens'][1], galprops_data['stars_maxndens'][2]))
 	#sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(nan, nan, nan))
 	#sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(nan, nan, nan))
@@ -55,7 +57,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1'):
 	mf = open(run_dir+'/'+filename,'w+')
 
 	redshift = 1./galprops_data['scale'][0] - 1
@@ -63,6 +65,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	mf.write('include_file         %s\n\n'%stub_name)
 	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
 	mf.write('output_file          %s\n'%(run_dir+'/mcrx.fits'))
+	mf.write('nthreads          		'+nthreads+'\n')
 	mf.write('camera_position      %s\n'%(snap_dir+'/inputs/cameras'))
 
 	if run_type != 'ifu':
@@ -201,11 +204,13 @@ if __name__ == "__main__":
 
 	#I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
 	#Pleiades values:
-	nthreads = '1'  #cpu models have 12, 16, 20, 24, respectively
-	model='san'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
+	nthreads = '12'  #cpu models have 12, 16, 20, 24, respectively
+	model='wes'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
 	queue='devel'   #options devel, debug, low, normal, long
 	notify='gsnyder@stsci.edu'
 	walltime_limit='02:00:00'
+
+        stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
 
         print "Generating Sunrise Runs for: ", snaps
 
@@ -257,32 +262,36 @@ if __name__ == "__main__":
 
                         print '\tGenerating sfrhist.config file for %s...'%run_type
                         sfrhist_fn   = 'sfrhist.config'
-                        sfrhist_stub = '/u/rcsimons/sunrise_testing/stub_files/sfrhist_base.stub'
+                        sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
+
                         generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, 
                                                 stub_name = sfrhist_stub,  fits_file = fits_file, 
-                                                galprops_data = galprops_data, run_type = run_type)
+                                                galprops_data = galprops_data, run_type = run_type, nthreads=nthreads)
 
 
                         print '\tGenerating mcrx.config file for %s...'%run_type
                         mcrx_fn   = 'mcrx.config'
-                        mcrx_stub = '/u/rcsimons/sunrise_testing/stub_files/mcrx_base.stub'
+                        mcrx_stub = os.path.join(stub_dir,'mcrx_base.stub')
+
                         generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                                              stub_name = mcrx_stub,
-                                             galprops_data = galprops_data, run_type = run_type)
+                                             galprops_data = galprops_data, run_type = run_type, nthreads=nthreads)
 
 
 
                         if run_type == 'images': 
                                 print '\tGenerating broadband.config file for %s...'%run_type
                                 broadband_fn   = 'broadband.config'
-                                broadband_stub = '/u/rcsimons/sunrise_testing/stub_files/broadband_base.stub'
+                                broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
+
                                 generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
                                                                  stub_name = broadband_stub, 
                                                                  galprops_data = galprops_data)
                         if run_type == 'grism': 
                                 print '\tGenerating broadband.config file for %s...'%run_type
                                 broadband_fn   = 'broadband.config'
-                                broadband_stub = '/u/rcsimons/sunrise_testing/stub_files/broadband_base.stub'
+                                broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
+
                                 generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
                                                                 stub_name = broadband_stub, 
                                                                 galprops_data = galprops_data)
