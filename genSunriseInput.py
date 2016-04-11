@@ -200,17 +200,17 @@ if __name__ == "__main__":
 
 
 
-	ts = yt.DatasetSeries(new_snapfiles)
+	#ts = yt.DatasetSeries(new_snapfiles)
 
 	# Loop over snapshot to generate cameras and projection plots, 
         # parallelization happens while generating the plots.
-	for ds in reversed(ts):
+	for snapfile in new_snapfiles:
 
-                aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
+                aname = (os.path.basename(snapfile)).split('_')[-1].rstrip('.d')
         
                 print "Timestep name: ", aname
 
-                snap_dir = os.path.dirname(ds._file_amr) #os.path.join(simname+'_'+aname+'_sunrise')
+                snap_dir = os.path.dirname(snapfile) #os.path.join(simname+'_'+aname+'_sunrise')
 
                 print "Sunrise directory: ", snap_dir
                 assert os.path.lexists(snap_dir)

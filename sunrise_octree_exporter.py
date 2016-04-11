@@ -291,7 +291,6 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	#Create a list of the star particle properties in PARTICLE_DATA
     #Include ID, parent-ID, position, velocity, creation_mass, 
     #formation_time, mass, age_m, age_l, metallicity, L_bol
-	ad = ds.all_data()
 
 	particle_data,nstars = prepare_star_particles(ds,star_particle_type,fle=fle,fre=fre, ad=ad,**kwargs)
 
@@ -596,6 +595,7 @@ def prepare_star_particles(ds,star_type,pos=None,vel=None, age=None, creation_ti
 
     if ad is None:
         ad = ds.all_data()
+
     nump = ad[star_type,"particle_ones"]
     assert nump.sum()>1 #make sure we select more than a single particle
     
