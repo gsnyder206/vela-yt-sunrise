@@ -57,7 +57,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=cam_file):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=''):
 	mf = open(run_dir+'/'+filename,'w+')
 
 	redshift = 1./galprops_data['scale'][0] - 1
