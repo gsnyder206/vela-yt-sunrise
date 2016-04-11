@@ -291,6 +291,8 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	#Create a list of the star particle properties in PARTICLE_DATA
     #Include ID, parent-ID, position, velocity, creation_mass, 
     #formation_time, mass, age_m, age_l, metallicity, L_bol
+	ad = ds.all_data()
+
 	particle_data,nstars = prepare_star_particles(ds,star_particle_type,fle=fle,fre=fre, ad=ad,**kwargs)
 
 	#Create the refinement depth-first hilbert octree structure
