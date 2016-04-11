@@ -57,7 +57,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1'):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=cam_file):
 	mf = open(run_dir+'/'+filename,'w+')
 
 	redshift = 1./galprops_data['scale'][0] - 1
@@ -66,7 +66,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
 	mf.write('output_file          %s\n'%(run_dir+'/mcrx.fits'))
 	mf.write('nthreads          		'+nthreads+'\n')
-	mf.write('camera_position      %s\n'%(snap_dir+'/inputs/cameras'))
+	mf.write('camera_position      %s\n'%(cam_file))
 
 	if run_type != 'ifu':
 		mf.write('use_kinematics	   %s\n'%('false #True for IFU'))
@@ -205,7 +205,7 @@ if __name__ == "__main__":
 	#I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
 	#Pleiades values:
 	nthreads = '12'  #cpu models have 12, 16, 20, 24, respectively
-	model='wes'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
+	model='san'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
 	queue='devel'   #options devel, debug, low, normal, long
 	notify='gsnyder@stsci.edu'
 	walltime_limit='02:00:00'
@@ -245,10 +245,15 @@ if __name__ == "__main__":
 
                 fits_file = snap_dir+'/input/%s.fits'%(snap_name)
                 info_file = fits_file.replace('.fits', '_export_info.npy')
+                cam_file = fits_file.replace('.fits','.cameras')
+
                 prop_file = os.path.abspath(simname+'_galprops.npy')
                 assert os.path.lexists(fits_file), 'Fits file %s not found'%fits_file
                 assert os.path.lexists(info_file), 'Info file %s not found'%info_file
+                assert os.path.lexists(cam_file), 'Cam file %s not found'%cam_file
+
                 assert os.path.lexists(prop_file), 'Prop file %s not found'%prop_file
+                
                 print '\tFits file name: %s'%fits_file
                 print '\tInfo file name: %s\n'%info_file
 
@@ -275,7 +280,7 @@ if __name__ == "__main__":
 
                         generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                                              stub_name = mcrx_stub,
-                                             galprops_data = galprops_data, run_type = run_type, nthreads=nthreads)
+                                             galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file)
 
 
 
