@@ -196,7 +196,7 @@ if __name__ == "__main__":
 
 	cam_dist = 100000
 	cam_fov  = 50
-        max_level = None
+        max_level = 8
 
 
 
