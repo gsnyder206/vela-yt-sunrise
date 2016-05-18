@@ -153,7 +153,6 @@ def OctreeDepthFirstHilbert(current_oct_id, current_level, mask_arr, hilbert, \
 
 	child_level	= current_level	+ 1
 
-	hilbert_order = arange(8)
 	if len(refined_locations) > 0:
 		child_oct_ids = oct_loc[str(child_level)][1][oct_loc[str(child_level)][0]:oct_loc[str(child_level)][0]+len(refined_locations)]
 		oct_loc[str(child_level)][0] += len(refined_locations)
@@ -189,7 +188,7 @@ def OctreeDepthFirstHilbert(current_oct_id, current_level, mask_arr, hilbert, \
 
 
 
-def add_preamble(levels, fwidth, fcoords, mask_arr):
+def add_preamble(levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr):
 
 	i = 0
 	while True:
@@ -207,21 +206,32 @@ def add_preamble(levels, fwidth, fcoords, mask_arr):
 		temp_maskarr = np.zeros((2,2,2,len(good)/8)).astype('bool')
 
 
+		for p, gd in enumerate(good):
+			print p, '\t', LeftEdge[gd]
+			raw_input('')
 
 
 		good_red = good[0:len(good):8]
 
-		#dimens = array([[-1,-1,-1],[-1,-1,1],[-1,1,-1],[-1,1,1],[1,-1,-1],[1,-1,1],[1,1,-1],[1,1,1]]).reshape((2,2,2,3))
 
 		for n, back_good in enumerate(good_red):
 			temp_levels[:,:,:,n] += i
 			temp_fwidth[:,:,:,n,:] += fwidth[:,:,:,back_good,:]*2.
-			child_cen = fcoords[-1,-1,-1,back_good,:].value[()]+0.5*fwidth[0,0,0,back_good,:].value[()]			
+
+
+
+			child_cen = fcoords[0,0,0,back_good,:].value[()]+fwidth[0,0,0,back_good,:].value[()]			
 
 			for ii in arange(2):
 				for jj in arange(2):
 					for kk in arange(2):
 						temp_fcoords[ii,jj,kk, n,:] = child_cen + 0.5*temp_fwidth[ii,jj,kk,n,:]*[[(-1)**(1-ii), (-1)**(1-jj), (-1)**(1-kk)]]
+
+
+			#ce = (temp_fcoords[0,0,0,n,:] + temp_fwidth[0,0,0,n,:]*0.5)
+			#print n, '\t', ce
+			#print raw_input('')
+
 
 
 		levels = append(temp_levels, levels, axis = 3)
@@ -323,7 +333,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 
 def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level=0, max_level=None, debug=True):
 
-	if True: 
+	if False: 
 		def _MetalMass(field, data):
 			return (data['metal_ia_density']*data['cell_volume']).in_units('Msun')
 		ad.ds.add_field('MetalMassMsun', function=_MetalMass, units='Msun')
@@ -377,17 +387,18 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 
 
-	fields = ["CellMassMsun","TemperatureTimesCellMassMsun","MetalMassMsun","CellVolumeKpc", "CellSFRtau", "Cellpgascgsx", "Cellpgascgsy", "Cellpgascgsz"]
+        if False:
+	        fields = ["CellMassMsun","TemperatureTimesCellMassMsun","MetalMassMsun","CellVolumeKpc", "CellSFRtau", "Cellpgascgsx", "Cellpgascgsy", "Cellpgascgsz"]
 
-	#gather the field data from octs 
+	        #gather the field data from octs 
 
-	print "Retrieving field data"
-	field_data = [] 
-	for fi,f in enumerate(fields):
-		print fi, f
-		field_data = ad[f]
+	        print "Retrieving field data"
+	        field_data = [] 
+	        for fi,f in enumerate(fields):
+	        	print fi, f
+	        	field_data = ad[f]
 
-	del field_data
+	        del field_data
 
 
 	#Initialize dicitionary with arrays containig the needed
@@ -413,13 +424,13 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 
 
-
-	output = {}
-	for field in fields:
-		output[field] = []
+	if False:
+		output = {}
+		for field in fields:
+		    output[field] = []
 
 	aa = shape(levels)[3]
-	levels, fwidth, fcoords,  mask_arr = add_preamble(levels, fwidth, fcoords, mask_arr)
+	levels, fwidth, fcoords,  mask_arr = add_preamble(levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr)
 	bb = shape(levels)[3]
 	preamble_end = bb - aa
 	print bb, aa
@@ -455,7 +466,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 	outfile = open('debug_hilbert.out', 'w+')
 	a = time.time()
-	debug = False
+	debug = True
 	OctreeDepthFirstHilbert(current_oct_id = 0, current_level = 0, mask_arr = mask_arr,  hilbert = hs, 
 							fcoords = fcoords, fwidth = fwidth, grid_structure = grid_structure, 
 							output = output, octs_dic = octs_dic, oct_loc = oct_loc, field_names = fields, 
@@ -679,182 +690,6 @@ def save_to_gridstructure(grid_structure, level, refined, leaf):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-if False:
-
-
-	'''
-	def add_preamble(grid_structure):
-		
-		#Add the higher level oct information
-		
-
-		level_list = blist(grid_structure['level'])
-		level_arr = array(grid_structure['level'])
-		list_structure = blist(grid_structure['refined'])
-
-		print 'Adding preamble oct structure...'
-		i = 0
-		while True:
-			good = where(level_arr == i)[0]
-			print i, len(good)
-			if len(good) == 1:
-				break
-			else:
-				i -= 1
-			good_red = good[0:len(good):8]
-
-			good = where(level_arr == i)[0]
-
-			for n, back_good in enumerate(good_red[::-1]):
-				level_list.insert(back_good, i)
-				list_structure.insert(back_good, True)
-				grid_structure['nrefined']+=1
-
-
-			level_arr = array(level_list)
-
-
-
-		grid_structure['refined'] = list_structure
-		grid_structure['level'] = level_list
-		return grid_structure
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	def OctreeDepthFirstHilbert(current_oct_id, current_level, cell_id, first_visit, oct_loc, mask_arr, grid_structure,  output, octs_dic, field_names, debug = False):
-		
-		#This is the oct mask, a 2x2x2 array that will identify leafs (True) and refined cells (False)
-		mask_i = mask_arr[:,:,:, current_oct_id]
-		#Flatten the mask to 8x1
-		flat_mask = mask_i.ravel(order = 'F')
-		fields = octs_dic['Fields'][:,:,:,:,current_oct_id]
-		#p_gas_field = octs_dic['p_gas_field']
-		fields_all = zeros((fields.shape[0], 8))
-		for field_index in range(fields.shape[0]):
-			fields_all[field_index] = fields[field_index,:,:,:].ravel(order = 'F')
-
-
-
-		if first_visit == True:
-			#It's the first time visiting this oct, so let's save 
-			#the oct information here in our grid structure dict
-			save_to_gridstructure(grid_structure, current_level, refined = True, leaf = False)
-			if debug: print '\t'*current_level, current_level
-			
-		#If this is our first visit, then cell_id should be 0. If we are returning to a parent 
-		#from a child, then cell_id will be larger than 0 (i.e. we don't want to return to the previous cells we visited)
-		for i in arange(cell_id, len(flat_mask)): 
-			is_leaf = flat_mask[i]
-
-			if is_leaf:
-				#This cell is a leaf, save the grid information and the physical properties
-				save_to_gridstructure(grid_structure, current_level+1, refined = False, leaf = True)
-				
-				for field_index in range(fields.shape[0]):
-					output[field_names[field_index]].append(fields_all[field_index,i])
-
-
-				if debug:  print '\t'*current_level,current_level, 'Found a leaf in cell '+ str(int(i))+'/'+str(int(len(mask_i.ravel())))
-			else:
-				#This cell is not a leaf, we'll now advance in to this cell
-				oct_loc[str(current_level)][2] = i + 1    #Store the cell_id that we are currently in (+1, since we'll be returning to the next cell)
-				child_level 	= current_level + 1 	  #We'll be going one level down
-				#Identify the index of the next available octree at child_level
-				child_argument 	= oct_loc[str(child_level)][0] 
-				child_oct_id 	= oct_loc[str(child_level)][1][child_argument]   
-
-				if debug: print '\t'*current_level, current_level, 'Found a cell to refine in cell ' + str(int(i))+'/'+str(int(len(flat_mask)))
-
-				#Visiting the next cell, going back to the for-loop first
-				return True, child_oct_id, child_level, 0., True
-
-
-		#Done with that oct, now we need to return to the parent level (or a new high level oct)
-		#But first, let's set the cell_id quantity for this level back to 0 (starting fresh)
-
-		oct_loc[str(current_level)][0] 	+= 1  	    #Next time we draw from this level, we will select the next index
-		oct_loc[str(current_level)][2] 	= 0
-		
-
-		#ok let's see what our path is now
-		if current_level > 0:
-			#We're going to move up to a parent
-			parent_level	= current_level - 1
-			#The octree index for our current parent
-			parent_argument = oct_loc[str(parent_level)][0]
-			parent_oct_id 	= oct_loc[str(parent_level)][1][parent_argument]
-			parent_cell_id 	= oct_loc[str(parent_level)][2]
-			#Don't reset the counter just yet, need to check if we are at cell 8 in the parent
-			first_visit = False       #If it turns out we need to return to parent
-			while parent_cell_id == 8:
-				#Done with this parent oct, reset the cells at this level and try the next level
-				oct_loc[str(parent_level)][2] 	= 0
-				oct_loc[str(parent_level)][0] 	+= 1
-				parent_level -= 1
-				if parent_level == -1: #Did we reach the high-level octs?
-					parent_level = 0
-					first_visit = True    #Done with this parent, on to a new high-level oct
-				#Identify next index and check if we've reached the end of the high-level octs
-				parent_argument = oct_loc[str(parent_level)][0]
-				if (parent_level == 0) & (parent_argument == len(oct_loc[str(parent_level)][1])): 
-					return False, -1, -1, -1, -1    #Done!
-				else:
-					#Nope, still more octs...
-					parent_oct_id 	= oct_loc[str(parent_level)][1][parent_argument]
-					parent_cell_id 	= oct_loc[str(parent_level)][2]
-
-
-			return True, parent_oct_id, parent_level, parent_cell_id, first_visit
-
-
-
-		elif current_level == 0:
-			parent_level = current_level    #Moving to next high-level oct...
-			first_visit = True       		#...which will be our first visit
-			#Find next oct
-			parent_argument = oct_loc[str(parent_level)][0]
-			#Check if we've reached the end of the high-level oct
-			if (parent_argument == len(oct_loc[str(parent_level)][1])): 
-				return False, -1, -1, -1, -1   #Done!
-			parent_oct_id 	= oct_loc[str(parent_level)][1][parent_argument]
-			parent_cell_id 	= oct_loc[str(parent_level)][2]
-			return True, parent_oct_id, parent_level, parent_cell_id, first_visit
-	'''
 
 
 
