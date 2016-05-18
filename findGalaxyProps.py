@@ -407,7 +407,7 @@ if __name__ == "__main__":
 	galaxy_props = {}
 	fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
 	          'stars_rhalf', 'stars_mass_profile', 'stars_L',
-	          'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center']
+	          'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files']
 	for field in fields: 
 	    if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
 	        galaxy_props[field] = np.array([])                
@@ -419,8 +419,6 @@ if __name__ == "__main__":
 	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print "Getting galaxy props: ", ds._file_amr, snap_dir
 
-		scale = round(1.0/(ds.current_redshift+1.0),4)
-		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
 
 		dd = ds.all_data()
 		ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
@@ -428,6 +426,19 @@ if __name__ == "__main__":
 		print ds.index.get_smallest_dx()
 
                 #need to exit gracefully here if there's no stars.
+                try:
+                        stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
+                        assert stars_pos_x.shape > 0
+                except AttributeError,AssertionError as e:
+                        print "No star particles found, skipping: ", ds._file_amr
+                        continue
+
+
+		scale = round(1.0/(ds.current_redshift+1.0),4)
+		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
+
+                galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
+
 
 		print 'Determining center...'
 		max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
@@ -468,6 +479,7 @@ if __name__ == "__main__":
 			#print 'Took %.2f minutes'%((t1-t0)/60.)
 
 		del (hc_sphere)
+                sys.stdout.flush()
 
 
         # Save galaxy props file

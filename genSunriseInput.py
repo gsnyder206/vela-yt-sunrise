@@ -119,11 +119,12 @@ def export_fits(ds, center, export_radius, prefix, star_particles, max_level=Non
 	info['export_nstars']=nstars
 	info['export_nrefined']=nrefined
 	info['export_nleafs']=nleafs
-
+        info['input_filename']=filename
 
 	print "Successfully generated FITS for snapshot %s"%ds.parameter_filename.split('/')[-1]
 	print info,'\n'
-	return info,  output, output_array
+	#return info,  output, output_array
+        return info  #output arrays not actually used later
 
 
 if __name__ == "__main__":
@@ -148,6 +149,32 @@ if __name__ == "__main__":
         simname = os.path.basename(dirname) #assumes directory name for simulation name
         print "Simulation name:  ", simname
 
+        particle_headers = []
+        particle_data = []
+        stars_data = []
+        new_snapfiles = []
+        for sn in snaps:
+                aname = sn.split('_')[-1].rstrip('.d')
+                particle_headers.append('PMcrd'+aname+'.DAT')
+                particle_data.append('PMcrs0'+aname+'.DAT')
+                stars_data.append('stars_'+aname+'.dat')
+                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+
+                print "Sunrise directory: ", snap_dir
+                if not os.path.lexists(snap_dir):
+                    os.mkdir(snap_dir)        
+
+                newf = os.path.join(snap_dir,sn)
+                new_snapfiles.append(newf)
+                if not os.path.lexists(newf):
+                        os.symlink(os.path.abspath(sn),newf)
+                        os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
+                        os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
+                        os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
+
+
+        new_snapfiles = np.asarray(new_snapfiles)
+
 
         #exit()
 
@@ -169,38 +196,43 @@ if __name__ == "__main__":
 
 	cam_dist = 100000
 	cam_fov  = 50
+        max_level = None
 
 
 
 
-
-	ts = yt.DatasetSeries(snaps)
+	#ts = yt.DatasetSeries(new_snapfiles)
 
 	# Loop over snapshot to generate cameras and projection plots, 
-    # parallelization happens while generating the plots.
-	for ds in reversed(ts):
+        # parallelization happens while generating the plots.
+	for snapfile in new_snapfiles:
 
-                aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
+                aname = (os.path.basename(snapfile)).split('_')[-1].rstrip('.d')
         
                 print "Timestep name: ", aname
 
-                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+                snap_dir = os.path.dirname(snapfile) #os.path.join(simname+'_'+aname+'_sunrise')
 
                 print "Sunrise directory: ", snap_dir
-                if not os.path.lexists(snap_dir):
-                    os.mkdir(snap_dir)
+                assert os.path.lexists(snap_dir)
 
-                continue
 
                     
                 galprops_file = simname+'_galprops.npy'
 
-                out_dir = snap_dir+'/input/'
+                out_dir = os.path.join(snap_dir,'input')
+                if not os.path.lexists(out_dir):
+                    os.mkdir(out_dir)
+
                 galprops = np.load(galprops_file)[()]
 
-		scale = round(1.0/(ds.current_redshift+1.0),4)
-		if scale not in galprops['scale']: continue
-		idx = np.argwhere(galprops['scale'] == scale)[0][0]
+
+                if os.path.abspath(snapfile) not in galprops['snap_files']: continue
+                idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
+
+		#scale = round(1.0/(ds.current_redshift+1.0),4)
+		#if scale not in galprops['scale']: continue
+		#idx = np.argwhere(galprops['scale'] == scale)[0][0]
 
 		stars_L = galprops['stars_L'][idx]
 		gas_L 	= galprops['gas_L'][idx]
@@ -217,22 +249,33 @@ if __name__ == "__main__":
 		cameras = generate_cameras(L, distance = cam_dist, fov = cam_fov)
                 prefix = os.path.join(out_dir,simname+'_'+aname)
 		write_cameras(prefix, cameras)
+                sys.stdout.flush()
 
 
 
-        exit()
+	ts = yt.DatasetSeries(new_snapfiles)
 
 	# Send one snapshots to each processor to export 
 
 	for ds in ts.piter():
                 aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
                 print "Timestep name: ", aname
-                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
-                out_dir = snap_dir+'/input/'
+                snap_dir = os.path.dirname(ds._file_amr)
+                assert os.path.lexists(snap_dir)
+
+                out_dir = os.path.join(snap_dir, 'input')
+                assert os.path.lexists(out_dir)
+
                 prefix = os.path.join(out_dir,simname+'_'+aname)
 
+                snapfile = ds._file_amr
+
+                if os.path.abspath(snapfile) not in galprops['snap_files']: continue
+                idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
+
 		scale = round(1.0/(ds.current_redshift+1.0),4)
-		idx = np.argwhere(galprops['scale'] == scale)[0][0]		
+		#idx = np.argwhere(galprops['scale'] == scale)[0][0]
+		
 		gal_center = galprops['stars_center'][idx]
 		gal_center = ds.arr(gal_center, 'kpc')
 
@@ -241,16 +284,19 @@ if __name__ == "__main__":
 
 		print export_radius
 
-		export_info,  output, output_array= export_fits(ds, gal_center, export_radius, 
+		export_info = export_fits(ds, gal_center, export_radius, 
                                           prefix, star_particles = 'stars', 
-                                          max_level=None)
+                                          max_level=max_level)
 
 
 
 		export_info['sim_name'] = simname
 		export_info['scale'] = scale
+                export_info['snap_file'] = snapfile
+
 		export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
 		np.save(export_info_file, export_info)
+                sys.stdout.flush()
 
 	b = time.time()
 	print 'Final time in seconds: ', b - a

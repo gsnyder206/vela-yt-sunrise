@@ -8,7 +8,7 @@ Code to export from yt to Sunrise
 import time
 import numpy as np
 from numpy import *
-import pyfits
+import astropy.io.fits as pyfits
 import yt
 from yt.funcs import get_pbar
 from blist import blist
@@ -129,7 +129,6 @@ def OctreeDepthFirstHilbert(current_oct_id, current_level, mask_arr, hilbert, \
 
 
 	if current_oct_id%10000 == 0 : print str(current_oct_id) + '/' + str(shape(mask_arr)[3])
-	save_to_gridstructure(grid_structure, current_level, refined = True, leaf = False)
 			
 
 	mask_i = mask_arr[:,:,:, current_oct_id]
@@ -140,6 +139,8 @@ def OctreeDepthFirstHilbert(current_oct_id, current_level, mask_arr, hilbert, \
 	flat_fcoords = array(zip(fcoords_ix.ravel(order = 'F').value[()], fcoords_iy.ravel(order = 'F').value[()], fcoords_iz.ravel(order = 'F').value[()]))
 	flat_fwidth = array(zip(fwidth_ix.ravel(order = 'F').value[()], fwidth_iy.ravel(order = 'F').value[()], fwidth_iz.ravel(order = 'F').value[()]))
 	refined_locations = where(flat_mask == False)[0]
+
+	#save_to_gridstructure(grid_structure, current_level, flat_fcoords, refined = True, leaf = False)
 
 
 	fields = octs_dic['Fields'][:,:,:,:, current_oct_id-preamble_end]
@@ -171,7 +172,7 @@ def OctreeDepthFirstHilbert(current_oct_id, current_level, mask_arr, hilbert, \
 				if debug:  f.write('\t'*oct_obj.child_level+str(oct_obj.child_level) + '\tFound a leaf in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
 				#assert(current_oct_id > preamble_end)
 				#This cell is a leaf, save the grid information and the physical properties
-				save_to_gridstructure(grid_structure, current_level, refined = False, leaf = True)				
+				save_to_gridstructure(grid_structure, current_level, np.asarray(oct_obj.le[i]), refined = False, leaf = True)				
 				assert(current_oct_id >= preamble_end)
 				for field_index in range(fields.shape[0]):
 					output[field_names[field_index]].append(fields_all[field_index,i])
@@ -180,6 +181,8 @@ def OctreeDepthFirstHilbert(current_oct_id, current_level, mask_arr, hilbert, \
 		else:
 			#This cell is not a leaf, we'll now advance in to this cell
 			if debug:  f.write('\t'*child_level+str(child_level) + '\tFound a refinement in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
+                        save_to_gridstructure(grid_structure,oct_obj.child_level, np.asarray(oct_obj.le[i]), refined = True, leaf = False)
+
 			OctreeDepthFirstHilbert(oct_obj.child_oct_ids[oct_obj.n_refined_visited], oct_obj.child_level, mask_arr, 
 									hilbert_child, fcoords, fwidth, grid_structure, output, octs_dic, oct_loc, 
 									field_names, debug, f, preamble_end)
@@ -301,6 +304,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	#Create a list of the star particle properties in PARTICLE_DATA
     #Include ID, parent-ID, position, velocity, creation_mass, 
     #formation_time, mass, age_m, age_l, metallicity, L_bol
+
 	particle_data,nstars = prepare_star_particles(ds,star_particle_type,fle=fle,fre=fre, ad=ad,**kwargs)
 
 	#Create the refinement depth-first hilbert octree structure
@@ -325,7 +329,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	refined = grid_structure['refined']
 
 	np.savez('grid_structure.npz',grid_structure)
-
+        np.save('grid_structure.npy',grid_structure)  #way faster to load for some reason?
 
 	create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge)
 
@@ -605,6 +609,7 @@ def prepare_star_particles(ds,star_type,pos=None,vel=None, age=None, creation_ti
 
     if ad is None:
         ad = ds.all_data()
+
     nump = ad[star_type,"particle_ones"]
     assert nump.sum()>1 #make sure we select more than a single particle
     
@@ -670,12 +675,13 @@ def prepare_star_particles(ds,star_type,pos=None,vel=None, age=None, creation_ti
     assert pd_table.data.shape[0]>0
     return pd_table, np.sum(idx)
 
-def save_to_gridstructure(grid_structure, level, refined, leaf):
+def save_to_gridstructure(grid_structure, level, fcoords, refined, leaf):
 	'''
 	Function to save grid information
 	'''
 	grid_structure['level'].append(level)
 	grid_structure['refined'].append(refined)
+        grid_structure['coords'].append(fcoords)
 	if leaf:
 		grid_structure['nleafs']+=1
 	if refined:
