@@ -13,8 +13,7 @@ import yt
 from yt.funcs import get_pbar
 from blist import blist
 from yt.funcs import *
-#import sunrise_export_gfs.octree_to_depthFirstHilbert_GFS as depthFirstHilbert
-
+import scipy
 
 
 class hilbert_state():
@@ -110,27 +109,25 @@ class hilbert_state():
 
 
 class oct_object():
-	def __init__(self, is_leaf, fcoords, fwidth, level, oct_id, child_oct_ids):
+	def __init__(self, is_leaf, fcoords, fwidth, level, oct_id, child_oct_ids, fields = None):
 		self.is_leaf = is_leaf
 		self.fcoords = fcoords
+		self.octcen = mean(self.fcoords, axis = 0)
 		self.fwidth = fwidth
 		self.le = fcoords - 0.5*fwidth
 		self.re = fcoords + 0.5*fwidth
+
 		self.child_oct_ids = child_oct_ids
 		self.n_refined_visited = 0
+		self.n_leaf = len(where(self.is_leaf == True)[0])
+		self.n_refined = len(where(self.is_leaf == False)[0])
 		self.level = level
 		self.child_level = self.level + 1
-		self.oct_id = oct_id		
+		self.oct_id = oct_id
+		self.fields = fields		
 
 
-def OctreeDepthFirstHilbert(current_oct_id, current_level, mask_arr, hilbert, \
-							fcoords, fwidth, grid_structure,\
-							output, octs_dic, oct_loc, field_names, debug = False, f  = 'out.out', preamble_end = None):
-
-
-	if current_oct_id%10000 == 0 : print str(current_oct_id) + '/' + str(shape(mask_arr)[3])
-			
-
+def recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic):
 	mask_i = mask_arr[:,:,:, current_oct_id]
 	fcoords_ix, fcoords_iy, fcoords_iz = fcoords[:,:,:, current_oct_id, 0],  fcoords[:,:,:, current_oct_id, 1], fcoords[:,:,:, current_oct_id, 2]
 	fwidth_ix, fwidth_iy, fwidth_iz = fwidth[:,:,:, current_oct_id, 0],  fwidth[:,:,:, current_oct_id, 1], fwidth[:,:,:, current_oct_id, 2]
@@ -138,109 +135,106 @@ def OctreeDepthFirstHilbert(current_oct_id, current_level, mask_arr, hilbert, \
 	flat_mask = mask_i.ravel(order = 'F')
 	flat_fcoords = array(zip(fcoords_ix.ravel(order = 'F').value[()], fcoords_iy.ravel(order = 'F').value[()], fcoords_iz.ravel(order = 'F').value[()]))
 	flat_fwidth = array(zip(fwidth_ix.ravel(order = 'F').value[()], fwidth_iy.ravel(order = 'F').value[()], fwidth_iz.ravel(order = 'F').value[()]))
+	child_level	= current_level	+ 1
+
 	refined_locations = where(flat_mask == False)[0]
+	nrefined = len(refined_locations)
+	child_oct_ids = nan*zeros(8)
+	if nrefined > 0:
+		child_oct_ids_temp = oct_loc[str(child_level)][1][oct_loc[str(child_level)][0]:oct_loc[str(child_level)][0]+nrefined]
+		oct_loc[str(child_level)][0] += nrefined
+		child_oct_ids[refined_locations] = child_oct_ids_temp
 
-	#save_to_gridstructure(grid_structure, current_level, flat_fcoords, refined = True, leaf = False)
+	child_oct_locs = nan*zeros(8)
+	child_oct_locs[refined_locations] = 1+ arange(len(oct_list), len(oct_list)+nrefined)
 
 
-	fields = octs_dic['Fields'][:,:,:,:, current_oct_id-preamble_end]
+	fields = octs_dic['Fields'][:,:,:,:, current_oct_id]
 	fields_all = zeros((fields.shape[0], 8))
 	for field_index in range(fields.shape[0]):
 		fields_all[field_index] = fields[field_index,:,:,:].ravel(order = 'F')
 
+	oct_obj = oct_object(flat_mask, flat_fcoords, flat_fwidth, current_level, len(oct_list), child_oct_locs, fields = fields_all)
+	oct_list.append(oct_obj)
+	for n, i in enumerate(refined_locations):
+		recursive_generate_oct_list(oct_list, child_oct_ids[i], child_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic)
+
+
+def add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr):
+	i = 0	
+	oct_id = -1
+	#We are trying to organize the root oct grid into a root grid of parent octs (8 per higher level oct)
+	while True:
+		#The 8 children for each oct will encode the level
+		good = filter(lambda x: x.level == i, oct_list)
+
+		octcens = [[gd.octcen[0], gd.octcen[1], gd.octcen[2], gd.oct_id] for gd in good]
+		octcens = array(octcens)
+
+		print i, len(good)
+		if len(good) == 1:
+			#We've reached the root single oct (1 x 1 x 1)
+			return oct_list
+		else:
+			i -= 1
+
+		dimens = int(scipy.special.cbrt(len(good)))/2.
+		flat_mask = array([False, False, False, False, False, False, False, False])
+		flat_fwidth  = good[0].fwidth*2
+		delx = 2*flat_fwidth[0,0]
+		oct_list_2 = []
+		for ii in arange(dimens):
+			print ii, dimens
+			for jj in arange(dimens):
+				for kk in arange(dimens):
+					le_oct = array([ii, jj, kk])*delx
+					re_oct = le_oct+delx
+					good_in = where((octcens[:,0] < re_oct[0]) & (octcens[:,1] < re_oct[1]) & (octcens[:,2] < re_oct[2]) &
+									(octcens[:,0] > le_oct[0]) & (octcens[:,1] > le_oct[1]) & (octcens[:,2] > le_oct[2]))[0]
+					assert(len(good_in) == 8)
+					flat_fcoords = octcens[good_in,0:3]
+					child_ids = octcens[good_in, 3]
+
+					oct_obj = oct_object(flat_mask, flat_fcoords, flat_fwidth, i, oct_id, child_ids)
+					oct_id-=1
+					oct_list_2.append(oct_obj)
+
+		oct_list = concatenate([oct_list_2[::-1], oct_list])
+
+
+
+def OctreeDepthFirstHilbert(oct_list, oct_obj, hilbert, grid_structure, output, field_names, debug = False, f  = 'out.out'):
+	current_level = oct_obj.level
+	child_level = oct_obj.child_level
+	fields = oct_obj.fields
 	#It's the first time visiting this oct, so let's save 
 	#the oct information here in our grid structure dictionary
-	if debug: f.write('\t'*current_level+'Entering level %i oct: found %i refined cells and %i leaf cells\n'%(current_level, len(refined_locations), 8-len(refined_locations)))
-
-	child_level	= current_level	+ 1
-
-	if len(refined_locations) > 0:
-		child_oct_ids = oct_loc[str(child_level)][1][oct_loc[str(child_level)][0]:oct_loc[str(child_level)][0]+len(refined_locations)]
-		oct_loc[str(child_level)][0] += len(refined_locations)
-	else:
-		child_oct_ids = None
-
-	oct_obj = oct_object(flat_mask, flat_fcoords, flat_fwidth, current_level, current_oct_id, child_oct_ids)
-
+	if debug: f.write('\t'*(current_level+6)+'Entering level %i oct (ID: %i): found %i refined cells and %i leaf cells\n'%(current_level, oct_obj.oct_id, oct_obj.n_refined, oct_obj.n_leaf))
 	for (vertex, hilbert_child) in hilbert:
-		parent_oct_le = oct_obj.le[0]
+		parent_oct_le = array([min(oct_obj.le[:,0]), min(oct_obj.le[:,1]), min(oct_obj.le[:,2])])
 		vertex_new = vertex*oct_obj.fwidth[0]
 		next_child_le = parent_oct_le + vertex_new
 		i = where((oct_obj.le[:,0] == next_child_le[0]) & (oct_obj.le[:,1] == next_child_le[1]) & (oct_obj.le[:,2] == next_child_le[2]))[0][0]
 
-		if oct_obj.is_leaf[i]:		
-				if debug:  f.write('\t'*oct_obj.child_level+str(oct_obj.child_level) + '\tFound a leaf in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
-				#assert(current_oct_id > preamble_end)
-				#This cell is a leaf, save the grid information and the physical properties
-				save_to_gridstructure(grid_structure, current_level, np.asarray(oct_obj.le[i]), refined = False, leaf = True)				
-				assert(current_oct_id >= preamble_end)
-				for field_index in range(fields.shape[0]):
-					output[field_names[field_index]].append(fields_all[field_index,i])
+		if oct_obj.is_leaf[i]:
+			#This cell is a leaf, save the grid information and the physical properties
+
+			if debug:  f.write('\t'*(child_level+6)+str(oct_obj.child_level) + '\tFound a leaf in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
+			
+			save_to_gridstructure(grid_structure, current_level, np.asarray(oct_obj.le[i]), refined = False, leaf = True)				
+			
+			for field_index in range(fields.shape[0]):
+				output[field_names[field_index]].append(fields[field_index,i])
 
 
 		else:
 			#This cell is not a leaf, we'll now advance in to this cell
-			if debug:  f.write('\t'*child_level+str(child_level) + '\tFound a refinement in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
-                        save_to_gridstructure(grid_structure,oct_obj.child_level, np.asarray(oct_obj.le[i]), refined = True, leaf = False)
-
-			OctreeDepthFirstHilbert(oct_obj.child_oct_ids[oct_obj.n_refined_visited], oct_obj.child_level, mask_arr, 
-									hilbert_child, fcoords, fwidth, grid_structure, output, octs_dic, oct_loc, 
-									field_names, debug, f, preamble_end)
-
-			oct_obj.n_refined_visited += 1
+			if debug:  f.write('\t'*(child_level+6)+str(child_level) + '\tFound a refinement in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
+			save_to_gridstructure(grid_structure,oct_obj.child_level, np.asarray(oct_obj.le[i]), refined = True, leaf = False)
+			child_oct_obj = oct_list[oct_obj.child_oct_ids[i]-oct_list[0].oct_id]
+			OctreeDepthFirstHilbert(oct_list, child_oct_obj, hilbert_child, grid_structure, output, field_names, debug, f)
 
 
-
-def add_preamble(levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr):
-
-	i = 0
-	while True:
-		good = where(levels[0,0,0,:] == i)[0]
-		print i, len(good)
-		if len(good) == 1:
-			return levels, fwidth, fcoords, mask_arr
-		else:
-			i -= 1
-
-
-		temp_levels  = zeros((2,2,2,len(good)/8))
-		temp_fwidth  = zeros((2,2,2,len(good)/8, 3))
-		temp_fcoords = zeros((2,2,2,len(good)/8, 3))
-		temp_maskarr = np.zeros((2,2,2,len(good)/8)).astype('bool')
-
-
-		for p, gd in enumerate(good):
-			print p, '\t', LeftEdge[gd]
-			raw_input('')
-
-
-		good_red = good[0:len(good):8]
-
-
-		for n, back_good in enumerate(good_red):
-			temp_levels[:,:,:,n] += i
-			temp_fwidth[:,:,:,n,:] += fwidth[:,:,:,back_good,:]*2.
-
-
-
-			child_cen = fcoords[0,0,0,back_good,:].value[()]+fwidth[0,0,0,back_good,:].value[()]			
-
-			for ii in arange(2):
-				for jj in arange(2):
-					for kk in arange(2):
-						temp_fcoords[ii,jj,kk, n,:] = child_cen + 0.5*temp_fwidth[ii,jj,kk,n,:]*[[(-1)**(1-ii), (-1)**(1-jj), (-1)**(1-kk)]]
-
-
-			#ce = (temp_fcoords[0,0,0,n,:] + temp_fwidth[0,0,0,n,:]*0.5)
-			#print n, '\t', ce
-			#print raw_input('')
-
-
-
-		levels = append(temp_levels, levels, axis = 3)
-		fwidth = append(temp_fwidth, fwidth, axis = 3)
-		fcoords = append(temp_fcoords, fcoords, axis = 3)
-		mask_arr = append(temp_maskarr, mask_arr, axis = 3)
 
 
 def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None, 
@@ -285,13 +279,13 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	Nocts_root = ds.domain_dimensions/2
 	'''
 
+
 	fc = fc.in_units('code_length').value
 	fwidth = fwidth.in_units('code_length').value
 	Nocts_root = ds.domain_dimensions/2
 
 	#we must round the dle,dre to the nearest root grid cells
-
-	ile,ire,super_level,nocts_wide=  round_nocts_wide(Nocts_root,fc-fwidth,fc+fwidth,nwide=nocts_wide)
+	ile,ire,super_level,nocts_wide = round_nocts_wide(Nocts_root,fc-fwidth,fc+fwidth,nwide=nocts_wide)
 	assert np.all((ile-ire)==(ile-ire)[0])
 	print "rounding specified region:"
 	print "from [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fc-fwidth)+tuple(fc+fwidth))
@@ -304,9 +298,9 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	#Create a list of the star particle properties in PARTICLE_DATA
     #Include ID, parent-ID, position, velocity, creation_mass, 
     #formation_time, mass, age_m, age_l, metallicity, L_bol
+	
 
 	particle_data,nstars = prepare_star_particles(ds,star_particle_type,fle=fle,fre=fre, ad=ad,**kwargs)
-
 	#Create the refinement depth-first hilbert octree structure
     #For every leaf (not-refined) oct we have a column n OCTDATA
     #Include mass_gas, mass_metals, gas_temp_m, gas_teff_m, cell_volume, SFR
@@ -314,10 +308,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
     #we must create the octree region sitting 
     #ontop of the first mesh by providing a negative level
 	ad = ds.all_data()
-
-	output, grid_structure, nrefined, nleafs = prepare_octree(ds,ile,fle=fle,fre=fre,
-													ad=ad,start_level=super_level,
-													max_level=max_level, debug=debug)
+	output, grid_structure, nrefined, nleafs = prepare_octree(ds,ile,fle=fle,fre=fre, ad=ad,start_level=super_level, debug=debug)
 
 
 
@@ -328,16 +319,17 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	#grid_structure['level']+=6
 	refined = grid_structure['refined']
 
-	np.savez('grid_structure.npz',grid_structure)
-        np.save('grid_structure.npy',grid_structure)  #way faster to load for some reason?
+	#np.savez('grid_structure.npz',grid_structure)
+	np.save('grid_structure.npy',grid_structure)  #way faster to load for some reason?
 
 	create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge)
 
 	return fle, fre, ile, ire, nrefined, nleafs, nstars, output, output_array
 
-def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level=0, max_level=None, debug=True):
+def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level=0, debug=True):
 
-	if False: 
+
+	if True: 
 		def _MetalMass(field, data):
 			return (data['metal_ia_density']*data['cell_volume']).in_units('Msun')
 		ad.ds.add_field('MetalMassMsun', function=_MetalMass, units='Msun')
@@ -391,18 +383,17 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 
 
-        if False:
+
 	        fields = ["CellMassMsun","TemperatureTimesCellMassMsun","MetalMassMsun","CellVolumeKpc", "CellSFRtau", "Cellpgascgsx", "Cellpgascgsy", "Cellpgascgsz"]
 
-	        #gather the field data from octs 
+        #gather the field data from octs 
+			print "Retrieving field data"
+			field_data = [] 
+			for fi,f in enumerate(fields):
+				print fi, f
+				field_data = ad[f]
 
-	        print "Retrieving field data"
-	        field_data = [] 
-	        for fi,f in enumerate(fields):
-	        	print fi, f
-	        	field_data = ad[f]
-
-	        del field_data
+			del field_data
 
 
 	#Initialize dicitionary with arrays containig the needed
@@ -428,20 +419,12 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 
 
-	if False:
-		output = {}
-		for field in fields:
-		    output[field] = []
+	output = {}
+	for field in fields:
+	    output[field] = []
 
-	aa = shape(levels)[3]
-	levels, fwidth, fcoords,  mask_arr = add_preamble(levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr)
-	bb = shape(levels)[3]
-	preamble_end = bb - aa
-	print bb, aa
 
-	levels = levels - min(levels[0,0,0,:])
-	levels = levels.astype('int')
-	
+
 
 	#RCS commented out fill_octree_arrays, replaced with the code above
 	octs_dic = {}
@@ -453,6 +436,34 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	octs_dic['Fields']    = np.array([ad[f] for f in fields])
 
 
+	#Location of all octrees, at a given level, and a counter
+
+	oct_loc = {}
+	for i in np.arange(max(levels[0,0,0,:])+1):
+		oct_loc[str(i)] = [0,where(levels[0,0,0,:] == i)[0]]
+	
+	oct_list = []
+
+
+	for i in arange(len(oct_loc['0'][1])):
+		if i%10000 == 0: print i, len(oct_loc['0'][1])
+		current_oct_id = oct_loc['0'][1][oct_loc['0'][0]]
+		current_level = 0
+		recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic)
+		oct_loc['0'][0]+=1
+
+	np.save('oct_list_orig.npy', oct_list)
+
+	oct_list = array(oct_list)
+	oct_list_new = add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr)
+
+	np.save('oct_list.npy', oct_list_new)
+
+	oct_list_new = np.load('oct_list.npy')
+
+
+
+
 
 	grid_structure 				  = {}
 	grid_structure['level'] 	  = []
@@ -462,19 +473,15 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	grid_structure['nleafs']      = 0.
 	grid_structure['nrefined']    = 0.
 
-	hs = hilbert_state()
-	#Location of all octrees, at a given level, and a counter
-	oct_loc = {}
-	for i in np.arange(max(levels[0,0,0,:])+1):
-		oct_loc[str(i)] = [0,where(levels[0,0,0,:] == i)[0]]
 
-	outfile = open('debug_hilbert.out', 'w+')
+	hs = hilbert_state()
+	oct_obj_init = oct_list_new[0]
+	
+	outfile = open('debug_hilbert_new.out', 'w+')
 	a = time.time()
-	debug = True
-	OctreeDepthFirstHilbert(current_oct_id = 0, current_level = 0, mask_arr = mask_arr,  hilbert = hs, 
-							fcoords = fcoords, fwidth = fwidth, grid_structure = grid_structure, 
-							output = output, octs_dic = octs_dic, oct_loc = oct_loc, field_names = fields, 
-							debug = debug, f  = outfile, preamble_end = preamble_end)
+	debug = True	
+
+	OctreeDepthFirstHilbert(oct_list_new, oct_obj_init, hs, grid_structure, output, field_names = fields, debug = False, f = outfile)
 	b = time.time()
 
 
@@ -484,9 +491,8 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	outfile.close()
 
 
-
-
 	return output, grid_structure, grid_structure['nrefined'], grid_structure['nleafs']
+
 
 def create_fits_file(ds, fn, output, refined, particle_data, fle, fre):
     #first create the grid structure
