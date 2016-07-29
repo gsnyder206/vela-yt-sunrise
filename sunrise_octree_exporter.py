@@ -106,28 +106,25 @@ class hilbert_state():
 		j+=1
 		yield vertex, self.descend(j)
 
-
-
 class oct_object():
 	def __init__(self, is_leaf, fcoords, fwidth, level, oct_id, child_oct_ids, fields = None):
-		self.is_leaf = is_leaf
-		self.fcoords = fcoords
-		self.octcen = mean(self.fcoords, axis = 0)
-		self.fwidth = fwidth
-		self.le = fcoords - 0.5*fwidth
-		self.re = fcoords + 0.5*fwidth
-
-		self.child_oct_ids = child_oct_ids
+		self.is_leaf = is_leaf	#2 x 2 x 2
+		self.fcoords = fcoords  #2 x 2 x 2
+		self.octcen = mean(self.fcoords, axis = 0) #3 x 1
+		self.fwidth = fwidth #2 x 2 x 2
+		self.le = fcoords - 0.5*fwidth #2 x 2 x 2
+		self.re = fcoords + 0.5*fwidth #2 x 2 x 2
+		self.child_oct_ids = child_oct_ids #2 x 2 x 2
 		self.n_refined_visited = 0
 		self.n_leaf = len(where(self.is_leaf == True)[0])
 		self.n_refined = len(where(self.is_leaf == False)[0])
 		self.level = level
 		self.child_level = self.level + 1
-		self.oct_id = oct_id
+		self.oct_id = int(oct_id)
 		self.fields = fields		
 
-
 def recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic):
+	current_oct_id = int(current_oct_id)
 	mask_i = mask_arr[:,:,:, current_oct_id]
 	fcoords_ix, fcoords_iy, fcoords_iz = fcoords[:,:,:, current_oct_id, 0],  fcoords[:,:,:, current_oct_id, 1], fcoords[:,:,:, current_oct_id, 2]
 	fwidth_ix, fwidth_iy, fwidth_iz = fwidth[:,:,:, current_oct_id, 0],  fwidth[:,:,:, current_oct_id, 1], fwidth[:,:,:, current_oct_id, 2]
@@ -140,13 +137,20 @@ def recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_ar
 	refined_locations = where(flat_mask == False)[0]
 	nrefined = len(refined_locations)
 	child_oct_ids = nan*zeros(8)
+
 	if nrefined > 0:
-		child_oct_ids_temp = oct_loc[str(child_level)][1][oct_loc[str(child_level)][0]:oct_loc[str(child_level)][0]+nrefined]
+		child_oct_ids_temp = oct_loc[str(child_level)][1][oct_loc[str(child_level)][0]:oct_loc[str(child_level)][0]+nrefined]		
 		oct_loc[str(child_level)][0] += nrefined
 		child_oct_ids[refined_locations] = child_oct_ids_temp
 
-	child_oct_locs = nan*zeros(8)
-	child_oct_locs[refined_locations] = 1+ arange(len(oct_list), len(oct_list)+nrefined)
+
+
+
+
+	#child_oct_locs = nan*zeros(8)
+	#child_oct_locs[refined_locations] = 1+ arange(len(oct_list), len(oct_list)+nrefined)
+
+
 
 
 	fields = octs_dic['Fields'][:,:,:,:, current_oct_id]
@@ -154,11 +158,10 @@ def recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_ar
 	for field_index in range(fields.shape[0]):
 		fields_all[field_index] = fields[field_index,:,:,:].ravel(order = 'F')
 
-	oct_obj = oct_object(flat_mask, flat_fcoords, flat_fwidth, current_level, len(oct_list), child_oct_locs, fields = fields_all)
-	oct_list.append(oct_obj)
+	oct_obj = oct_object(flat_mask, flat_fcoords, flat_fwidth, current_level, current_oct_id, child_oct_ids, fields = fields_all)
+	oct_list[current_oct_id] = oct_obj
 	for n, i in enumerate(refined_locations):
 		recursive_generate_oct_list(oct_list, child_oct_ids[i], child_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic)
-
 
 def add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr):
 	i = 0	
@@ -201,41 +204,36 @@ def add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_ar
 
 		oct_list = concatenate([oct_list_2[::-1], oct_list])
 
-
-
 def OctreeDepthFirstHilbert(oct_list, oct_obj, hilbert, grid_structure, output, field_names, debug = False, f  = 'out.out'):
 	current_level = oct_obj.level
 	child_level = oct_obj.child_level
 	fields = oct_obj.fields
+	parent_oct_le = array([min(oct_obj.le[:,0]), min(oct_obj.le[:,1]), min(oct_obj.le[:,2])])
+	save_to_gridstructure(grid_structure,oct_obj.child_level, np.asarray(oct_obj.octcen-oct_obj.fwidth[0,0]), refined = True, leaf = False)
 	#It's the first time visiting this oct, so let's save 
 	#the oct information here in our grid structure dictionary
 	if debug: f.write('\t'*(current_level+6)+'Entering level %i oct (ID: %i): found %i refined cells and %i leaf cells\n'%(current_level, oct_obj.oct_id, oct_obj.n_refined, oct_obj.n_leaf))
 	for (vertex, hilbert_child) in hilbert:
-		parent_oct_le = array([min(oct_obj.le[:,0]), min(oct_obj.le[:,1]), min(oct_obj.le[:,2])])
 		vertex_new = vertex*oct_obj.fwidth[0]
 		next_child_le = parent_oct_le + vertex_new
 		i = where((oct_obj.le[:,0] == next_child_le[0]) & (oct_obj.le[:,1] == next_child_le[1]) & (oct_obj.le[:,2] == next_child_le[2]))[0][0]
-
 		if oct_obj.is_leaf[i]:
 			#This cell is a leaf, save the grid information and the physical properties
-
-			if debug:  f.write('\t'*(child_level+6)+str(oct_obj.child_level) + '\tFound a leaf in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
-			
-			save_to_gridstructure(grid_structure, current_level, np.asarray(oct_obj.le[i]), refined = False, leaf = True)				
-			
+			if debug:  f.write('\t'*(child_level+6)+str(oct_obj.child_level) + '\tFound a leaf in cell %i/%i \t (x,y,z, vol, mass, density) = (%.8f, %.8f, %.8f, %.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2], fields[3,i], fields[0,i], fields[0,i]/fields[3,i]))		
+			save_to_gridstructure(grid_structure, current_level, np.asarray(oct_obj.le[i]), refined = False, leaf = True)							
 			for field_index in range(fields.shape[0]):
 				output[field_names[field_index]].append(fields[field_index,i])
 
-
 		else:
 			#This cell is not a leaf, we'll now advance in to this cell
-			if debug:  f.write('\t'*(child_level+6)+str(child_level) + '\tFound a refinement in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
-			save_to_gridstructure(grid_structure,oct_obj.child_level, np.asarray(oct_obj.le[i]), refined = True, leaf = False)
-			child_oct_obj = oct_list[oct_obj.child_oct_ids[i]-oct_list[0].oct_id]
+			try:	
+				if debug:  f.write('\t'*(child_level+6)+str(child_level) + '\tFound a refinement in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f, %.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2], fields[0,i], fields[0,i]/fields[3,i]))
+			except:
+				if debug:  f.write('\t'*(child_level+6)+str(child_level) + '\tFound a refinement in cell %i/%i \t (x,y,z) = (%.8f, %.8f, %.8f) \n'%(i, 8, oct_obj.le[i][0], oct_obj.le[i][1], oct_obj.le[i][2]))
+
+
+			child_oct_obj = oct_list[int(oct_obj.child_oct_ids[i]-oct_list[0].oct_id)]
 			OctreeDepthFirstHilbert(oct_list, child_oct_obj, hilbert_child, grid_structure, output, field_names, debug, f)
-
-
-
 
 def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None, 
     debug=False,ad=None,max_level=None,  **kwargs):
@@ -327,8 +325,6 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	return fle, fre, ile, ire, nrefined, nleafs, nstars, output, output_array
 
 def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level=0, debug=True):
-
-
 	if True: 
 		def _MetalMass(field, data):
 			return (data['metal_ia_density']*data['cell_volume']).in_units('Msun')
@@ -350,70 +346,76 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 		ad.ds.add_field('CellVolumeKpc', function=_cellVolumeKpc, units='kpc**3')
 
 
-        def _pgascgsx(field, data):
-            return data['momentum_x'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
-        ad.ds.add_field('Cellpgascgsx', function=_pgascgsx, units = 'Msun*kpc/yr')
+		def _pgascgsx(field, data):
+		    return data['momentum_x'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+		ad.ds.add_field('Cellpgascgsx', function=_pgascgsx, units = 'Msun*kpc/yr')
 
 
-        def _pgascgsy(field, data):
-            return data['momentum_y'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
-        ad.ds.add_field('Cellpgascgsy', function=_pgascgsy, units = 'Msun*kpc/yr')
+		def _pgascgsy(field, data):
+		    return data['momentum_y'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+		ad.ds.add_field('Cellpgascgsy', function=_pgascgsy, units = 'Msun*kpc/yr')
 
-        def _pgascgsz(field, data):    
-            return data['momentum_z'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
-        ad.ds.add_field('Cellpgascgsz', function=_pgascgsz, units = 'Msun*kpc/yr')
-
-
-
-
-        def _cellSFRtau(field, data):
-            min_dens = 0.035 #Msun/pc^3 Ceverino et al. 2009
-            density = data["density"].in_units('Msun/pc**3')
-            temperature = data["temperature"].in_units('K')
-            volume = data["cell_volume"].in_units('pc**3')
-            sfr_times_tau = np.where(np.logical_and(density >= min_dens, temperature <= 1.0e4),density*volume,np.zeros_like(density))
-            return ds.arr(sfr_times_tau,'Msun')
-        ad.ds.add_field('CellSFRtau', function=_cellSFRtau,units='Msun')
-
-        #Tau_SFR = 12 Myr for VELA_v2  Ceverino et al. 2015
-        #Not sure about VELA_v2.1 or VELA_v1
-        #Using this general version should be applicable for any values used across resolutions
-        #Must post-process SFR projections by dividing by Tau.
+		def _pgascgsz(field, data):    
+		    return data['momentum_z'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+		ad.ds.add_field('Cellpgascgsz', function=_pgascgsz, units = 'Msun*kpc/yr')
 
 
 
 
+		def _cellSFRtau(field, data):
+		    min_dens = 0.035 #Msun/pc^3 Ceverino et al. 2009
+		    density = data["density"].in_units('Msun/pc**3')
+		    temperature = data["temperature"].in_units('K')
+		    volume = data["cell_volume"].in_units('pc**3')
+		    sfr_times_tau = np.where(np.logical_and(density >= min_dens, temperature <= 1.0e4),density*volume,np.zeros_like(density))
+		    return ds.arr(sfr_times_tau,'Msun')
+		ad.ds.add_field('CellSFRtau', function=_cellSFRtau,units='Msun')
 
-	        fields = ["CellMassMsun","TemperatureTimesCellMassMsun","MetalMassMsun","CellVolumeKpc", "CellSFRtau", "Cellpgascgsx", "Cellpgascgsy", "Cellpgascgsz"]
+		#Tau_SFR = 12 Myr for VELA_v2  Ceverino et al. 2015
+		#Not sure about VELA_v2.1 or VELA_v1
+		#Using this general version should be applicable for any values used across resolutions
+		#Must post-process SFR projections by dividing by Tau.
 
-        #gather the field data from octs 
-			print "Retrieving field data"
-			field_data = [] 
-			for fi,f in enumerate(fields):
-				print fi, f
-				field_data = ad[f]
 
-			del field_data
+
+
+
+		fields = ["CellMassMsun","TemperatureTimesCellMassMsun","MetalMassMsun","CellVolumeKpc", "CellSFRtau", "Cellpgascgsx", "Cellpgascgsy", "Cellpgascgsz"]
+
+	#gather the field data from octs 
+
+		print "Retrieving field data"
+		field_data = [] 
+		for fi,f in enumerate(fields):
+			print fi, f
+			field_data = ad[f]
+
+		del field_data
 
 
 	#Initialize dicitionary with arrays containig the needed
 	#properites of all octs
 	total_octs = ad.index.total_octs
-
+	print shape(ad.fcoords)
 	mask_arr = np.zeros((2,2,2,total_octs), dtype='bool')
 
 	block_iter = ad.blocks.__iter__()  
 
 	for i in np.arange(total_octs):
-		oct, mask = block_iter.next()
+		octn, mask = block_iter.next()
 		mask_arr[:,:,:,i] = mask
 
+	#added .block_slice to conform to yt 3.3	
 
-	levels = oct._ires[:,:,:, :]
-	icoords = oct._icoords[:,:,:, :]
-	fcoords = oct._fcoords[:,:,:, :]
-	fwidth = oct._fwidth[:,:,:, :]
+	levels = octn.block_slice._ires[:,:,:, :]
+	icoords = octn.block_slice._icoords[:,:,:, :]
+	fcoords = octn.block_slice._fcoords[:,:,:, :]
+	fwidth = octn.block_slice._fwidth[:,:,:, :]
 	mask_arr = mask_arr[:,:,:,:]
+
+
+
+
 	LeftEdge  = (fcoords[0,0,0,:,:]      - fwidth[0,0,0,:,:]*0.5)
 	RightEdge = (fcoords[-1,-1,-1,:,:]   + fwidth[-1,-1,-1,:,:]*0.5)
 
@@ -442,7 +444,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	for i in np.arange(max(levels[0,0,0,:])+1):
 		oct_loc[str(i)] = [0,where(levels[0,0,0,:] == i)[0]]
 	
-	oct_list = []
+	oct_list = [None for i in arange (total_octs)]
 
 
 	for i in arange(len(oct_loc['0'][1])):
@@ -459,7 +461,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 	np.save('oct_list.npy', oct_list_new)
 
-	oct_list_new = np.load('oct_list.npy')
+	#oct_list_new = np.load('oct_list.npy')
 
 
 
@@ -477,7 +479,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	hs = hilbert_state()
 	oct_obj_init = oct_list_new[0]
 	
-	outfile = open('debug_hilbert_new.out', 'w+')
+	outfile = open('debug_hilbert.out', 'w+')
 	a = time.time()
 	debug = True	
 
@@ -485,14 +487,13 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	b = time.time()
 
 
-	print b-a
+	print 'DFH: ', int(b-a), 'seconds'
 
 
 	outfile.close()
 
 
 	return output, grid_structure, grid_structure['nrefined'], grid_structure['nleafs']
-
 
 def create_fits_file(ds, fn, output, refined, particle_data, fle, fre):
     #first create the grid structure
@@ -523,11 +524,9 @@ def create_fits_file(ds, fn, output, refined, particle_data, fle, fre):
     del output
 
     col_list = []
-    cell_mass = fd["CellMassMsun"]
-    size = cell_mass.size
-    tm = cell_mass.sum()
+
     col_list.append(pyfits.Column("mass_gas", format='D',
-                    array=cell_mass, unit="Msun"))
+                    array=fd["CellMassMsun"], unit="Msun"))
     col_list.append(pyfits.Column("mass_metals", format='D',
                     array=fd['MetalMassMsun'], unit="Msun"))
     col_list.append(pyfits.Column("gas_temp_m", format='D',
@@ -546,7 +545,7 @@ def create_fits_file(ds, fn, output, refined, particle_data, fle, fre):
     cols = pyfits.ColDefs(col_list)
     mg_table = pyfits.BinTableHDU.from_columns(cols)
     #mg_table = pyfits.new_table(cols)
-    mg_table.header.set("M_g_tot", tm)
+    mg_table.header.set("M_g_tot", fd["CellMassMsun"].sum())
     mg_table.header.set("timeunit", "yr")
     mg_table.header.set("tempunit", "K")
     mg_table.name = "GRIDDATA"
