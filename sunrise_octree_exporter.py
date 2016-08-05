@@ -181,7 +181,8 @@ def add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_ar
 		else:
 			i -= 1
 
-		dimens = int(scipy.special.cbrt(len(good)))/2.
+		dimens = int(  (float(len(good)))**(1.0/3.0)    )/2.
+                
 		flat_mask = array([False, False, False, False, False, False, False, False])
 		flat_fwidth  = good[0].fwidth*2
 		delx = 2*flat_fwidth[0,0]
