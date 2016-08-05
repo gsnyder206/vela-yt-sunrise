@@ -407,13 +407,17 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 	#added .block_slice to conform to yt 3.3	
 
-	levels = octn.block_slice._ires[:,:,:, :]
+	'''levels = octn.block_slice._ires[:,:,:, :]
 	icoords = octn.block_slice._icoords[:,:,:, :]
 	fcoords = octn.block_slice._fcoords[:,:,:, :]
 	fwidth = octn.block_slice._fwidth[:,:,:, :]
+	mask_arr = mask_arr[:,:,:,:]'''
+
+	levels = octn._ires[:,:,:, :]
+	icoords = octn._icoords[:,:,:, :]
+	fcoords = octn._fcoords[:,:,:, :]
+	fwidth = octn._fwidth[:,:,:, :]
 	mask_arr = mask_arr[:,:,:,:]
-
-
 
 
 	LeftEdge  = (fcoords[0,0,0,:,:]      - fwidth[0,0,0,:,:]*0.5)
