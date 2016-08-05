@@ -454,12 +454,12 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 		recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic)
 		oct_loc['0'][0]+=1
 
-	np.save('oct_list_orig.npy', oct_list)
+	#np.save('oct_list_orig.npy', oct_list)
 
 	oct_list = array(oct_list)
 	oct_list_new = add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr)
 
-	np.save('oct_list.npy', oct_list_new)
+	#np.save('oct_list.npy', oct_list_new)
 
 	#oct_list_new = np.load('oct_list.npy')
 
