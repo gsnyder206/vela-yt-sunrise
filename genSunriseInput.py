@@ -284,7 +284,7 @@ if __name__ == "__main__":
 
 		print export_radius
 
-		export_info,output,output_array = export_fits(ds, gal_center, export_radius, 
+		export_info = export_fits(ds, gal_center, export_radius, 
                                           prefix, star_particles = 'stars', 
                                           max_level=max_level)
 
