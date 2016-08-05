@@ -429,7 +429,7 @@ if __name__ == "__main__":
                 try:
                         stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
                         assert stars_pos_x.shape > 0
-                except AttributeError,AssertionError as e:
+                except AttributeError,AssertionError:
                         print "No star particles found, skipping: ", ds._file_amr
                         continue
 
