@@ -12,6 +12,7 @@ import time
 from blist import blist
 import glob
 
+yt.enable_parallelism()
 
 def generate_cameras(normal_vector, distance=100.0, fov=50.0, mov_ang = 0.):
     '''
