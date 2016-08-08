@@ -224,6 +224,7 @@ if __name__ == "__main__":
                 galprops_file = simname+'_galprops.npy'
 
                 out_dir = os.path.join(snap_dir,'input')
+                print os.path.lexists(out_dir)
                 if not os.path.lexists(out_dir):
                     os.mkdir(out_dir)
 
