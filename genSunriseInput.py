@@ -12,7 +12,6 @@ import time
 from blist import blist
 import glob
 
-yt.enable_parallelism()
 
 def generate_cameras(normal_vector, distance=100.0, fov=50.0, mov_ang = 0.):
     '''
@@ -133,7 +132,8 @@ if __name__ == "__main__":
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2.1', 'VELA10', 'VELA10_a0.330', '../data/VELA10_v2.1/10MpcBox_csf512_a0.330.d'
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.560', '../data/VELA27_v2/a0.560/10MpcBox_csf512_a0.560.d'	
 	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.500', '../data/VELA27_v2/a0.500/10MpcBox_csf512_a0.500.d'
-	
+    	yt.enable_parallelism()
+
         if len(sys.argv)==2:
             snaps = np.asarray([sys.argv[1]])
         else:
