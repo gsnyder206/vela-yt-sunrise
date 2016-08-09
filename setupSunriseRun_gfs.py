@@ -197,19 +197,19 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 
 if __name__ == "__main__":
 
-        if len(sys.argv)==2:
-            snaps = np.asarray([sys.argv[1]])
-        else:
-            snaps = np.asarray(glob.glob("*.d"))
+    if len(sys.argv)==2:
+        snaps = np.asarray([sys.argv[1]])
+    else:
+        snaps = np.asarray(glob.glob("*.d"))
 
 
-	#I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
-	#Pleiades values:
-	nthreads = '16'  #cpu models have 12, 16, 20, 24, respectively
-	model='ivy'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
-	queue='devel'   #options devel, debug, low, normal, long
-	notify='gsnyder@stsci.edu'
-	walltime_limit='02:00:00'
+    #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
+    #Pleiades values:
+    nthreads = '16'  #cpu models have 12, 16, 20, 24, respectively
+    model='ivy'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
+    queue='devel'   #options devel, debug, low, normal, long
+    notify='gsnyder@stsci.edu'
+    walltime_limit='02:00:00'
 
     stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
 
