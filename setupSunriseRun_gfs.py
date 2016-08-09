@@ -211,110 +211,110 @@ if __name__ == "__main__":
 	notify='gsnyder@stsci.edu'
 	walltime_limit='02:00:00'
 
-        stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
+    stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
 
-        print "Generating Sunrise Runs for: ", snaps
+    print "Generating Sunrise Runs for: ", snaps
 
-        abssnap = os.path.abspath(snaps[0])
-        assert os.path.lexists(abssnap)
+    abssnap = os.path.abspath(snaps[0])
+    assert os.path.lexists(abssnap)
 
-        dirname = os.path.dirname(abssnap)
-        simname = os.path.basename(dirname) #assumes directory name for simulation name
-        print "Simulation name:  ", simname
+    dirname = os.path.dirname(abssnap)
+    simname = os.path.basename(dirname) #assumes directory name for simulation name
+    print "Simulation name:  ", simname
 
-        new_snapfiles = []
+    new_snapfiles = []
 
-        for sn in snaps:
-                aname = sn.split('_')[-1].rstrip('.d')
+    for sn in snaps:
+        aname = sn.split('_')[-1].rstrip('.d')
 
-                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+        snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
 
-                print "Sunrise directory: ", snap_dir
-                assert os.path.lexists(snap_dir)
-      
-                newf = os.path.join(snap_dir,sn)
-                new_snapfiles.append(newf)
-                assert os.path.lexists(newf)
+        print "Sunrise directory: ", snap_dir
+        assert os.path.lexists(snap_dir)
 
-
-        new_snapfiles = np.asarray(new_snapfiles)
-
-        for snapfile in new_snapfiles:
-                snap_dir = os.path.abspath(os.path.dirname(snapfile))
-                sunrise_dir = os.path.basename(snap_dir)
-                snap_name = sunrise_dir.rstrip('_sunrise')
-
-                fits_file = snap_dir+'/input/%s.fits'%(snap_name)
-                info_file = fits_file.replace('.fits', '_export_info.npy')
-                cam_file = fits_file.replace('.fits','.cameras')
-
-                prop_file = os.path.abspath(simname+'_galprops.npy')
-
-                #Clean exit for galaxies with no prop file
-                if os.path.lexists(prop_file):
-                    print prop_file
-                    print os.path.lexists(prop_file)
-	                assert os.path.lexists(prop_file), 'Prop file %s not found'%prop_file
-	                assert os.path.lexists(fits_file), 'Fits file %s not found'%fits_file
-	                assert os.path.lexists(info_file), 'Info file %s not found'%info_file
-	                assert os.path.lexists(cam_file), 'Cam file %s not found'%cam_file
-
-	                
-	                print '\tFits file name: %s'%fits_file
-	                print '\tInfo file name: %s\n'%info_file
-
-	                galprops_data = np.load(prop_file)[()]
+        newf = os.path.join(snap_dir,sn)
+        new_snapfiles.append(newf)
+        assert os.path.lexists(newf)
 
 
-	                for run_type in ['images','ifu','grism']:
-	                        run_dir = snap_dir+'/%s'%run_type
-	                        if not os.path.lexists(run_dir): 
-	                                os.mkdir(run_dir)
+    new_snapfiles = np.asarray(new_snapfiles)
 
-	                        print '\tGenerating sfrhist.config file for %s...'%run_type
-	                        sfrhist_fn   = 'sfrhist.config'
-	                        sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
+    for snapfile in new_snapfiles:
+        snap_dir = os.path.abspath(os.path.dirname(snapfile))
+        sunrise_dir = os.path.basename(snap_dir)
+        snap_name = sunrise_dir.rstrip('_sunrise')
 
-	                        generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, 
-	                                                stub_name = sfrhist_stub,  fits_file = fits_file, 
-	                                                galprops_data = galprops_data, run_type = run_type, nthreads=nthreads)
+        fits_file = snap_dir+'/input/%s.fits'%(snap_name)
+        info_file = fits_file.replace('.fits', '_export_info.npy')
+        cam_file = fits_file.replace('.fits','.cameras')
+
+        prop_file = os.path.abspath(simname+'_galprops.npy')
+
+        #Clean exit for galaxies with no prop file
+        if os.path.lexists(prop_file):
+            print prop_file
+            print os.path.lexists(prop_file)
+            assert os.path.lexists(prop_file), 'Prop file %s not found'%prop_file
+            assert os.path.lexists(fits_file), 'Fits file %s not found'%fits_file
+            assert os.path.lexists(info_file), 'Info file %s not found'%info_file
+            assert os.path.lexists(cam_file), 'Cam file %s not found'%cam_file
+
+            
+            print '\tFits file name: %s'%fits_file
+            print '\tInfo file name: %s\n'%info_file
+
+            galprops_data = np.load(prop_file)[()]
 
 
-	                        print '\tGenerating mcrx.config file for %s...'%run_type
-	                        mcrx_fn   = 'mcrx.config'
-	                        mcrx_stub = os.path.join(stub_dir,'mcrx_base.stub')
+            for run_type in ['images','ifu','grism']:
+                    run_dir = snap_dir+'/%s'%run_type
+                    if not os.path.lexists(run_dir): 
+                            os.mkdir(run_dir)
 
-	                        generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
-	                                             stub_name = mcrx_stub,
-	                                             galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file)
+                    print '\tGenerating sfrhist.config file for %s...'%run_type
+                    sfrhist_fn   = 'sfrhist.config'
+                    sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
+
+                    generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, 
+                                            stub_name = sfrhist_stub,  fits_file = fits_file, 
+                                            galprops_data = galprops_data, run_type = run_type, nthreads=nthreads)
 
 
+                    print '\tGenerating mcrx.config file for %s...'%run_type
+                    mcrx_fn   = 'mcrx.config'
+                    mcrx_stub = os.path.join(stub_dir,'mcrx_base.stub')
 
-	                        if run_type == 'images': 
-	                                print '\tGenerating broadband.config file for %s...'%run_type
-	                                broadband_fn   = 'broadband.config'
-	                                broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
-
-	                                generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
-	                                                                 stub_name = broadband_stub, 
-	                                                                 galprops_data = galprops_data)
-	                        if run_type == 'grism': 
-	                                print '\tGenerating broadband.config file for %s...'%run_type
-	                                broadband_fn   = 'broadband.config'
-	                                broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
-
-	                                generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
-	                                                                stub_name = broadband_stub, 
-	                                                                galprops_data = galprops_data)
+                    generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
+                                         stub_name = mcrx_stub,
+                                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file)
 
 
 
+                    if run_type == 'images': 
+                            print '\tGenerating broadband.config file for %s...'%run_type
+                            broadband_fn   = 'broadband.config'
+                            broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
+
+                            generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
+                                                             stub_name = broadband_stub, 
+                                                             galprops_data = galprops_data)
+                    if run_type == 'grism': 
+                            print '\tGenerating broadband.config file for %s...'%run_type
+                            broadband_fn   = 'broadband.config'
+                            broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
+
+                            generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
+                                                            stub_name = broadband_stub, 
+                                                            galprops_data = galprops_data)
 
 
-	                        print '\tGenerating sunrise.qsub file for %s...'%run_type
-	                        qsub_fn   = 'sunrise.qsub'		
-	                        generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
-	                                      galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit)
+
+
+
+                    print '\tGenerating sunrise.qsub file for %s...'%run_type
+                    qsub_fn   = 'sunrise.qsub'		
+                    generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
+                                  galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit)
 
 
 
