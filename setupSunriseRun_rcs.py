@@ -212,7 +212,7 @@ if __name__ == "__main__":
     notify='gsnyder@stsci.edu'
     walltime_limit='02:00:00'
 
-    stub_dir = '/u/rcsimons/sunrise_testing/stub_files/'
+    stub_dir = '/nobackupp2/rcsimons/sunrise_testing/stub_files'
 
 
     print "Generating Sunrise Runs for: ", snaps
