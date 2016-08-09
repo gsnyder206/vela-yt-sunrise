@@ -252,6 +252,8 @@ if __name__ == "__main__":
 
                 #Clean exit for galaxies with no prop file
                 if os.path.lexists(prop_file):
+                    print prop_file
+                    print os.path.lexists(prop_file)
 	                assert os.path.lexists(prop_file), 'Prop file %s not found'%prop_file
 	                assert os.path.lexists(fits_file), 'Fits file %s not found'%fits_file
 	                assert os.path.lexists(info_file), 'Info file %s not found'%info_file
