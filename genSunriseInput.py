@@ -257,7 +257,7 @@ if __name__ == "__main__":
 
 
 
-	ts = yt.DatasetSeries(new_snapfiles, limit_level = 3)
+	ts = yt.DatasetSeries(new_snapfiles)
 
 	# Send one snapshots to each processor to export 
 
