@@ -389,12 +389,12 @@ if __name__ == "__main__":
                 particle_data.append('PMcrs0'+aname+'.DAT')
                 stars_data.append('stars_'+aname+'.dat')
                 snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
-
+                yt_fig_dir = snap_dir+'/yt_projections'
                 print "Sunrise directory: ", snap_dir
                 if not os.path.lexists(snap_dir):
                     os.mkdir(snap_dir)        
-                if not os.path.lexists(snap_dir+'/yt_projections'):
-                    os.mkdir(snap_dir+'/yt_projections')        
+                if not os.path.lexists(yt_fig_dir):
+                    os.mkdir(yt_fig_dir)        
 
                 newf = os.path.join(snap_dir,sn)
                 new_snapfiles.append(newf)
@@ -467,8 +467,8 @@ if __name__ == "__main__":
 			#p = yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr), width = (8.,'kpc'))
 			#p.save('projection_z.png')
 			#yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (40.,'kpc')).save('testproj_2nd_pass_3_z.png')
-			yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (30, 'kpc')).save(snap_dir+'/yt_projections/max_ndens_arr_30kpc.png')
-			yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (1, 'Mpc')).save(snap_dir+'/yt_projections/max_ndens_arr_1Mpc.png')
+			yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (30, 'kpc')).save(yt_fig_dir+'/max_ndens_cen_30kpc.png')
+			yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (1, 'Mpc')).save(yt_fig_dir+'/max_ndens_cen_1Mpc.png')
 			
 			#yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(galaxy_props['stars_com'][0],'kpc'),  width = (10, 'kpc')).save('max_ndens_arr.png')
 			#L = ds.arr([0,1./sqrt(2),1./sqrt(2)], 'kpc')
