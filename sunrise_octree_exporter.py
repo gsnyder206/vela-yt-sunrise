@@ -486,7 +486,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	
 	debug = False	
 
-	if debug: outfile = open('debug_hilbert.out', 'w+')
+	outfile = open('debug_hilbert.out', 'w+')
 	a = time.time()
 
 	OctreeDepthFirstHilbert(oct_list_new, oct_obj_init, hs, grid_structure, output, field_names = fields, debug = debug, f = outfile)
