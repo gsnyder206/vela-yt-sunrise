@@ -237,7 +237,7 @@ def OctreeDepthFirstHilbert(oct_list, oct_obj, hilbert, grid_structure, output, 
 			OctreeDepthFirstHilbert(oct_list, child_oct_obj, hilbert_child, grid_structure, output, field_names, debug, f)
 
 def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None, 
-    debug=False,ad=None,max_level=None,  **kwargs):
+    debug=False,ad=None,max_level=None, grid_structure_fn = 'grid_structure.npy', **kwargs):
 
 
 	r"""Convert the contents of a dataset to a FITS file format that Sunrise
@@ -319,7 +319,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	refined = grid_structure['refined']
 
 	#np.savez('grid_structure.npz',grid_structure)
-	np.save('grid_structure.npy',grid_structure)  #way faster to load for some reason?
+	np.save(grid_structure_fn,grid_structure)  #way faster to load for some reason?
 
 	create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge)
 

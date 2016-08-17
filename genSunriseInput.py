@@ -105,7 +105,7 @@ def export_fits(ds, center, export_radius, prefix, star_particles, max_level=Non
 	info = {}
 
 	fle, fre, ile, ire, nrefined, nleafs, nstars, output, output_array = \
-	sunrise_octree_exporter.export_to_sunrise(ds, filename, star_particles,  center, width, max_level=max_level)
+	sunrise_octree_exporter.export_to_sunrise(ds, filename, star_particles,  center, width, max_level=max_level, grid_structure_fn = prefix+'_grid_struct.npy')
 
 	info['export_ile']=ile
 	info['export_ire']=ire
