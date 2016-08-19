@@ -209,7 +209,7 @@ if __name__ == "__main__":
     nthreads = '16'  #cpu models have 12, 16, 20, 24, respectively
     model='ivy'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
     queue='devel'   #options devel, debug, low, normal, long
-    notify='rcsimons@jhu.edu'
+    notify='rsimons@jhu.edu'
     walltime_limit='02:00:00'
 
     stub_dir = '/nobackupp2/rcsimons/sunrise_testing/stub_files'
