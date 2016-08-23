@@ -62,7 +62,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file='', idx = None):
 	mf = open(run_dir+'/'+filename,'w+')
 
-	redshift = 1./galprops_data['scale'][idx][0] - 1
+	redshift = 1./galprops_data['scale'][idx] - 1
 	mf.write('#Parameter File for Sunrise, mcrx\n\n')
 	mf.write('include_file         %s\n\n'%stub_name)
 	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
@@ -112,7 +112,7 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 
 	bfz = open(run_dir+'/'+filename.replace('broadband','broadbandz'),'w+')
 
-	redshift = 1./galprops_data['scale'][idx][0] - 1
+	redshift = 1./galprops_data['scale'][idx] - 1
 	bfz.write('#Parameter File for Sunrise, broadband\n\n')
 	bfz.write('include_file                      %s\n\n'%stub_name)
 	bfz.write('redshift                          %.3f\n\n'%redshift)
