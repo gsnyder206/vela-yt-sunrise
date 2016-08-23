@@ -243,6 +243,7 @@ if __name__ == "__main__":
 
     for snapfile in new_snapfiles:
         snap_dir = os.path.abspath(os.path.dirname(snapfile))
+        print snap_dir
         sunrise_dir = os.path.basename(snap_dir)
         snap_name = sunrise_dir.rstrip('_sunrise')
 
