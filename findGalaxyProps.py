@@ -436,7 +436,7 @@ if __name__ == "__main__":
                         continue
 
 
-		scale = round(1.0/(ds.current_redshift+1.0),4)
+		scale = round(1.0/(ds.current_redshift+1.0),3)
 		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
 
                 galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
