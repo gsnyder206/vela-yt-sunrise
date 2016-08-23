@@ -245,7 +245,8 @@ if __name__ == "__main__":
         snap_dir = os.path.abspath(os.path.dirname(snapfile))
         sunrise_dir = os.path.basename(snap_dir)
         snap_name = sunrise_dir.rstrip('_sunrise')
-        print snap_dir, sunrise_dir, snap_name
+        print snapfile
+        print os.path.abspath(snapfile)
 
 
         fits_file = snap_dir+'/input/%s.fits'%(snap_name)
@@ -273,6 +274,8 @@ if __name__ == "__main__":
             idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
             print idx
             galprops_data = galprops_data[idx]
+            print 'maxndens', galprops_data['stars_maxndens'][0], galprops_data['stars_maxndens'][1], galprops_data['stars_maxndens'][2]
+
 
             for run_type in ['images','ifu','grism']:
                     run_dir = snap_dir+'/%s'%run_type
