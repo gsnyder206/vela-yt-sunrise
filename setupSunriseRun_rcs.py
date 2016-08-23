@@ -243,15 +243,18 @@ if __name__ == "__main__":
 
     for snapfile in new_snapfiles:
         snap_dir = os.path.abspath(os.path.dirname(snapfile))
-        print snap_dir
         sunrise_dir = os.path.basename(snap_dir)
         snap_name = sunrise_dir.rstrip('_sunrise')
+        print snap_dir, sunrise_dir, snap_name
+
 
         fits_file = snap_dir+'/input/%s.fits'%(snap_name)
         info_file = fits_file.replace('.fits', '_export_info.npy')
         cam_file = fits_file.replace('.fits','.cameras')
 
         prop_file = os.path.abspath(simname+'_galprops.npy')
+
+
 
         #Clean exit for galaxies with no prop file
         if os.path.lexists(fits_file):
@@ -267,7 +270,8 @@ if __name__ == "__main__":
             print '\tInfo file name: %s\n'%info_file
 
             galprops_data = np.load(prop_file)[()]
-
+            idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
+            galprops_data = galprops_data[idx]
 
             for run_type in ['images','ifu','grism']:
                     run_dir = snap_dir+'/%s'%run_type
