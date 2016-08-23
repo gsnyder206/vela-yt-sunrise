@@ -245,8 +245,8 @@ if __name__ == "__main__":
         snap_dir = os.path.abspath(os.path.dirname(snapfile))
         sunrise_dir = os.path.basename(snap_dir)
         snap_name = sunrise_dir.rstrip('_sunrise')
-        print snapfile
-        print os.path.abspath(snapfile)
+        print 'snapfile', snapfile
+        print 'abspath snapfile', os.path.abspath(snapfile)
 
 
         fits_file = snap_dir+'/input/%s.fits'%(snap_name)
