@@ -208,7 +208,7 @@ if __name__ == "__main__":
     #Pleiades values:
     nthreads = '16'  #cpu models have 12, 16, 20, 24, respectively
     model='ivy'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
-    queue='devel'   #options devel, debug, low, normal, long
+    queue='normal'   #options devel, debug, low, normal, long
     notify='rsimons@jhu.edu'
     walltime_limit='02:00:00'
 
