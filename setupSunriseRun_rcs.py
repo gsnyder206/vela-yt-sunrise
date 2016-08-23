@@ -271,6 +271,7 @@ if __name__ == "__main__":
 
             galprops_data = np.load(prop_file)[()]
             idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
+            print idx
             galprops_data = galprops_data[idx]
 
             for run_type in ['images','ifu','grism']:
