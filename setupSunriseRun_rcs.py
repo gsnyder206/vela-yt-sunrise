@@ -22,7 +22,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 	sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
 	sf.write('n_threads          		'+nthreads+'\n')
 
-	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data[idx]['stars_maxndens'][0], galprops_data[idx]['stars_maxndens'][1], galprops_data[idx]['stars_maxndens'][2]))
+	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['stars_maxndens'][idx][0], galprops_data[idx]['stars_maxndens'][idx][1], galprops_data['stars_maxndens'][idx][2]))
 	#sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(nan, nan, nan))
 	#sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(nan, nan, nan))
 
@@ -62,7 +62,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file='', idx = None):
 	mf = open(run_dir+'/'+filename,'w+')
 
-	redshift = 1./galprops_data[idx]['scale'][0] - 1
+	redshift = 1./galprops_data['scale'][idx][0] - 1
 	mf.write('#Parameter File for Sunrise, mcrx\n\n')
 	mf.write('include_file         %s\n\n'%stub_name)
 	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
@@ -100,7 +100,7 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 
 	bf = open(run_dir+'/'+filename,'w+')
 
-	redshift = 1./galprops_data[idx]['scale'][0] - 1
+	redshift = 1./galprops_data['scale'][idx] - 1
 	bf.write('#Parameter File for Sunrise, broadband\n\n')
 	bf.write('include_file                      %s\n\n'%stub_name)
 	bf.write('redshift                          %.3f\n\n'%redshift)
@@ -112,7 +112,7 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 
 	bfz = open(run_dir+'/'+filename.replace('broadband','broadbandz'),'w+')
 
-	redshift = 1./galprops_data[idx]['scale'][0] - 1
+	redshift = 1./galprops_data['scale'][idx][0] - 1
 	bfz.write('#Parameter File for Sunrise, broadband\n\n')
 	bfz.write('include_file                      %s\n\n'%stub_name)
 	bfz.write('redshift                          %.3f\n\n'%redshift)
@@ -137,7 +137,7 @@ def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galp
 
 	bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
 
-	redshift = 1./galprops_data[idx]['scale'][0] - 1
+	redshift = 1./galprops_data['scale'][idx] - 1
 	bfg.write('#Parameter File for Sunrise, broadband\n\n')
 	bfg.write('include_file                      %s\n\n'%stub_name)
 	bfg.write('redshift                          %.3f\n\n'%redshift)
