@@ -454,7 +454,7 @@ if __name__ == "__main__":
 		hc_sphere = ds.sphere(max_ndens_arr, rvir)
 
  
-		galaxy_props['stars_maxndens'].append(max_ndens_arr)
+		galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
 		galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
 		galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
 
