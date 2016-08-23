@@ -271,7 +271,7 @@ if __name__ == "__main__":
             print '\tInfo file name: %s\n'%info_file
 
             galprops_data = np.load(prop_file)[()]
-            idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
+            idx = np.argwhere(galprops_data['snap_files']==os.path.abspath(snapfile))[0][0]
 
 
             for run_type in ['images','ifu','grism']:
