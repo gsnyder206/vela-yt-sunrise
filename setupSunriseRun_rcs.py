@@ -13,7 +13,7 @@ necessary to submit.
 '''
 
 
-def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_data, run_type, nthreads='1'):
+def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None):
 
 	sf = open(run_dir+'/'+filename,'w+')
 	sf.write('#Parameter File for Sunrise, sfrhist\n\n')
@@ -22,7 +22,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 	sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
 	sf.write('n_threads          		'+nthreads+'\n')
 
-	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['stars_maxndens'][0], galprops_data['stars_maxndens'][1], galprops_data['stars_maxndens'][2]))
+	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data[idx]['stars_maxndens'][0], galprops_data[idx]['stars_maxndens'][1], galprops_data[idx]['stars_maxndens'][2]))
 	#sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(nan, nan, nan))
 	#sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(nan, nan, nan))
 
@@ -59,10 +59,10 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=''):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file='', idx = None):
 	mf = open(run_dir+'/'+filename,'w+')
 
-	redshift = 1./galprops_data['scale'][0] - 1
+	redshift = 1./galprops_data[idx]['scale'][0] - 1
 	mf.write('#Parameter File for Sunrise, mcrx\n\n')
 	mf.write('include_file         %s\n\n'%stub_name)
 	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
@@ -94,13 +94,13 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	return
 
 
-def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, galprops_data):
+def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, galprops_data, idx = None):
 
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
 	bf = open(run_dir+'/'+filename,'w+')
 
-	redshift = 1./galprops_data['scale'][0] - 1
+	redshift = 1./galprops_data[idx]['scale'][0] - 1
 	bf.write('#Parameter File for Sunrise, broadband\n\n')
 	bf.write('include_file                      %s\n\n'%stub_name)
 	bf.write('redshift                          %.3f\n\n'%redshift)
@@ -112,7 +112,7 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 
 	bfz = open(run_dir+'/'+filename.replace('broadband','broadbandz'),'w+')
 
-	redshift = 1./galprops_data['scale'][0] - 1
+	redshift = 1./galprops_data[idx]['scale'][0] - 1
 	bfz.write('#Parameter File for Sunrise, broadband\n\n')
 	bfz.write('include_file                      %s\n\n'%stub_name)
 	bfz.write('redshift                          %.3f\n\n'%redshift)
@@ -130,14 +130,14 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 	return
 
 
-def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galprops_data):
+def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galprops_data, idx = None):
 
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 	#I uploaded these to '~gfsnyder/sunrise_data/' on Pleiades
 
 	bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
 
-	redshift = 1./galprops_data['scale'][0] - 1
+	redshift = 1./galprops_data[idx]['scale'][0] - 1
 	bfg.write('#Parameter File for Sunrise, broadband\n\n')
 	bfg.write('include_file                      %s\n\n'%stub_name)
 	bfg.write('redshift                          %.3f\n\n'%redshift)
@@ -272,9 +272,6 @@ if __name__ == "__main__":
 
             galprops_data = np.load(prop_file)[()]
             idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
-            print idx
-            galprops_data = galprops_data[idx]
-            print 'maxndens', galprops_data['stars_maxndens'][0], galprops_data['stars_maxndens'][1], galprops_data['stars_maxndens'][2]
 
 
             for run_type in ['images','ifu','grism']:
@@ -288,7 +285,7 @@ if __name__ == "__main__":
 
                     generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, 
                                             stub_name = sfrhist_stub,  fits_file = fits_file, 
-                                            galprops_data = galprops_data, run_type = run_type, nthreads=nthreads)
+                                            galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, idx = idx)
 
 
                     print '\tGenerating mcrx.config file for %s...'%run_type
@@ -297,7 +294,7 @@ if __name__ == "__main__":
 
                     generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                                          stub_name = mcrx_stub,
-                                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file)
+                                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file, idx=idx)
 
 
 
@@ -308,7 +305,7 @@ if __name__ == "__main__":
 
                             generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
                                                              stub_name = broadband_stub, 
-                                                             galprops_data = galprops_data)
+                                                             galprops_data = galprops_data, idx=idx)
                     if run_type == 'grism': 
                             print '\tGenerating broadband.config file for %s...'%run_type
                             broadband_fn   = 'broadband.config'
@@ -316,7 +313,7 @@ if __name__ == "__main__":
 
                             generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
                                                             stub_name = broadband_stub, 
-                                                            galprops_data = galprops_data)
+                                                            galprops_data = galprops_data, idx=idx)
 
 
 
