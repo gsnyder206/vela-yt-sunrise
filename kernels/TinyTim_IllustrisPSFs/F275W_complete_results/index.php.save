@@ -1,0 +1,19 @@
+<?php include_once("header_tinytimweb.php"); ?>
+
+<head>
+   <meta http-equiv="refresh" content="5"/>
+</head>
+
+<font size="+3"><b>Tiny Tim Web Interface</b></font><br/><br/><br/>
+<font color="#99FF33">Your request is being processed. Please wait ...</font><br/>
+<br/>
+This page is set to reload automatically every 5 seconds. <br/>
+If this does not work in your browser, please do reload the page manually from time to time. 
+<br/><br/>
+<font color="lightblue">
+<pre>
+<?php include("process.txt"); ?>
+</pre>
+</font>
+<br/>
+<?php include_once("footer_tinytimweb.php"); ?>

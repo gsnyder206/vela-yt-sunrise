@@ -1,0 +1,8 @@
+Camera |WFC3 UVIS channel
+Chip|1
+Pixel Position|2045 1024
+Filter|F336W
+Spectrumtype|Blackbody
+Spectrumvalue|6000
+PSF diameter|8 [arcsec]
+Focus|0.0 [microns secondary mirror despace]

@@ -1,0 +1,21 @@
+Hybrid TinyTim + empirical PSFs
+
+created by Y.-Y. Chang using Y. Guo's star-stacking code, modified by 
+A. van der Wel and Y.-Y. Chang on 21 Mar 2012, and TinyTim PSF 
+created by E. J. McGrath
+
+   created 2013-01-14
+
+These PSFs use a combination of the TinyTim simulated PSF and stacked star 
+empirical PSFs.  The reason for doing this is that the TinyTim PSFs are 
+better in the core region (where centroiding issues tend to broaden empirical
+PSFs), while the empirical PSFs appear to fit real stars better in the wings.
+
+PSF consists of the following components:
+0   pixels <  radius < 2.5 pixels: tinytim
+2.5 pixels <= radius < 40  pixels: stacked star
+40  pixels <= radius             : tinytim
+
+Star list used for creating the stacked star portion is included as a .dat 
+file.  Columns in the .dat file are RA, Dec, and peak flux.
+

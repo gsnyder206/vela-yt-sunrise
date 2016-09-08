@@ -1,0 +1,119 @@
+=== input.txt ===========================================================
+23
+511 511
+F105W
+2
+6000
+8
+0.0
+result
+
+=== tiny1 ===============================================================
+
+      ------ Tiny Tim v7.5 : The HST PSF Generator ------
+
+                Release Date : June 1, 2008
+                   Developed by John Krist
+             Additional support by Richard Hook & Felix Stoehr
+        >> Manual in /eng/ssb/websites/tinytim/backend/tinytim/tinytim.pdf <<
+        ** http://www.stsci.edu/software/tinytim **
+
+--------- Aberrated Cameras ---------  -------- Corrected HST Optics -------
+1) Wide Field Camera (WFPC1)             5) WFPC2 - Wide Field Camera 
+2) Planetary Camera  (WFPC1)             6) WFPC2 - Planetary Camera 
+3) FOC f/48                              7) COSTAR-corrected FOC f/48 
+4) FOC f/96                              8) COSTAR-corrected FOC f/96 
+
+--------- Second Generation ---------  -------- Third Generation ---------
+ 9) NICMOS Camera 1 (pre-cryocooler)    15) ACS - Wide Field Channel 
+10) NICMOS Camera 2 (pre-cryocooler)    16) ACS - High Resolution Channel 
+11) NICMOS Camera 3 (pre-cryocooler)    17) ACS - HRC coronagraph off-spot PSF
+12) STIS CCD                            18) ACS - Solar Blind Channel 
+13) STIS NUV-MAMA                       19) NICMOS Camera 1 + cryocooler 
+14) STIS FUV-MAMA                       20) NICMOS Camera 2 + cryocooler 
+                                        21) NICMOS Camera 3 + cryocooler 
+--------- Fourth Generation --------- 
+22) WFC3 UVIS channel
+23) WFC3 IR channel
+
+Choice : 
+Enter position (x and y) on detector in INTEGER
+pixels (range = 0 to 1013) or the filename of a list
+of positions preceded by a '@' (ie. @xy.lis).
+
+Position : 
+Select filter passband :
+    - Enter the name of the filter (eg. f555w)
+    - Enter MONO to specify a single wavelength
+Filter : 
+19 wavelengths will be used to generate PSF
+
+** WARNING : wavelength = 899.090027 nm is outside of camera's range
+             of 900 - 1700 nm
+Choose form of object spectrum :
+    1) Select a spectrum from list
+    2) Blackbody
+    3) Power law : F(nu) = nu^i 
+    4) Power law : F(lambda) = lambda^i 
+    5) Read user-provided spectrum from ASCII table
+Choice : 
+Enter temperature (Kelvin) : 
+Using undistorted critical sampling pixel size of 0.02972 arcsec
+
+The maximum computable PSF size is 30.0 arcsec.
+The recommended size is about 3.0 arcseconds.
+What diameter should your PSF be (in arcseconds)? : Secondary mirror despace is scaled by 0.011 and added to Z4.
+Focus, secondary mirror despace? [microns]: 
+Rootname of PSF image files (no extension) : 
+To execute the next stage, enter the command :
+        tiny2 output.txt
+=== tiny2 ===============================================================
+Tiny Tim v7.5
+Intermediate PSF dimensions are 268 by 268
+
+Computing PSF for position 1/1 (x,y) = 511 511
+   Computing PSF 1/19 for wavelength 899.09 nm (weight=0.003243)
+   Computing PSF 2/19 for wavelength 913.79 nm (weight=0.053191)
+   Computing PSF 3/19 for wavelength 928.74 nm (weight=0.054669)
+   Computing PSF 4/19 for wavelength 943.93 nm (weight=0.057179)
+   Computing PSF 5/19 for wavelength 959.37 nm (weight=0.057209)
+   Computing PSF 6/19 for wavelength 975.06 nm (weight=0.058403)
+   Computing PSF 7/19 for wavelength 991.01 nm (weight=0.059694)
+   Computing PSF 8/19 for wavelength 1007.22 nm (weight=0.057884)
+   Computing PSF 9/19 for wavelength 1023.69 nm (weight=0.058122)
+   Computing PSF 10/19 for wavelength 1040.43 nm (weight=0.062392)
+   Computing PSF 11/19 for wavelength 1057.45 nm (weight=0.061743)
+   Computing PSF 12/19 for wavelength 1074.75 nm (weight=0.060255)
+   Computing PSF 13/19 for wavelength 1092.33 nm (weight=0.061299)
+   Computing PSF 14/19 for wavelength 1110.19 nm (weight=0.059062)
+   Computing PSF 15/19 for wavelength 1128.35 nm (weight=0.057932)
+   Computing PSF 16/19 for wavelength 1146.81 nm (weight=0.059088)
+   Computing PSF 17/19 for wavelength 1165.57 nm (weight=0.056950)
+   Computing PSF 18/19 for wavelength 1184.63 nm (weight=0.055738)
+   Computing PSF 19/19 for wavelength 1204.00 nm (weight=0.005947)
+   Writing PSF to result00_psf.fits
+
+Started at  Wed Sep 30 16:50:49 2015
+Finished at Wed Sep 30 16:50:54 2015
+
+Writing template optional parameter file for tiny3 to result.tt3.
+
+To continue PSF processing for ACS and WFC3, you must run tiny3 to resample
+and distort the PSF.  You may also process a simulated scene (see
+the manual for details).
+
+Just to distort the PSF, issue this command :
+
+        tiny3 output.txt
+
+=== tiny3 ===============================================================
+Tiny Tim v7.5
+Processing PSF for position 1/1 : (x,y) = 511 511
+Reading input PSF from result00_psf.fits.
+  Input critically-sampled undistorted PSF dimensions are 268 by 268 (0.029720 arcsec/pixel).
+  Mapping PSF onto distorted grid.
+  Convolving PSF with charge diffusion kernel.
+  Writing distorted PSF to result00.fits (73 by 73 pixels)
+
+Started at  Wed Sep 30 16:50:54 2015
+Finished at Wed Sep 30 16:50:55 2015

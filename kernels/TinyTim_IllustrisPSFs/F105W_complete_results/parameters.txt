@@ -1,0 +1,7 @@
+Camera |WFC3 IR channel
+Pixel Position|511 511
+Filter|F105W
+Spectrumtype|Blackbody
+Spectrumvalue|6000
+PSF diameter|8 [arcsec]
+Focus|0.0 [microns secondary mirror despace]

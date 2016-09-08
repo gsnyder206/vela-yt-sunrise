@@ -1,0 +1,15 @@
+Drizzled TinyTim PSFs created by E. J. McGrath
+created 2011-07-24
+** updated 2012-07-19
+update adds F435W and increases the size of the PSF images to 167x167 (for 
+60mas PSFs) and 235x235 (for 30mas PSFs) in order to be consistent with 
+the WFC3 PSFs.
+
+These PSFs were created in a similar manner as the CANDELS PSFs but for the
+original GOODS-S ACS data.  The naming convention is slightly different 
+and the image size is slightly different (some are 99 x 99 pixels instead of
+167 x 167).
+
+I am only including the centered PSFs.  The additional number in the filename 
+denotes the image size in pixels.
+

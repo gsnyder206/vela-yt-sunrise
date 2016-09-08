@@ -1,0 +1,18 @@
+Parsing inputfile 
+Parsing inputfile finished successfully
+
+Running tiny1 
+Running tiny1 finished successfully
+
+Running tiny2 .....
+Running tiny2 finished successfully
+
+Running tiny3 ...
+Running tiny3 finished successfully
+
+Running postprocessing ................
+Running postprocessing finished successfully
+
+Making result page 
+Making result page finished successfully
+

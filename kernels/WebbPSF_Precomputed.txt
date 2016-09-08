@@ -1,0 +1,3 @@
+The simulated PSFs provided here were computed using WebbPSF and the Revision V (Mission CDR) optical error budget OPDs. The assumed source spectrum is a G0V star from the Castelli & Kurucz spectral library included with pysynphot. Only direct imaging PSFs are provided here; if you need coronagraphic models please download and run WebbPSF yourself.
+
+Each FITS file contains two images: (1) a primary HDU giving the image oversampled by 4x relative to the detector, and (2) an image extension giving the same PSF as rebinned down to the actual detector pixel scale. MIRI files are for a 20 arcsec FOV, while all others use 10 arcsec. See the FITS headers for more information.

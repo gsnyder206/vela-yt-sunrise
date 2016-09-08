@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>TinyTimWeb</title>
+<link rel="SHORTCUT ICON" href="/static/favicon.ico" />
+<link rel="ICON" href="/static/favicon.ico" />
+<link href="/static/style.css" rel="stylesheet" type="text/css" media="screen" />
+<link href="/static/printstyle.css" rel="stylesheet" type="text/css" media="print" />
+<meta name="ROBOTS" content="INDEX,FOLLOW" />
+<meta name="author" content="Felix Stoehr" />
+<meta name="description" content="Space Telescope-European Coordinating Facility,  Space Telescope Science Institute" />
+<meta http-equiv="Reply to" content="fstoehr [at] eso [dot] org" />
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Keywords" content="Space Telescope-European Coordinating Facility, ST-ECF, STECF, Hubble Space Telescope, Hubble, HST, aXe, SLIM, ACS Grism, aXedrizzle, Axe2web, FOS spectroscopy, STIS spectroscopy, Scisoft, ESA-ESO working groups, NICMOSLook, NICMOS Grism, HST Archive" />
+<script type="text/javascript" src="/static/ua.js"></script>
+<script type="text/javascript" src="/static/ftiens4.js"></script>
+<script type="text/javascript" src="/static/menu.js"></script>
+</head>
+
+<body>
+
+<div align="center" class="main">
+
+
+<div class="pagearea">
+	<table class="pagetable" cellpadding="0" cellspacing="0">
+	<tr>
+	       <td> <div class="contentarea">
+
+      <font size="+3"><b>Tiny Tim Web Interface</b></font><br/><br/><br/>
+      <table width="100%"><tr><td valign="top">
+         <table cellpadding="5" width="100%">
+            <tr valign="top">
+            <td bgcolor="#7D7D88">
+            <table width="100%">
+               <tr><td width="35%"><b>Parameters</b><br/></td><td></td></tr>
+   
+<tr><td> Camera  </td><td><font color="#99FF33"> WFC3 UVIS channel
+</font></td></tr>
+<tr><td> Chip </td><td><font color="#99FF33"> 1
+</font></td></tr>
+<tr><td> Pixel Position </td><td><font color="#99FF33"> 2045 1024
+</font></td></tr>
+<tr><td> Filter </td><td><font color="#99FF33"> F275W
+</font></td></tr>
+<tr><td> Spectrumtype </td><td><font color="#99FF33"> Blackbody
+</font></td></tr>
+<tr><td> Spectrumvalue </td><td><font color="#99FF33"> 6000
+</font></td></tr>
+<tr><td> PSF diameter </td><td><font color="#99FF33"> 8 [arcsec]
+</font></td></tr>
+<tr><td> Focus </td><td><font color="#99FF33"> 0.0 [microns secondary mirror despace]
+</font></td></tr>
+      
+          </table>
+          </td>
+          </tr>
+          <tr>
+          <td bgcolor="#7D7D88">            
+          <table width="100%">         
+             <tr><td width="35%"><b>Data</b></td><td></td></tr>
+      
+   
+               <tr><td>PSF distorted          </td><td> <a href="result00.fits">result00.fits</a></td></tr>
+               <tr><td>PSF undistorted        </td><td> <a href="result00_psf.fits">result00_psf.fits</a></td></tr>               
+               <tr><td>Data files distorted   </td><td> <a href="result00_cuts.dat">result00_cuts.dat</a>, &nbsp;&nbsp;<a href="result00_energy.dat">result00_energy.dat</a>&nbsp;&nbsp;</td></tr>
+               <tr><td>Data files undistorted </td><td> <a href="result00_psf_cuts.dat">result00_psf_cuts.dat</a>, &nbsp;&nbsp;<a href="result00_psf_energy.dat">result00_psf_energy.dat</a>&nbsp;&nbsp;</td></tr>
+      
+  
+               <tr><td>TinyTim processing        </td><td><a href="parameters.txt">parameters.txt</a>,&nbsp;&nbsp;<a href="input.txt">input.txt</a>,&nbsp;&nbsp;<a href="output.txt">output.txt</a>,&nbsp;&nbsp;<a href="logfile.txt">logfile.txt</a></td></tr>
+             </table>
+         </td>
+         </tr>
+         <tr>
+         <td bgcolor="#7D7D88">            
+         
+
+               <table width="100%" >
+               <tr><td width="35%"><b>Figures</b>          </td><td>                                                           </td><td></td></tr>
+               <tr><td>All figures             </td><td>on one <a href="figurepage.html">page</a></td><td></td></tr>    
+               <tr><td>                        </td><td></td><td></td></tr>
+               <tr><td>                        </td><td><font color="lightblue">distorted</font>                                                </td><td><font color="lightblue">undistorted</font>                                                        </td></tr>    
+               <tr><td>PSF                     </td><td><a href="result00_01.png">lin_psf</a>,&nbsp;&nbsp; <a href="result00_03.png">log_psf    </a></td><td><a href="result00_psf_01.png">lin_psf</a>,&nbsp;&nbsp; <a href="result00_psf_03.png">log_psf</a>      </td></tr>
+               <tr><td>PSF with 1&#37; cut-off </td><td><a href="result00_02.png">lin_cutoff</a>,&nbsp;    <a href="result00_04.png">log_cutoff </a></td><td><a href="result00_psf_02.png">lin_cutoff</a>,&nbsp;&nbsp; <a href="result00_psf_04.png">log_cutoff</a></td></tr>
+               <tr><td>Cuts through the PSF    </td><td><a href="result00_05.png">lin_cut</a>,&nbsp;&nbsp; <a href="result00_06.png">log_cut    </a></td><td><a href="result00_psf_05.png">lin_cut</a>,&nbsp;&nbsp; <a href="result00_psf_06.png">log_cut</a>      </td></tr>
+               <tr><td>Light profiles          </td><td><a href="result00_07.png">radial</a>,&nbsp;&nbsp;  <a href="result00_08.png">cumulative </a></td><td><a href="result00_psf_07.png">radial</a>,&nbsp;&nbsp; <a href="result00_psf_08.png">cumulative</a>    </td></tr>
+        
+       
+
+            </table>
+         </td>
+         </tr>
+         <tr>
+         <td bgcolor="#7D7D88">            
+         <table width="100%">         
+            <tr><td width="35%"><b>Download</b>          </td><td>                                                                                </td></tr>
+            <tr><td>All files                </td><td>in one <a href="complete_results.tar.gz">tar.gz file</a>, including this web page</td></tr>
+         </table>
+         </td>
+         </tr>
+       
+         
+         <tr>
+         <td>
+         <a href="../../tinytimweb.cgi">Back</a> to the TinyTim start page<br/>
+         </td>
+         </tr>         
+         </table>
+      </td>
+      
+         
+     <td width="1%" valign="top">
+     <a href="figurepage.html"><img src="composite.png" alt="composite"/></a><br/>
+     
+
+         <font color="lightblue">Distorted PSF</font>
+      
+  
+     </td>
+     </tr>
+     </table>
+   
+                <br/>
+		<br/>
+                <p class="footer">
+		Maintained by Space Telescope Science Institute <a href="mailto:help at stsci dot edu">&lt;help at stsci dot edu&gt;</a><br />
+		</p>
+                </div>
+		</td>
+		</tr>
+	</table>
+</div>
+</div>
+</body>
+</html>
+
