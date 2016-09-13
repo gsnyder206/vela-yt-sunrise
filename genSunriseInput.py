@@ -73,7 +73,7 @@ def parse():
 
 
 
-def generate_cameras(normal_vector, distance=100.0, fov=50.0, mov_ang = 0.):
+def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang = 0., movie = False):
     '''
     Set camera positions and orientations
     '''
@@ -87,29 +87,44 @@ def generate_cameras(normal_vector, distance=100.0, fov=50.0, mov_ang = 0.):
     camera_set = OrderedDict([
             ['face',([0.,0.,1.],[0.,-1.,0],True)], #up is north=+y
             ['edge',([0.,1.,0.],[0.,0.,-1.],True)],#up is along z
+            ['backface',([0.,0.,-1.],[0.,-1.,0],True)], #up is north=+y
+            ['backedge',([0.,-1.,0.],[0.,0.,-1.],True)],#up is along z
             ['45',([0.,0.7071,0.7071],[0., 0., -1.],True)],
             ['Z-axis',([0.,0.,1.],[0.,-1.,0],False)], #up is north=+y
             ['Y-axis',([0.,1.,0.],[0.,0.,-1.],False)],#up is along z
-            ['Movie_angle',([0.,math.cos(mov_ang*180./pi),math.sin(2*180./pi)],[0.,0.,-1.],False)],#up is along z                        
             ])  
 
-    segments = 10
-    #np.random.seed(0), we don't want seed here
-    ts = np.random.random(segments)*np.pi*2
-    ps = np.random.random(segments)*np.pi-np.pi/2.0
+
+
+    segments_fixed  = 5
+    segments_random = 7
+
+
+    ts_random = np.random.random(segments_random)*np.pi*2
+    ps_random = np.random.random(segments_random)*np.pi-np.pi/2.0
+
+    np.random.seed(seed)#, we don't want seed here
+    ts_fixed = np.random.random(segments_fixed)*np.pi*2
+    ps_fixed = np.random.random(segments_fixed)*np.pi-np.pi/2.0
+
+    ts = np.concatenate([ts_fixed, ts_random])
+    ps = np.concatenate([ps_fixed, ps_random])
+
+
     for i,(theta, phi) in enumerate(zip(ts,ps)):
     	print theta, phi
     	#print theta*180./pi, phi*180./pi
         pos = [np.cos(theta),0.,np.sin(phi)]
         vc  = [np.cos(np.pi/2.-theta),0.,np.sin(np.pi/2.-phi)] 
-        camera_set['Random_%03i'%(i)]=(pos,vc,False)
-	ts = array([-0.00742641835397925])
-	ps = array([-1.80216918439022])
-	for i,(theta, phi) in enumerate(zip(ts,ps)):
-		#print theta*180./pi, phi*180./pi
-		pos = [np.cos(theta),0.,np.sin(phi)]
-		vc  = [np.cos(np.pi/2.-theta),0.,np.sin(np.pi/2.-phi)] 
-		camera_set['Random_match']=(pos,vc,False)
+
+        if i < segments_fixed:
+            camera_set['Fixed_%03i'%(i)]=(pos,vc,False)
+        else:
+            camera_set['Random_%03i'%(i)]=(pos,vc,False)
+
+    if movie: camera_set['Movie_angle'] = ([0.,math.cos(mov_ang*180./pi),math.sin(2*180./pi)],[0.,0.,-1.],False)
+
+
 
 
     i=0    
@@ -261,7 +276,8 @@ if __name__ == "__main__":
     cam_dist = 100000
     cam_fov  = 50
     max_level = None
-    
+    seed = 0
+
 
 
 
@@ -308,10 +324,9 @@ if __name__ == "__main__":
 	    L_sum = gas_L
 
 	L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
-		
 	#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
 	#This function is important for generating the cameras that we will be using
-	cameras = generate_cameras(L, distance = cam_dist, fov = cam_fov)
+	cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
         prefix = os.path.join(out_dir,simname+'_'+aname)
 	write_cameras(prefix, cameras)
         sys.stdout.flush()
