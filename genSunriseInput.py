@@ -197,20 +197,14 @@ if __name__ == "__main__":
     
     yt.enable_parallelism()
     
-    
-    print args
-    print sys.argv
-    print args['snap_files']
-    
+
     if args['snap_files'] is not None:
         snaps = args['snap_files']
     else:
         snaps = np.asarray(glob.glob("*.d"))
 
-    print snaps
         
     print "Generating Sunrise Input for: ", snaps
-    exit()
 
     abssnap = os.path.abspath(snaps[0])
     assert os.path.lexists(abssnap)
@@ -321,7 +315,13 @@ if __name__ == "__main__":
         sys.stdout.flush()
 
 
+    if args['no_export'] is False:
+        print "Skipping export stage, per command argument."
+        exit()
 
+    print "Continuing to export grids."
+    exit()
+    
     ts = yt.DatasetSeries(new_snapfiles)
 
     # Send one snapshots to each processor to export 
