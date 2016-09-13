@@ -322,7 +322,6 @@ if __name__ == "__main__":
         exit()
 
     print "Continuing to export grids."
-    exit()
     
     ts = yt.DatasetSeries(new_snapfiles)
 
