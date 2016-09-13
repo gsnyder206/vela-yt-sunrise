@@ -199,7 +199,9 @@ if __name__ == "__main__":
     
     
     print args
-    exit
+    print sys.argv
+    
+    exit()
     
     if len(sys.argv)==2:
         snaps = np.asarray([sys.argv[1]])
@@ -309,7 +311,7 @@ if __name__ == "__main__":
 	except TypeError:
 	    L_sum = gas_L
 
-	    L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
+	L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
 		
 	#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
 	#This function is important for generating the cameras that we will be using
