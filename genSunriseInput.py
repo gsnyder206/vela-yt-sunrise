@@ -317,7 +317,7 @@ if __name__ == "__main__":
         sys.stdout.flush()
 
 
-    if args['no_export'] is False:
+    if args['no_export'] is True:
         print "Skipping export stage, per command argument."
         exit()
 
