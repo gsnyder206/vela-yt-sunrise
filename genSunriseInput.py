@@ -202,17 +202,16 @@ if __name__ == "__main__":
     print sys.argv
     print args['snap_files']
     
-    exit()
-    
-    if len(sys.argv)>=2:
-        snaps = np.asarray([sys.argv[1]])
+    if args['snap_files'] is not None:
+        snaps = args['snap_files']
     else:
         snaps = np.asarray(glob.glob("*.d"))
-        
-        
+
+    print snaps
         
     print "Generating Sunrise Input for: ", snaps
-    
+    exit()
+
     abssnap = os.path.abspath(snaps[0])
     assert os.path.lexists(abssnap)
     
