@@ -197,7 +197,9 @@ if __name__ == "__main__":
     
     yt.enable_parallelism()
     
-
+    print args
+    print args['no_export']
+    
     if args['snap_files'] is not None:
         snaps = args['snap_files']
     else:
