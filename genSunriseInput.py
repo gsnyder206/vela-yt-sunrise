@@ -23,7 +23,7 @@ def parse():
                                 the fov to a FITS file in a format that Sunrise understands.
                                 ''')
  
-    #parser.add_argument('sim_dirs', nargs='+', help='Simulation directories to be analyzed.')
+    parser.add_argument('snap_files', nargs='+', help='Snapshot files to be analyzed.')
     
     #parser.add_argument('-s', '--snap_base', default='10MpcBox_csf512_',
     #                    help='Base of the snapshots file names.') 
