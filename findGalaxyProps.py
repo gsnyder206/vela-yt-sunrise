@@ -463,24 +463,24 @@ if __name__ == "__main__":
 		galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
 
 		#Making Figures
-		if True:
-			#yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=([10,10,10],'Mpc'), width = (25.,'Mpc')).save('test.png')
-			#p = yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr), width = (8.,'kpc'))
-			#p.save('projection_z.png')
-			#yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (40.,'kpc')).save('testproj_2nd_pass_3_z.png')
-			yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (30, 'kpc')).save(yt_fig_dir+'/max_ndens_cen_30kpc.png')
-			yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (1, 'Mpc')).save(yt_fig_dir+'/max_ndens_cen_1Mpc.png')
+		if False:
+			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=([10,10,10],'Mpc'), width = (25.,'Mpc')).save('test.png')
+			# p = yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr), width = (8.,'kpc'))
+			# p.save('projection_z.png')
+			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (40.,'kpc')).save('testproj_2nd_pass_3_z.png')
+			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (30, 'kpc')).save(yt_fig_dir+'/max_ndens_cen_30kpc.png')
+			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (1, 'Mpc')).save(yt_fig_dir+'/max_ndens_cen_1Mpc.png')
 			
-			#yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(galaxy_props['stars_com'][0],'kpc'),  width = (10, 'kpc')).save('max_ndens_arr.png')
-			#L = ds.arr([0,1./sqrt(2),1./sqrt(2)], 'kpc')
+			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(galaxy_props['stars_com'][0],'kpc'),  width = (10, 'kpc')).save('max_ndens_arr.png')
+			# L = ds.arr([0,1./sqrt(2),1./sqrt(2)], 'kpc')
 
 
-			#yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), width = (10, 'kpc')).save('off_axis_projection.png')
+			# yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), width = (10, 'kpc')).save('off_axis_projection.png')
 
-			#t0 = time.time()
-			#yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), depth = (1, "Mpc"), width = (25, "kpc")).save('off_axis_projection_2.png')
-			#t1 = time.time()
-			#print 'Took %.2f minutes'%((t1-t0)/60.)
+			# t0 = time.time()
+			# yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), depth = (1, "Mpc"), width = (25, "kpc")).save('off_axis_projection_2.png')
+			# t1 = time.time()
+			# print 'Took %.2f minutes'%((t1-t0)/60.)
 
 		del (hc_sphere)
                 sys.stdout.flush()
