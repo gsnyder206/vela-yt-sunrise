@@ -102,11 +102,15 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
 
     np.random.seed()
     ts_random = np.random.random(segments_random)*np.pi*2
-    ps_random = np.random.random(segments_random)*np.pi-np.pi/2.0
+    #ps_random = np.random.random(segments_random)*np.pi-np.pi/2.0
+    ps_random = np.random.random(segments_random)*np.pi
 
     np.random.seed(seed)
     ts_fixed = np.random.random(segments_fixed)*np.pi*2
-    ps_fixed = np.random.random(segments_fixed)*np.pi-np.pi/2.0
+    #ps_fixed = np.random.random(segments_fixed)*np.pi-np.pi/2.0
+    ps_fixed = np.random.random(segments_fixed)*np.pi
+
+
 
     ts = np.concatenate([ts_fixed, ts_random])
     ps = np.concatenate([ps_fixed, ps_random])
