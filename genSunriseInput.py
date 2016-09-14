@@ -121,7 +121,7 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
         if i < segments_fixed:
             camera_set['Fixed_%03i'%(i)]=(pos,vc,False)
         else:
-            camera_set['Random_%03i'%(i)]=(pos,vc,False)
+            camera_set['Random_%03i'%(i-segments_fixed)]=(pos,vc,False)
 
     if movie: camera_set['Movie_angle'] = ([0.,math.cos(mov_ang*180./pi),math.sin(2*180./pi)],[0.,0.,-1.],False)
 
