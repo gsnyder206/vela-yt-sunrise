@@ -93,11 +93,15 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
             ['Z-axis',([0.,0.,1.],[0.,-1.,0],False)], #up is north=+y
             ['Y-axis',([0.,1.,0.],[0.,0.,-1.],False)],#up is along z
             ['X-axis',([1.,0.,0.],[0.,0.,-1.],False)],#up is along z
+            ['Fixed_000',([1/sqrt(3.),1/sqrt(3.),1/sqrt(3.)],[0.,-1.,0],False)], #up is north=+y
+            ['Fixed_001',([-1/sqrt(3.),-1/sqrt(3.),1/sqrt(3.)],False)],#up is along z
+            ['Fixed_002',([-1/sqrt(3.),1/sqrt(3.),-1/sqrt(3.)],#up is along z
+            ['Fixed_003',([1/sqrt(3.),-1/sqrt(3.),-1/sqrt(3.)],#up is along z
             ])  
 
 
 
-    segments_fixed  = 4
+    segments_fixed  = 0
     segments_random = 7
 
 
