@@ -134,6 +134,7 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
         orient = Orientation(normal_vector=normal, north_vector=north)
         if do_rot:
             drot = R.copy()
+            print "Rotating into L frame"
         else:
             drot = np.identity(3)
         sunrise_pos = np.dot(orient.normal_vector, drot)
