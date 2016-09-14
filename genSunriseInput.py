@@ -114,10 +114,11 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
 
     for i,(theta, phi) in enumerate(zip(ts,ps)):
     	print theta, phi
-    	#print theta*180./pi, phi*180./pi
-        pos = [np.cos(theta),0.,np.sin(phi)]
-        vc  = [np.cos(np.pi/2.-theta),0.,np.sin(np.pi/2.-phi)] 
-
+        #pos = [np.cos(theta),0.,np.sin(phi)]
+        pos = [np.cos(theta)*np.sin(phi),np.sin(theta)*np.sin(phi),np.cos(phi)]
+        #vc  = [np.cos(np.pi/2.-theta),0.,np.sin(np.pi/2.-phi)] 
+        vc = [-np.cos(theta)*np.sin(phi),-np.sin(theta)*np.sin(phi),-np.cos(phi)]
+        
         if i < segments_fixed:
             camera_set['Fixed_%03i'%(i)]=(pos,vc,False)
         else:
