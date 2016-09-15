@@ -90,8 +90,8 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
             ['backface',([0.,0.,-1.],[0.,-1.,0],True)], #up is north=+y
             ['backedge',([0.,-1.,0.],[0.,0.,-1.],True)],#up is along z
             ['45',([0.,0.7071,0.7071],[0., 0., -1.],True)],
-            ['Z-axis',([0.,0.,1.],[0.,-1.,0],False)], #up is north=+y
-            ['Y-axis',([0.,-1.,0.],[0.,0.,-1.],False)],#up is along z
+            ['Z-axis',([0.,0.,-1.],[0.,-1.,0],False)], #up is north=+y
+            ['Y-axis',([0.,1.,0.],[0.,0.,-1.],False)],#up is along z
             ['X-axis',([1.,0.,0.],[0.,0.,-1.],False)],#up is along z
             ])  
 
