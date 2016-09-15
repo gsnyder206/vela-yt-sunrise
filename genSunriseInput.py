@@ -98,7 +98,7 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
 
 
     segments_fixed  = 4
-    segments_random = 500
+    segments_random = 7
 
 
     np.random.seed()
