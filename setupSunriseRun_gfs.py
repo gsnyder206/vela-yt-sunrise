@@ -156,7 +156,7 @@ def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galp
 
 
 
-def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='12', model='wes', queue='normal',email='rsimons@jhu.edu',walltime='04:00:00'):
+def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='12', model='wes', queue='normal',email='rsimons@jhu.edu',walltime='04:00:00',isnap=0):
 
 	bsubf = open(run_dir+'/'+filename, 'w+')
 	bsubf.write('#!/bin/bash\n')
@@ -167,8 +167,8 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 	bsubf.write('#PBS -N sunrise_'+run_type+'\n')     #selects job name
 	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
 	bsubf.write('#PBS -m abe\n')  #set notification types (abe=abort, begin, end)
-	bsubf.write('#PBS -o sunrise_pbs.out\n')  #save standard output here
-	bsubf.write('#PBS -e sunrise_pbs.err\n')  #save standard error here
+	bsubf.write('#PBS -o '+run_dir+'/sunrise_pbs.out\n')  #save standard output here
+	bsubf.write('#PBS -e '+run_dir+'/sunrise_pbs.err\n')  #save standard error here
 	bsubf.write('#PBS -V\n')    #export environment variables at start of job
 
 	bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
@@ -244,7 +244,7 @@ if __name__ == "__main__":
 
     new_snapfiles = np.asarray(new_snapfiles)
 
-    for snapfile in new_snapfiles:
+    for isnap, snapfile in enumerate(new_snapfiles):
         snap_dir = os.path.abspath(os.path.dirname(snapfile))
         sunrise_dir = os.path.basename(snap_dir)
         snap_name = sunrise_dir.rstrip('_sunrise')
@@ -320,7 +320,7 @@ if __name__ == "__main__":
                 print '\tGenerating sunrise.qsub file for %s...'%run_type
                 qsub_fn   = 'sunrise.qsub'		
                 final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
-                                         galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit)
+                                         galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
                 submitline = 'qsub '+final_fn
 
                 if run_type=='images':
