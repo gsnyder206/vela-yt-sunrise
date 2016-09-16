@@ -210,7 +210,7 @@ if __name__ == "__main__":
     model='ivy'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
     queue='normal'   #options devel, debug, low, normal, long
     notify='gsnyder@stsci.edu'
-    walltime_limit='05:00:00'
+    walltime_limit='07:00:00'
 
     stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
 
