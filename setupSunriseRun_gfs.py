@@ -177,8 +177,8 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 	if run_type=='images':
 		bsubf.write('/u/gfsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
 		bsubf.write('/u/gfsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
-		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-		#bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+		bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+		bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
                 bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
 	#elif run_type=='ifu':
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
@@ -223,8 +223,9 @@ if __name__ == "__main__":
     simname = os.path.basename(dirname) #assumes directory name for simulation name
     print "Simulation name:  ", simname
 
-    submitfile = 'submit_sunrise_images.sh'
-    smf = open(submitfile,'w')
+    smf_images = open('submit_sunrise_images.sh','w')
+    smf_ifu = open('submit_sunrise_ifu.sh','w')
+    smf_grism = open('submit_sunrise_grism.sh','w')
     
     new_snapfiles = []
 
@@ -321,10 +322,18 @@ if __name__ == "__main__":
                 final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit)
                 submitline = 'qsub '+final_fn
-                smf.write(submitline+'\n')
 
-    smf.close()
+                if run_type=='images':
+                        smf_images.write(submitline+'\n')
+                if run_type=='ifu':
+                        smf_ifu.write(submitline+'\n')
+                if run_type=='grism':
+                        smf_grism.write(submitline+'\n')
 
+
+    smf_images.close()
+    smf_ifu.close()
+    smf_grism.close()
 
 
 
