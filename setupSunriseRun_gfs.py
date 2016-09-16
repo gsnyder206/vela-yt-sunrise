@@ -193,7 +193,7 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 
 
 
-	return os.path.abspath(bsubf)
+	return os.path.abspath(run_dir+'/'+filename)
 
 
 if __name__ == "__main__":
