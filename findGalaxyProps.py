@@ -463,7 +463,7 @@ if __name__ == "__main__":
 		galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
 
 		#Making Figures
-		if False:
+		#if False:
 			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=([10,10,10],'Mpc'), width = (25.,'Mpc')).save('test.png')
 			# p = yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr), width = (8.,'kpc'))
 			# p.save('projection_z.png')
