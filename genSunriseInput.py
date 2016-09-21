@@ -337,8 +337,6 @@ if __name__ == "__main__":
 
         
 	L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
-
-        print stars_L + gas_L
         
 
 	#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
