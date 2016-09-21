@@ -343,7 +343,7 @@ if __name__ == "__main__":
 	#This function is important for generating the cameras that we will be using
         try:
 	    cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
-        except numpy.linalg.linalg.LinAlgError:
+        except np.linalg.linalg.LinAlgError:
             print "Error in camera linear algebra: skipping"
             continue
 
