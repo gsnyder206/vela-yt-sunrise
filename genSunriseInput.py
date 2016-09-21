@@ -222,7 +222,6 @@ if __name__ == "__main__":
     import sunrise_octree_exporter
     reload(sunrise_octree_exporter)
     
-    yt.enable_parallelism()
     
     print args
     print args['no_export']
@@ -349,6 +348,8 @@ if __name__ == "__main__":
         exit()
 
     print "Continuing to export grids."
+
+    yt.enable_parallelism()
     
     ts = yt.DatasetSeries(new_snapfiles)
 
