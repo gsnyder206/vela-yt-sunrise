@@ -258,7 +258,7 @@ if __name__ == "__main__":
         prop_file = os.path.abspath(simname+'_galprops.npy')
 
         #Clean exit for galaxies with no prop file
-        if os.path.lexists(fits_file):
+        if os.path.lexists(fits_file) and os.path.lexists(cam_file):
             print prop_file
             print os.path.lexists(prop_file)
             assert os.path.lexists(prop_file), 'Prop file %s not found'%prop_file

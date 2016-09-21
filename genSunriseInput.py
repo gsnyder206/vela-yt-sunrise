@@ -341,7 +341,12 @@ if __name__ == "__main__":
 
 	#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
 	#This function is important for generating the cameras that we will be using
-	cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
+        try:
+	    cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
+        except numpy.linalg.linalg.LinAlgError:
+            print "Error in camera linear algebra: skipping"
+            continue
+
         prefix = os.path.join(out_dir,simname+'_'+aname)
 	write_cameras(prefix, cameras)
         sys.stdout.flush()
