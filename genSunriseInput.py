@@ -329,12 +329,18 @@ if __name__ == "__main__":
 	stars_L = galprops['stars_L'][idx]
 	gas_L 	= galprops['gas_L'][idx]
 
+        
 	try:
 	    L_sum = stars_L + gas_L
 	except TypeError:
 	    L_sum = gas_L
 
+        
 	L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
+
+        print L_sum, stars_L, gas_L, L
+        
+
 	#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
 	#This function is important for generating the cameras that we will be using
 	cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
