@@ -227,7 +227,7 @@ if __name__ == "__main__":
     print args['no_export']
     
     if args['snap_files'] is not None:
-        snaps = args['snap_files']
+        snaps = [args['snap_files']]
     else:
         snaps = np.asarray(glob.glob("*.d"))
 
