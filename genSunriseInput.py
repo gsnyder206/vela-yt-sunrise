@@ -235,8 +235,7 @@ if __name__ == "__main__":
     print "Generating Sunrise Input for: ", snaps
 
     abssnap = os.path.abspath(snaps[0])
-    print snaps[0]
-    print abssnap
+
     
     assert os.path.lexists(abssnap)
     
