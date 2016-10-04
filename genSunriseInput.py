@@ -376,7 +376,7 @@ if __name__ == "__main__":
         sys.stdout.flush()
 
         qsubfn = 'export_'+aname+'.qsub'
-        write_qsub_exporters(snapname,qsubfn,aname)
+        write_qsub_exporters(snapfile,qsubfn,aname)
         
 
     if args['no_export'] is True:
