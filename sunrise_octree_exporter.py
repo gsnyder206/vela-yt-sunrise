@@ -328,7 +328,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level=0, debug=True):
 	if True: 
 		def _MetalMass(field, data):
-			return (data['metal_ia_density']*data['cell_volume']).in_units('Msun')
+			return ((data['metal_ia_density']+data['metal_ii_density'])*data['cell_volume']).in_units('Msun')
 		ad.ds.add_field('MetalMassMsun', function=_MetalMass, units='Msun')
 		
 		def _TempTimesMass(field, data):
