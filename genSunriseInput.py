@@ -214,6 +214,28 @@ def export_fits(ds, center, export_radius, prefix, star_particles, max_level=Non
     return info  #output arrays not actually used later
 
 
+def write_qsub_exporters(snapname,qsubfn,aname):
+    qsfo = open(qsubfn,'w')
+    qsfo.write('#!/bin/bash\n')
+    qsfo.write('#PBS -S /bin/bash\n')
+    qsfo.write('#PBS -l select=1:ncpus=1:model=has\n')
+    qsfo.write('#PBS -l walltime=04:00:00\n')
+    qsfo.write('#PBS -q normal\n')
+    qsfo.write('#PBS -N sunrise_export\n')
+    qsfo.write('#PBS -M gsnyder@stsci.edu\n')
+    qsfo.write('#PBS -m abe\n')
+    qsfo.write('#PBS -o sunrise_export_pbs.out\n')
+    qsfo.write('#PBS -e sunrise_export_pbs.err\n')
+    qsfo.write('#PBS -V\n\n')
+    
+    qsfo.write('python $VELAYTSUNRISE_CODE/genSunriseInput.py '+snapname+'> export_test_'+aname+'.out 2> export_test_'+aname+'.err\n')
+    qsfo.close()
+    
+
+    return
+
+
+
 if __name__ == "__main__":
 
     args = parse()
@@ -353,6 +375,9 @@ if __name__ == "__main__":
 	write_cameras(prefix, cameras)
         sys.stdout.flush()
 
+        qsubfn = 'export_'+aname+'.qsub'
+        write_qsub_exporters(snapname,qsubfn,aname)
+        
 
     if args['no_export'] is True:
         print "Skipping export stage, per command argument."
