@@ -224,8 +224,8 @@ def write_qsub_exporters(snapname,qsubfn,aname):
     qsfo.write('#PBS -N sunrise_export\n')
     qsfo.write('#PBS -M gsnyder@stsci.edu\n')
     qsfo.write('#PBS -m abe\n')
-    qsfo.write('#PBS -o sunrise_export_pbs.out\n')
-    qsfo.write('#PBS -e sunrise_export_pbs.err\n')
+    qsfo.write('#PBS -o sunrise_export_'+aname+'pbs.out\n')
+    qsfo.write('#PBS -e sunrise_export_'+aname+'pbs.err\n')
     qsfo.write('#PBS -V\n\n')
     
     qsfo.write('python $VELAYTSUNRISE_CODE/genSunriseInput.py '+os.path.basename(snapname)+' > export_test_'+aname+'.out 2> export_test_'+aname+'.err\n')
