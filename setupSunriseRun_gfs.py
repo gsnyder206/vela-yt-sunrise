@@ -30,7 +30,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 		sf.write('min_wavelength			%s\n'%("0.02e-6"))
 		sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
 
-		sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel-lores256.fits"))
+		sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel-lores128.fits"))
 		sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/Patrik-imfKroupa-Zmulti-ml.fits"))
 
 
@@ -209,7 +209,7 @@ if __name__ == "__main__":
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
     #Pleiades values:
     nthreads = '20'  #cpu models have 12, 16, 20, 24, respectively
-    model='ivy'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
+    model='has'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
     queue='normal'   #options devel, debug, low, normal, long
     notify='gsnyder@stsci.edu'
     walltime_limit='07:00:00'

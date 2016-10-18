@@ -313,7 +313,8 @@ if __name__ == "__main__":
     max_level = None
     seed = 0
 
-
+    export_all_fn = 'export_all.sh'
+    eaf = open(export_all_fn,'w')
 
 
     #ts = yt.DatasetSeries(new_snapfiles)
@@ -377,8 +378,12 @@ if __name__ == "__main__":
 
         qsubfn = 'export_'+aname+'.qsub'
         write_qsub_exporters(snapfile,qsubfn,aname)
+        submitline = 'qsub '+qsubfn
+        eaf.write(submitline+'\n')
         
 
+    eaf.close()
+    
     if args['no_export'] is True:
         print "Skipping export stage, per command argument."
         exit()
