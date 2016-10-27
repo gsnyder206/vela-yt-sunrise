@@ -309,7 +309,11 @@ if __name__ == "__main__":
 
 
     cam_dist = 100000
-    cam_fov  = 50
+    if args['fov'] is not None:
+        cam_fov = float(args['fov'])
+    else:
+        cam_fov  = 50.0
+
     max_level = None
     seed = 0
 
