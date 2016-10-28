@@ -35,8 +35,8 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 	elif run_type == 'ifu':
-		sf.write('min_wavelength			%s\n'%("0.6518e-6"))
-		sf.write('max_wavelength			%s\n\n'%("0.6628e-6"))
+		sf.write('min_wavelength			%s\n'%("0.653e-6"))
+		sf.write('max_wavelength			%s\n\n'%("0.660e-6"))
 
 		sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel_full_hires.fits"))
 		sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
