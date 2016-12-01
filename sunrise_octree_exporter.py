@@ -237,7 +237,7 @@ def OctreeDepthFirstHilbert(oct_list, oct_obj, hilbert, grid_structure, output, 
 			OctreeDepthFirstHilbert(oct_list, child_oct_obj, hilbert_child, grid_structure, output, field_names, debug, f)
 
 def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None, 
-    debug=False,ad=None,max_level=None, grid_structure_fn = 'grid_structure.npy', **kwargs):
+    debug=False,ad=None,max_level=None, grid_structure_fn = 'grid_structure.npy', no_gas_p = False, **kwargs):
 
 
 	r"""Convert the contents of a dataset to a FITS file format that Sunrise
@@ -321,7 +321,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	#np.savez('grid_structure.npz',grid_structure)
 	np.save(grid_structure_fn,grid_structure)  #way faster to load for some reason?
 
-	create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge)
+	create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge, no_gas_p = no_gas_p)
 
 	return fle, fre, ile, ire, nrefined, nleafs, nstars, output, output_array
 
@@ -501,7 +501,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 	return output, grid_structure, grid_structure['nrefined'], grid_structure['nleafs']
 
-def create_fits_file(ds, fn, output, refined, particle_data, fle, fre):
+def create_fits_file(ds, fn, output, refined, particle_data, fle, fre, no_gas_p = False):
     #first create the grid structure
     structure = pyfits.Column("structure", format="B", array=array(refined).astype("bool"))
     cols = pyfits.ColDefs([structure])
@@ -544,6 +544,8 @@ def create_fits_file(ds, fn, output, refined, particle_data, fle, fre):
     col_list.append(pyfits.Column("SFR", format='D',
                     array=fd['CellSFRtau'],  unit = 'Msun'))
     p_gas_zipped = zip(fd['Cellpgascgsx'],fd['Cellpgascgsy'],fd['Cellpgascgsz'])
+    if no_gas_p: p_gas_zipped = p_gas_zipped*0.
+    
     col_list.append(pyfits.Column("p_gas", format='3D',
                     array=p_gas_zipped , unit = 'Msun*kpc/yr'))
 
