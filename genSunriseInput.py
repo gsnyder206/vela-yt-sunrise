@@ -68,6 +68,10 @@ def parse():
     parser.add_argument('--no_export',action='store_true',
                         help='Do not export data to fits for Sunrise.') 
 
+    parser.add_argument('--no_gas_p',action='store_true',
+                        help='Shut off momentum of gas grid.') 
+
+
     args = vars(parser.parse_args())
     return args
 
