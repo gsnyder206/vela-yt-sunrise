@@ -250,7 +250,7 @@ if __name__ == "__main__":
     
     
     print args
-    print args['no_export']
+    print args['no_export'], args['no_gas_p']
     
     if args['snap_files'] is not None:
         snaps = [args['snap_files']]
