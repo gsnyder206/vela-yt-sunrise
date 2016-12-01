@@ -543,9 +543,13 @@ def create_fits_file(ds, fn, output, refined, particle_data, fle, fre, no_gas_p 
                     array=fd['CellVolumeKpc'], unit="kpc^3"))
     col_list.append(pyfits.Column("SFR", format='D',
                     array=fd['CellSFRtau'],  unit = 'Msun'))
-    p_gas_zipped = zip(fd['Cellpgascgsx'],fd['Cellpgascgsy'],fd['Cellpgascgsz'])
-    if no_gas_p: p_gas_zipped = p_gas_zipped*0.
-    
+
+    m = 1
+    if no_gas_p: m = 0
+    p_gas_zipped = zip(fd['Cellpgascgsx']*m,
+    				   fd['Cellpgascgsy']*m,
+    				   fd['Cellpgascgsz']*m)
+
     col_list.append(pyfits.Column("p_gas", format='3D',
                     array=p_gas_zipped , unit = 'Msun*kpc/yr'))
 
