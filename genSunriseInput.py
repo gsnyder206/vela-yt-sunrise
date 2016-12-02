@@ -91,6 +91,8 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
     camera_set = OrderedDict([
             ['face',([0.,0.,1.],[0.,-1.,0],True)], #up is north=+y
             ['edge',([0.,1.,0.],[0.,0.,-1.],True)],#up is along z
+            ])
+            '''
             ['backface',([0.,0.,-1.],[0.,-1.,0],True)], #up is north=+y
             ['backedge',([0.,-1.,0.],[0.,0.,-1.],True)],#up is along z
             ['45',([0.,0.7071,0.7071],[0., 0., -1.],True)],
@@ -98,9 +100,9 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
             ['Y-axis',([0.,1.,0.],[0.,0.,-1.],False)],#up is along z
             ['X-axis',([1.,0.,0.],[0.,0.,-1.],False)],#up is along z
             ])  
+            '''
 
-
-
+    '''
     segments_fixed  = 4
     segments_random = 7
 
@@ -140,8 +142,9 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
 
 
 
+    '''  
 
-    i=0    
+    i=0  
     cameras = OrderedDict()
     for name,(normal,north,do_rot)  in camera_set.iteritems():
         print name, normal, north, do_rot
