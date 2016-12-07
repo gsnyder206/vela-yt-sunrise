@@ -91,8 +91,6 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
     camera_set = OrderedDict([
             ['face',([0.,0.,1.],[0.,-1.,0],True)], #up is north=+y
             ['edge',([0.,1.,0.],[0.,0.,-1.],True)],#up is along z
-            ])
-    '''
             ['backface',([0.,0.,-1.],[0.,-1.,0],True)], #up is north=+y
             ['backedge',([0.,-1.,0.],[0.,0.,-1.],True)],#up is along z
             ['45',([0.,0.7071,0.7071],[0., 0., -1.],True)],
@@ -139,10 +137,6 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
             camera_set['Random_%03i'%(i-segments_fixed)]=(pos,vc,False)
 
     if movie: camera_set['Movie_angle'] = ([0.,math.cos(mov_ang*180./pi),math.sin(2*180./pi)],[0.,0.,-1.],False)
-    '''
-
-
-
 
     i=0  
     cameras = OrderedDict()
