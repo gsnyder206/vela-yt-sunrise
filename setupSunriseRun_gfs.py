@@ -216,6 +216,9 @@ if __name__ == "__main__":
 
     stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
 
+    #list_of_types = ['images','ifu','grism']
+    list_of_types = ['images']
+    
     print "Generating Sunrise Runs for: ", snaps
 
     abssnap = os.path.abspath(snaps[0])
@@ -274,7 +277,7 @@ if __name__ == "__main__":
             idx = np.argwhere(galprops_data['snap_files']==os.path.abspath(snapfile))[0][0]
 
 
-            for run_type in ['images','ifu','grism']:
+            for run_type in list_of_types:
                 run_dir = snap_dir+'/%s'%run_type
                 if not os.path.lexists(run_dir):
                         os.mkdir(run_dir)
