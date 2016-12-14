@@ -69,8 +69,11 @@ def parse():
                         help='Do not export data to fits for Sunrise.') 
 
     parser.add_argument('--no_gas_p',action='store_true',
-                        help='Shut off momentum of gas grid.') 
-
+                        help='Shut off momentum of gas grid.')
+    
+    parser.add_argument('--email',default='gsnyder@stsci.edu',type=str,
+                        help='email address for job notifications')
+    
 
     args = vars(parser.parse_args())
     return args
@@ -215,7 +218,13 @@ def export_fits(ds, center, export_radius, prefix, star_particles, max_level=Non
     return info  #output arrays not actually used later
 
 
-def write_qsub_exporters(snapname,qsubfn,aname):
+def write_qsub_exporters(snapname,qsubfn,aname,args):
+
+    if args['email'] is not None:
+        en = args['email']
+    else:
+        en = 'gsnyder@stsci.edu'
+        
     qsfo = open(qsubfn,'w')
     qsfo.write('#!/bin/bash\n')
     qsfo.write('#PBS -S /bin/bash\n')
@@ -223,7 +232,7 @@ def write_qsub_exporters(snapname,qsubfn,aname):
     qsfo.write('#PBS -l walltime=02:00:00\n')
     qsfo.write('#PBS -q devel\n')
     qsfo.write('#PBS -N sunrise_export\n')
-    qsfo.write('#PBS -M rsimons@jhu.edu\n')
+    qsfo.write('#PBS -M '+en+'\n')
     qsfo.write('#PBS -m abe\n')
     qsfo.write('#PBS -o sunrise_export_'+aname+'pbs.out\n')
     qsfo.write('#PBS -e sunrise_export_'+aname+'pbs.err\n')
@@ -382,7 +391,7 @@ if __name__ == "__main__":
         sys.stdout.flush()
 
         qsubfn = 'export_'+aname+'.qsub'
-        write_qsub_exporters(snapfile,qsubfn,aname)
+        write_qsub_exporters(snapfile,qsubfn,aname,args)
         submitline = 'qsub '+qsubfn
         eaf.write(submitline+'\n')
         
