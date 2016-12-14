@@ -356,7 +356,7 @@ if __name__ == "__main__":
                 final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
                 can_qsub_fn   = 'candelize.qsub'		
-                can_final_fn = generate_candelize_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
+                can_final_fn = generate_candelize_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = can_qsub_fn, 
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
                 
                 submitline = 'qsub '+final_fn
