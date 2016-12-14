@@ -198,6 +198,35 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 	return os.path.abspath(run_dir+'/'+filename)
 
 
+def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='12', model='wes', queue='normal',email='rsimons@jhu.edu',walltime='04:00:00',isnap=0):
+
+	bsubf = open(run_dir+'/'+filename, 'w+')
+	bsubf.write('#!/bin/bash\n')
+	bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
+	bsubf.write('#PBS -l select=1:ncpus=10:model=ivy\n')   #selects cpu model and number (sunrise uses 1 node)
+	bsubf.write('#PBS -l walltime='+walltime+'\n')    #hh:mm:ss before job is killed
+	bsubf.write('#PBS -q '+queue+'\n')       #selects queue to submit to 
+	bsubf.write('#PBS -N candelize_'+run_type+'\n')     #selects job name
+	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
+	bsubf.write('#PBS -m abe\n')  #set notification types (abe=abort, begin, end)
+	bsubf.write('#PBS -o '+run_dir+'/candelize_pbs.out\n')  #save standard output here
+	bsubf.write('#PBS -e '+run_dir+'/candelize_pbs.err\n')  #save standard error here
+	bsubf.write('#PBS -V\n')    #export environment variables at start of job
+
+	bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
+
+	if run_type=='images':
+                bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
+
+	bsubf.close()
+
+	print '\t\tSuccessfully generated %s'%filename
+
+
+
+	return os.path.abspath(run_dir+'/'+filename)
+
+
 if __name__ == "__main__":
 
     if len(sys.argv)==2:
@@ -208,7 +237,7 @@ if __name__ == "__main__":
 
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
     #Pleiades values:
-    nthreads = '20'  #cpu models have 12, 16, 20, 24, respectively
+    nthreads = '24'  #cpu models have 12, 16, 20, 24, respectively
     model='has'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
     queue='normal'   #options devel, debug, low, normal, long
     notify='gsnyder@stsci.edu'
@@ -326,6 +355,10 @@ if __name__ == "__main__":
                 qsub_fn   = 'sunrise.qsub'		
                 final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
+                can_qsub_fn   = 'candelize.qsub'		
+                can_final_fn = generate_candelize_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
+                                         galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
+                
                 submitline = 'qsub '+final_fn
 
                 if run_type=='images':
