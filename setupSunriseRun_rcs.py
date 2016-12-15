@@ -183,7 +183,7 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
                 #bsubf.write('gzip -9 broadband.fits\n')
 	#elif run_type=='ifu':
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-        #bsubf.write('gzip -9 mcrx.fits\n')
+        bsubf.write('gzip -9 mcrx.fits\n')
 	elif run_type=='grism':
 		bsubf.write('/u/gfsnyder/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
