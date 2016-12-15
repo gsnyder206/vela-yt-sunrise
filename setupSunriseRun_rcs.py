@@ -180,10 +180,10 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 		bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
 		bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
                 bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
-                bsubf.write('gzip -9 broadband.fits\n')
-	elif run_type=='ifu':
+                #bsubf.write('gzip -9 broadband.fits\n')
+	#elif run_type=='ifu':
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-                bsubf.write('gzip -9 mcrx.fits\n')
+        #bsubf.write('gzip -9 mcrx.fits\n')
 	elif run_type=='grism':
 		bsubf.write('/u/gfsnyder/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
@@ -208,11 +208,11 @@ if __name__ == "__main__":
 
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
     #Pleiades values:
-    nthreads = '20'  #cpu models have 12, 16, 20, 24, respectively
-    model='has'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
+    nthreads = '12'  #cpu models have 12, 16, 20, 24, respectively
+    model='wes'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
     queue='normal'   #options devel, debug, low, normal, long
     notify='rsimons@jhu.edu'
-    walltime_limit='02:00:00'
+    walltime_limit='04:00:00'
 
     stub_dir = '/nobackupp2/rcsimons/sunrise_testing/stub_files'
 
