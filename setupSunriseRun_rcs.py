@@ -208,7 +208,7 @@ if __name__ == "__main__":
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
     #Pleiades values:
     nthreads = '16'  #cpu models have 12, 16, 20, 24, respectively
-    model='san'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
+    model='has'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
     queue='normal'   #options devel, debug, low, normal, long
     notify='rsimons@jhu.edu'
     walltime_limit='04:00:00'
