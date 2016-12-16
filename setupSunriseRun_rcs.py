@@ -37,8 +37,8 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 	elif run_type == 'ifu':
 		sf.write('min_wavelength			%s\n'%("0.653e-6"))
 		sf.write('max_wavelength			%s\n\n'%("0.660e-6"))
-
-		sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel_full_hires.fits"))
+        #Use the sigma = 10 km/s smoothed mappings model
+		sf.write('mappings_sed_file			%s\n'%("/u/rcsimons/scripts/vela-yt-sunrise/Smodel_full_hires_smooth.fits"))
 		sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
 
 	elif run_type == 'grism':
@@ -296,39 +296,39 @@ if __name__ == "__main__":
 
 
 
-                if run_type == 'images': 
-                        print '\tGenerating broadband.config file for %s...'%run_type
-                        broadband_fn   = 'broadband.config'
-                        broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
+            if run_type == 'images': 
+                    print '\tGenerating broadband.config file for %s...'%run_type
+                    broadband_fn   = 'broadband.config'
+                    broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
 
-                        generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
-                                                         stub_name = broadband_stub, 
-                                                         galprops_data = galprops_data, idx = idx)
-                if run_type == 'grism': 
-                        print '\tGenerating broadband.config file for %s...'%run_type
-                        broadband_fn   = 'broadband.config'
-                        broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
+                    generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
+                                                     stub_name = broadband_stub, 
+                                                     galprops_data = galprops_data, idx = idx)
+            if run_type == 'grism': 
+                    print '\tGenerating broadband.config file for %s...'%run_type
+                    broadband_fn   = 'broadband.config'
+                    broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
 
-                        generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
-                                                        stub_name = broadband_stub, 
-                                                        galprops_data = galprops_data, idx = idx)
-
-
+                    generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
+                                                    stub_name = broadband_stub, 
+                                                    galprops_data = galprops_data, idx = idx)
 
 
 
-                print '\tGenerating sunrise.qsub file for %s...'%run_type
-                qsub_fn   = 'sunrise.qsub'		
-                final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
-                                         galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
-                submitline = 'qsub '+final_fn
 
-                if run_type=='images':
-                        smf_images.write(submitline+'\n')
-                if run_type=='ifu':
-                        smf_ifu.write(submitline+'\n')
-                if run_type=='grism':
-                        smf_grism.write(submitline+'\n')
+
+            print '\tGenerating sunrise.qsub file for %s...'%run_type
+            qsub_fn   = 'sunrise.qsub'		
+            final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
+                                     galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
+            submitline = 'qsub '+final_fn
+
+            if run_type=='images':
+                    smf_images.write(submitline+'\n')
+            if run_type=='ifu':
+                    smf_ifu.write(submitline+'\n')
+            if run_type=='grism':
+                    smf_grism.write(submitline+'\n')
 
     
     smf_ifu.close()
