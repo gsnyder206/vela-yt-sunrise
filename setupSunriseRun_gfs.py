@@ -260,6 +260,7 @@ if __name__ == "__main__":
     smf_images = open('submit_sunrise_images_gfs.sh','w')
     smf_ifu = open('submit_sunrise_ifu_gfs.sh','w')
     smf_grism = open('submit_sunrise_grism_gfs.sh','w')
+    smf_candelize = open('submit_sunrise_candelize_gfs.sh','w')
     
     new_snapfiles = []
 
@@ -360,9 +361,11 @@ if __name__ == "__main__":
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
                 
                 submitline = 'qsub '+final_fn
-
+                can_submitline = 'qsub '+can_final_fn
+                
                 if run_type=='images':
                         smf_images.write(submitline+'\n')
+                        smf_candelize.write(can_submitline+'\n')
                 if run_type=='ifu':
                         smf_ifu.write(submitline+'\n')
                 if run_type=='grism':
@@ -372,7 +375,8 @@ if __name__ == "__main__":
     smf_images.close()
     smf_ifu.close()
     smf_grism.close()
-
+    smf_candelize.close()
+    
 
 
 
