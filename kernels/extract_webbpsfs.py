@@ -41,7 +41,7 @@ if __name__=="__main__":
                'WebbPSF_F1280W_trunc.fits','WebbPSF_F1500W_trunc.fits','WebbPSF_F1800W_trunc.fits','WebbPSF_F2100W_trunc.fits','WebbPSF_F2550W_trunc.fits',]
 
     truncs = [40,40,40,40,40,30,30,30,
-              50,50,50,50,50,50,50,50,50]
+              40,40,50,50,60,60,80,80,80]
 
     for i,fits in enumerate(ncpsfs):
         hdulist = pyfits.open(fits)
