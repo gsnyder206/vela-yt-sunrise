@@ -180,7 +180,7 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 		bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
 		bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
                 #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
-                bsubf.write('gzip -9 broadband.fits\n')
+                bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
 	elif run_type=='ifu':
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
                 bsubf.write('gzip -9 mcrx.fits\n')
