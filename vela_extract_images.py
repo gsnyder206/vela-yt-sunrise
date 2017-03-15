@@ -24,10 +24,10 @@ def extract_jwst_from_vela(dirname='VELA01'):
             members=tfo.getmembers()
             blist=[]
             for n,m in zip(names,members):
-                if n.find('NC')>0 and n.find('SB00')>0 and (n.find('cam17')>0 or n.find('cam18')>0 or n.find('cam16')>0 ):
+                if n.find('NC')>0 and n.find('SB00')>0 :
                     blist.append(True)
                 elif n.find('MIRI')>0 and n.find('SB00')>0:
-                    blist.append(False)
+                    blist.append(True)
                 else:
                     blist.append(False)
 
@@ -41,3 +41,12 @@ def extract_jwst_from_vela(dirname='VELA01'):
             tfo.extractall(path=outdir,members=marr[barr])
 
     return
+
+
+
+if __name__=="__main__":
+
+    vdir= np.asarray(glob.glob('VELA??'))
+    for vd in vdir:
+        extract_jwst_from_vela(vd)
+    
