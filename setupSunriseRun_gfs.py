@@ -180,12 +180,12 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 		bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
 		bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
                 #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
-                bsubf.write('gzip -9 broadband.fits\n')
+                bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
 	elif run_type=='ifu':
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
                 bsubf.write('gzip -9 mcrx.fits\n')
 	elif run_type=='grism':
-		bsubf.write('/u/gfsnyder/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
+		bsubf.write('/u/gfsnyder/bin/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
 		#bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
 
@@ -203,8 +203,8 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
 	bsubf = open(run_dir+'/'+filename, 'w+')
 	bsubf.write('#!/bin/bash\n')
 	bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
-	bsubf.write('#PBS -l select=1:ncpus=10:model=ivy\n')   #selects cpu model and number (sunrise uses 1 node)
-	bsubf.write('#PBS -l walltime='+walltime+'\n')    #hh:mm:ss before job is killed
+	bsubf.write('#PBS -l select=1:ncpus=4:model=ivy\n')   #selects cpu model and number (sunrise uses 1 node)
+	bsubf.write('#PBS -l walltime=05:00:00\n')    #hh:mm:ss before job is killed
 	bsubf.write('#PBS -q '+queue+'\n')       #selects queue to submit to 
 	bsubf.write('#PBS -N candelize_'+run_type+'\n')     #selects job name
 	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
@@ -237,8 +237,8 @@ if __name__ == "__main__":
 
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
     #Pleiades values:
-    nthreads = '24'  #cpu models have 12, 16, 20, 24, respectively
-    model='has'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
+    nthreads = '28'  #cpu models have 12, 16, 20, 24, respectively
+    model='bro_ele'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
     queue='normal'   #options devel, debug, low, normal, long
     notify='gsnyder@stsci.edu'
     walltime_limit='08:00:00'
@@ -260,6 +260,7 @@ if __name__ == "__main__":
     smf_images = open('submit_sunrise_images_gfs.sh','w')
     smf_ifu = open('submit_sunrise_ifu_gfs.sh','w')
     smf_grism = open('submit_sunrise_grism_gfs.sh','w')
+    smf_candelize = open('submit_sunrise_candelize_gfs.sh','w')
     
     new_snapfiles = []
 
@@ -360,9 +361,11 @@ if __name__ == "__main__":
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
                 
                 submitline = 'qsub '+final_fn
-
+                can_submitline = 'qsub '+can_final_fn
+                
                 if run_type=='images':
                         smf_images.write(submitline+'\n')
+                        smf_candelize.write(can_submitline+'\n')
                 if run_type=='ifu':
                         smf_ifu.write(submitline+'\n')
                 if run_type=='grism':
@@ -372,7 +375,8 @@ if __name__ == "__main__":
     smf_images.close()
     smf_ifu.close()
     smf_grism.close()
-
+    smf_candelize.close()
+    
 
 
 

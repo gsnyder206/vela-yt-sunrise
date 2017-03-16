@@ -31,12 +31,17 @@ import astropy.io.ascii as ascii
 
 if __name__=="__main__":
     ncpsfs = ['PSF_NIRCam_F070W_revV-1.fits','PSF_NIRCam_F090W_revV-1.fits','PSF_NIRCam_F115W_revV-1.fits','PSF_NIRCam_F150W_revV-1.fits',
-              'PSF_NIRCam_F200W_revV-1.fits','PSF_NIRCam_F277W_revV-1.fits','PSF_NIRCam_F356W_revV-1.fits','PSF_NIRCam_F444W_revV-1.fits']
+              'PSF_NIRCam_F200W_revV-1.fits','PSF_NIRCam_F277W_revV-1.fits','PSF_NIRCam_F356W_revV-1.fits','PSF_NIRCam_F444W_revV-1.fits',
+              'PSF_MIRI_F560W_revV-1.fits','PSF_MIRI_F770W_revV-1.fits','PSF_MIRI_F1000W_revV-1.fits','PSF_MIRI_F1130W_revV-1.fits',
+              'PSF_MIRI_F1280W_revV-1.fits','PSF_MIRI_F1500W_revV-1.fits','PSF_MIRI_F1800W_revV-1.fits','PSF_MIRI_F2100W_revV-1.fits','PSF_MIRI_F2550W_revV-1.fits']
 
     outpsfs = ['WebbPSF_F070W_trunc.fits','WebbPSF_F090W_trunc.fits','WebbPSF_F115W_trunc.fits','WebbPSF_F150W_trunc.fits',
-               'WebbPSF_F200W_trunc.fits','WebbPSF_F277W_trunc.fits','WebbPSF_F356W_trunc.fits','WebbPSF_F444W_trunc.fits']
+               'WebbPSF_F200W_trunc.fits','WebbPSF_F277W_trunc.fits','WebbPSF_F356W_trunc.fits','WebbPSF_F444W_trunc.fits',
+               'WebbPSF_F560W_trunc.fits','WebbPSF_F770W_trunc.fits','WebbPSF_F1000W_trunc.fits','WebbPSF_F1130W_trunc.fits',
+               'WebbPSF_F1280W_trunc.fits','WebbPSF_F1500W_trunc.fits','WebbPSF_F1800W_trunc.fits','WebbPSF_F2100W_trunc.fits','WebbPSF_F2550W_trunc.fits',]
 
-    truncs = [40,40,40,40,40,30,30,30]
+    truncs = [40,40,40,40,40,30,30,30,
+              40,40,50,50,60,60,80,80,80]
 
     for i,fits in enumerate(ncpsfs):
         hdulist = pyfits.open(fits)
