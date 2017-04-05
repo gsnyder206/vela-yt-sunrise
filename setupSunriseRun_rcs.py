@@ -224,7 +224,7 @@ if __name__ == "__main__":
     simname = os.path.basename(dirname) #assumes directory name for simulation name
     print "Simulation name:  ", simname
 
-    smf_ifu = open('submit_sunrise_ifu.sh','w')
+    #smf_ifu = open('submit_sunrise_ifu.sh','w')
     
     new_snapfiles = []
 
@@ -325,12 +325,13 @@ if __name__ == "__main__":
                 if run_type=='images':
                         smf_images.write(submitline+'\n')
                 if run_type=='ifu':
-                        smf_ifu.write(submitline+'\n')
+                        pass
+                        #smf_ifu.write(submitline+'\n')
                 if run_type=='grism':
                         smf_grism.write(submitline+'\n')
 
     
-    smf_ifu.close()
+    #smf_ifu.close()
     
 
 
