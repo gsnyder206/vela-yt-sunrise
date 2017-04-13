@@ -224,7 +224,7 @@ if __name__ == "__main__":
     simname = os.path.basename(dirname) #assumes directory name for simulation name
     print "Simulation name:  ", simname
 
-    smf_ifu = open('/nobackupp2/rcsimons/runs_files/submit_sunrise_ifu.sh','w')
+    smf_ifu = open('/nobackupp2/rcsimons/runs_files/submit_%s_sunrise_ifu.sh'%simname,'w')
     
     new_snapfiles = []
 
