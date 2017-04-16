@@ -171,7 +171,7 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
     bsubf.write('#PBS -V\n')    #export environment variables at start of job
 
     bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
-    #bsubf.write('/u/rcsimons/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
+    bsubf.write('/u/rcsimons/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
     bsubf.write('/u/rcsimons/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
     if run_type=='images':
         bsubf.write('/u/gfsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
