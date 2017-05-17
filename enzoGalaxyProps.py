@@ -102,7 +102,7 @@ if __name__=="__main__":
     for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
         print "Getting galaxy props: ",  snap_dir
 
-        #ds.add_particle_filter('stars')
+        ds.add_particle_filter('stars')
         
         dd = ds.all_data()
         ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
