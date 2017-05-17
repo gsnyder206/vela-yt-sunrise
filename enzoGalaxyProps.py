@@ -80,7 +80,7 @@ if __name__=="__main__":
                 os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
         elif form=='ENZO':
             #can probably just work from snap directories?
-            new_snapfiles.append(sn)
+            new_snapfiles.append(os.path.abspath(sn))
             
     
     new_snapfiles = np.asarray(new_snapfiles)
@@ -114,14 +114,14 @@ if __name__=="__main__":
             stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
             assert stars_pos_x.shape > 5
         except AttributeError,AssertionError:
-            print "No star particles found, skipping: ", ds._file_amr
+            print "No star particles found, skipping: ", snap_dir
             continue
 
 
         scale = round(1.0/(ds.current_redshift+1.0),3)
         galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
     
-        galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
+        galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],snap_dir)
 
 
         print 'Determining center...'
