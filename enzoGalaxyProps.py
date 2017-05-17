@@ -97,49 +97,49 @@ if __name__=="__main__":
         print "Getting galaxy props: ",  snap_dir
 
 
-    dd = ds.all_data()
-    ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
-    ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
-    print ds.index.get_smallest_dx()
+        dd = ds.all_data()
+        ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
+        ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
+        print ds.index.get_smallest_dx()
 
-    #need to exit gracefully here if there's no stars.
-    try:
-        stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
-        assert stars_pos_x.shape > 5
-    except AttributeError,AssertionError:
-        print "No star particles found, skipping: ", ds._file_amr
-        continue
+        #need to exit gracefully here if there's no stars.
+        try:
+            stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
+            assert stars_pos_x.shape > 5
+        except AttributeError,AssertionError:
+            print "No star particles found, skipping: ", ds._file_amr
+            continue
 
 
-    scale = round(1.0/(ds.current_redshift+1.0),3)
-    galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
+        scale = round(1.0/(ds.current_redshift+1.0),3)
+        galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
     
-    galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
+        galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 
-    print 'Determining center...'
-    max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
-    print '\tCenter = ', max_ndens_arr
+        print 'Determining center...'
+        max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
+        print '\tCenter = ', max_ndens_arr
 
-    #Generate Sphere Selection
-    print 'Determining virial radius...'
-    rvir = find_rvirial(dd, ds, max_ndens_arr)
-    print '\tRvir = ', rvir
+        #Generate Sphere Selection
+        print 'Determining virial radius...'
+        rvir = find_rvirial(dd, ds, max_ndens_arr)
+        print '\tRvir = ', rvir
 
-    hc_sphere = ds.sphere(max_ndens_arr, rvir)
+        hc_sphere = ds.sphere(max_ndens_arr, rvir)
 
  
-    galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
-    galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
-    galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
+        galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
+        galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
+        galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
 
 		
-    #Find Galaxy Properties
-    galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
+        #Find Galaxy Properties
+        galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
 
 
-    del (hc_sphere)
-    sys.stdout.flush()
+        del (hc_sphere)
+        sys.stdout.flush()
 
 
     # Save galaxy props file
