@@ -106,6 +106,8 @@ if __name__ == "__main__":
             snaps = np.sort(np.asarray(glob.glob("RD????/RD????")))  #ENZO format a list of snapshots in separate directories
             form='ENZO'
 
+    args['format']=form
+
     assert snaps.shape[0] > 0
 
     print "Generating Sunrise Inputs for "+form+": ", snaps
