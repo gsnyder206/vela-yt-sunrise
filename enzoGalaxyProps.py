@@ -125,12 +125,13 @@ if __name__=="__main__":
 
 
         print 'Determining center...'
-        max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
+        max_ndens_arr = fGP.find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
         print '\tCenter = ', max_ndens_arr
+        sys.stdout.flush()
 
         #Generate Sphere Selection
         print 'Determining virial radius...'
-        rvir = find_rvirial(dd, ds, max_ndens_arr)
+        rvir = fGP.find_rvirial(dd, ds, max_ndens_arr)
         print '\tRvir = ', rvir
 
         hc_sphere = ds.sphere(max_ndens_arr, rvir)
@@ -142,7 +143,7 @@ if __name__=="__main__":
 
 		
         #Find Galaxy Properties
-        galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
+        galaxy_props = fGP.find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
 
 
         del (hc_sphere)
