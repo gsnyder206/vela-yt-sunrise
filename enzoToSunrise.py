@@ -62,6 +62,9 @@ def parse():
     #parser.add_argument('--no_plots',action='store_true',
     #                    help='Do not generate projection plots.') 
 
+    parser.add_argument('--format',default='VELA',type=str,
+                        help='Simulation type (ENZO or VELA)') 
+    
     parser.add_argument('--no_export',action='store_true',
                         help='Do not export data to fits for Sunrise.') 
 
