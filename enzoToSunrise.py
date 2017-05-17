@@ -9,6 +9,15 @@ import glob
 import genSunriseInput as gSI
 
 
+def _stars(pfilter, data):
+    return data[(pfilter.filtered_type, "particle_type")] == 2
+
+#this gets dark matter particles in zoom region only
+def _darkmatter(pfilter, data):
+    return data[(pfilter.filtered_type, "particle_type")] == 4
+
+
+
 def parse():
     '''
     Parse command line arguments
@@ -255,12 +264,20 @@ if __name__ == "__main__":
 
     print "Continuing to export grids."
 
+    if form=='VELA':
+        starfield='stars'
+    elif form=='ENZO':
+        starfield='stars'
+
+    
     yt.enable_parallelism()
     
     ts = yt.DatasetSeries(new_snapfiles)
 
     # Send one snapshots to each processor to export 
+    yt.add_particle_filter("stars",function=_stars, filtered_type='all',requires=["particle_type"])
 
+    
     for ds in ts.piter():
         if form=='VELA':
             aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
@@ -280,6 +297,7 @@ if __name__ == "__main__":
             out_dir=os.path.join(snap_dir,'input')
             prefix=os.path.join(out_dir,simname+'_'+aname)
             snapfile=os.path.join(ds.fullpath,aname)
+            ds.add_particle_filter('stars')
 
             
         if os.path.abspath(snapfile) not in galprops['snap_files']: continue
