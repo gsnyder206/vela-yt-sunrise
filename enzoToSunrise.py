@@ -262,18 +262,26 @@ if __name__ == "__main__":
     # Send one snapshots to each processor to export 
 
     for ds in ts.piter():
-        aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
-        print "Timestep name: ", aname
-        snap_dir = os.path.dirname(ds._file_amr)
-        assert os.path.lexists(snap_dir)
+        if form=='VELA':
+            aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
+            print "Timestep name: ", aname
+            snap_dir = os.path.dirname(ds._file_amr)
+            assert os.path.lexists(snap_dir)
+            
+            out_dir = os.path.join(snap_dir, 'input')
+            assert os.path.lexists(out_dir)
+            
+            prefix = os.path.join(out_dir,simname+'_'+aname)
         
-        out_dir = os.path.join(snap_dir, 'input')
-        assert os.path.lexists(out_dir)
-        
-        prefix = os.path.join(out_dir,simname+'_'+aname)
-        
-        snapfile = ds._file_amr
-        
+            snapfile = ds._file_amr
+        elif form=='ENZO':
+            aname=ds.basename
+            snap_dir=os.path.join(ds.fullpath,simname+'_'+aname+'_sunrise')
+            out_dir=os.path.join(snap_dir,'input')
+            prefix=os.path.join(out_dir,simname+'_'+aname)
+            snapfile=os.path.join(ds.fullpath,aname)
+
+            
         if os.path.abspath(snapfile) not in galprops['snap_files']: continue
         idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
         
