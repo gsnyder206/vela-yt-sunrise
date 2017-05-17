@@ -187,7 +187,8 @@ def export_fits(ds, center, export_radius, prefix, star_particles, max_level=Non
     Convert the contents of a dataset to a FITS file format that Sunrise
     understands.
     '''
-    
+    import sunrise_octree_exporter
+
     print "\nExporting data in %s to FITS for Sunrise"%ds.parameter_filename.split('/')[-1]
     
     filename = prefix+'.fits'
