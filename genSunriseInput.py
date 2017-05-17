@@ -152,7 +152,7 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
         else:
             drot = np.identity(3)
         sunrise_pos = np.dot(orient.normal_vector, drot)
-        sunrise_up  = L.copy()
+        sunrise_up  = normal_vector.copy()
         if np.all(np.abs(sunrise_up-sunrise_pos)<1e-3):
             sunrise_up[0] *= 0.5 
         sunrise_direction = -1.0*sunrise_pos
