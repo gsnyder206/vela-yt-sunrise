@@ -639,8 +639,11 @@ def prepare_star_particles(ds,star_type,pos=None,vel=None, age=None, creation_ti
     pos = pos[idx].in_units('kpc') #unitary units -> kpc
 
     if creation_time is None:
-        formation_time = ad[star_type,"particle_creation_time"][idx].in_units('yr')
-
+        try:
+                formation_time = ad[star_type,"particle_creation_time"][idx].in_units('yr')
+        except:
+                formation_time = ad[star_type,'creation_time'][idx].in_units('yr')
+                
     if age is None:
         age = (ds.current_time - formation_time).in_units('yr')
 
@@ -653,16 +656,23 @@ def prepare_star_particles(ds,star_type,pos=None,vel=None, age=None, creation_ti
     
     if initial_mass is None:
         #in solar masses
-        initial_mass = ad[star_type,"particle_mass_initial"][idx].in_units('Msun')
-    
+        try:
+                initial_mass = ad[star_type,"particle_mass_initial"][idx].in_units('Msun')
+        except:
+                initial_mass = ad[star_type,"particle_mass"][idx].in_units('Msun')
+
     if current_mass is None:
         #in solar masses
         current_mass = ad[star_type,"particle_mass"][idx].in_units('Msun')
     
     if metallicity is None:
         #this should be in dimensionless units, metals mass / particle mass
-        metallicity = ad[star_type,"particle_metallicity1"][idx]
-    
+        try:
+                metallicity = ad[star_type,"particle_metallicity1"][idx]
+        except:
+                metallicity = ad[star_type,"metallicity_fraction"][idx]
+                
+                
     if radius is None:
         radius = ds.arr(metallicity*0.0 + 10.0/1000.0, 'kpc') #10pc radius
     
