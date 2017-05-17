@@ -9,6 +9,11 @@ from astropy.cosmology import Planck13 as cosmo
 reload(yt)
 import findGalaxyProps as fGP
 
+@yt.particle_filter(requires=["particle_type"], filtered_type='all')
+def stars(pfilter, data):
+    filter = data[(pfilter.filtered_type, "particle_type")] == 2
+    return filter
+
 if __name__=="__main__":
     
     if len(sys.argv)==3:
@@ -95,6 +100,7 @@ if __name__=="__main__":
     for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
         print "Getting galaxy props: ",  snap_dir
 
+        ds.add_particle_filter('stars')
 
         dd = ds.all_data()
         ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
