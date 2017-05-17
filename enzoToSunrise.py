@@ -315,7 +315,7 @@ if __name__ == "__main__":
 	print export_radius
         
 	export_info = gSI.export_fits(ds, gal_center, export_radius, 
-                                  prefix, star_particles = 'io', 
+                                  prefix, star_particles = starfield, 
                                   max_level=max_level, no_gas_p = args['no_gas_p'])
 
 
