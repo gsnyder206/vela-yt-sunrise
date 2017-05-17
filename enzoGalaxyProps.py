@@ -78,7 +78,6 @@ if __name__=="__main__":
             #can probably just work from snap directories?
             new_snapfiles.append(sn)
             
-    exit()
     
     new_snapfiles = np.asarray(new_snapfiles)
     galaxy_props = {}
