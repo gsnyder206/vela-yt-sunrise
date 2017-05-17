@@ -139,6 +139,7 @@ if __name__=="__main__":
         print 'Determining virial radius...'
         rvir = fGP.find_rvirial(dd, ds, max_ndens_arr)
         print '\tRvir = ', rvir
+        sys.stdout.flush()
 
         hc_sphere = ds.sphere(max_ndens_arr, rvir)
 

@@ -325,8 +325,12 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	    x, y, z = [sc_sphere[('stars', 'particle_position_%s'%s)] for s in 'xyz'] 
 	    vx, vy, vz = [sc_sphere[('stars', 'particle_velocity_%s'%s)] for s in 'xyz'] 
 	    mass = sc_sphere[('stars', 'particle_mass')]
-	    metals = sc_sphere[('stars', 'particle_metallicity1')]
-	    stars_L = L_crossing(x, y, z, vx, vy, vz, mass*metals, sc_sphere.center)
+            try:
+	        metals = sc_sphere[('stars', 'particle_metallicity1')]
+	        stars_L = L_crossing(x, y, z, vx, vy, vz, mass*metals, sc_sphere.center)
+            except:
+	        stars_L = L_crossing(x, y, z, vx, vy, vz, mass, sc_sphere.center)
+                
 	except IndexError: # no stars found
 	    stars_L = [None, None, None]
 	galaxy_props['stars_L'].append(stars_L)
@@ -340,8 +344,13 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	x, y, z = [gc_sphere[('index', '%s'%s)] for s in 'xyz'] 
 	vx, vy, vz = [gc_sphere[('gas', 'momentum_%s'%s)] for s in 'xyz'] # momentum density
 	cell_volume = gc_sphere[('index', 'cell_volume')]
-	metals = gc_sphere[('gas', 'metal_ia_density')] + gc_sphere[('gas', 'metal_ii_density')]
-	gas_L = L_crossing(x, y, z, vx, vy, vz, metals*cell_volume**2, gc_sphere.center)
+        try:
+                metals = gc_sphere[('gas', 'metal_ia_density')] + gc_sphere[('gas', 'metal_ii_density')]
+	        gas_L = L_crossing(x, y, z, vx, vy, vz, metals*cell_volume**2, gc_sphere.center)
+        except:
+                density=gc_sphere[('gas', 'density')]
+	        gas_L = L_crossing(x, y, z, vx, vy, vz, density*cell_volume**2, gc_sphere.center)
+                
 	galaxy_props['gas_L'].append(gas_L)
 	del(gc_sphere)
 
