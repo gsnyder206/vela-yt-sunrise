@@ -20,7 +20,7 @@ if __name__=="__main__":
             form='VELA'
             assert snaps.shape[0] > 0
         except AssertionError as e:
-            snaps = np.sort(np.asarray(glob.glob("RD*/RD*")))  #ENZO format a list of snapshots in separate directories
+            snaps = np.sort(np.asarray(glob.glob("RD????/RD????")))  #ENZO format a list of snapshots in separate directories
             form='ENZO'
 
     assert snaps.shape[0] > 0
