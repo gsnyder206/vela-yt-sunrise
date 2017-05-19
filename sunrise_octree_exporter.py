@@ -356,16 +356,25 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 
 		def _pgascgsx(field, data):
-		    return data['momentum_x'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+                        try:
+		                return data['momentum_x'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+                        except:
+                                return data['velocity_x'].in_units('kpc/yr')*data['cell_mass'].in_units('Msun')
 		ad.ds.add_field('Cellpgascgsx', function=_pgascgsx, units = 'Msun*kpc/yr')
 
 
 		def _pgascgsy(field, data):
-		    return data['momentum_y'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+		    try:
+                            return data['momentum_y'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+                    except:
+                            return data['velocity_y'].in_units('kpc/yr')*data['cell_mass'].in_units('Msun')
 		ad.ds.add_field('Cellpgascgsy', function=_pgascgsy, units = 'Msun*kpc/yr')
 
-		def _pgascgsz(field, data):    
-		    return data['momentum_z'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+		def _pgascgsz(field, data):
+                        try:
+		                return data['momentum_z'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+                        except:
+                                return data['velocity_z'].in_units('kpc/yr')*data['cell_mass'].in_units('Msun')
 		ad.ds.add_field('Cellpgascgsz', function=_pgascgsz, units = 'Msun*kpc/yr')
 
 
