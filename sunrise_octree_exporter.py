@@ -339,7 +339,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
                         except:
                                 den=data['density']
                                 ted=(te*den).in_units('erg/cm**3')
-                                temp=(2.0*te/(3.0*hd*yt.physical_constants.kb)).in_units('K')
+                                temp=(2.0*ted/(3.0*hd*yt.physical_constants.kb)).in_units('K')
                                 
                         mass=data["cell_mass"].in_units('Msun')
                         
