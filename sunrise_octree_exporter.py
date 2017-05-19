@@ -335,7 +335,9 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 			te = data['thermal_energy']
 			hd = data['H_nuclei_density']
 			temp = (2.0*te/(3.0*hd*yt.physical_constants.kb)).in_units('K')
-			return temp*data["cell_mass"].in_units('Msun')
+                        mass=data["cell_mass"].in_units('Msun')
+                        print(te.units,hd.units,temp.units,mass.units)
+			return temp*mass
 		ad.ds.add_field('TemperatureTimesCellMassMsun', function=_TempTimesMass, units='K*Msun')
 		
 		def _cellMassMsun(field, data):
