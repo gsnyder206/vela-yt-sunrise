@@ -48,7 +48,7 @@ def phot_from_vela(jd="jwst_VELA01"):
     fitsfiles=np.sort(np.asarray(glob.glob(jd+'/images_*_sunrise/*.fits')))
     print(fitsfiles)
 
-    outf=open(jd+'_photometry.txt')
+    outf=open(jd+'_photometry.txt','w')
     outf.write('name,redshift,filter,apparentmag,distancemodulus')
     for fn in fitsfiles:
         header=pyfits.open(fn)[0].header
@@ -56,6 +56,7 @@ def phot_from_vela(jd="jwst_VELA01"):
         filname=header['FILTER']
         redshift=header['REDSHIFT']
         distmod=header['DISTMOD']
+        print(fn,redshift,mag)
         outf.write('{:20s} {:8.4f} {:20s} {:8.4f} {:8.4f}\n'.format(jd,redshift,filname,mag,distmod))
 
     outf.close()
