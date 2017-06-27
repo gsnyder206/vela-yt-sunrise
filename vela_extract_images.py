@@ -53,6 +53,8 @@ def phot_from_vela(jd="jwst_VELA01"):
 
 if __name__=="__main__":
 
-    vdir= np.asarray(glob.glob('VELA??'))
-    for vd in vdir:
-        extract_jwst_from_vela(vd)
+    #vdir= np.asarray(glob.glob('VELA??'))
+    #for vd in vdir:
+    #    extract_jwst_from_vela(vd)
+
+    phot_from_vela()
