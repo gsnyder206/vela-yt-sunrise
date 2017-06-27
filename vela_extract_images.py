@@ -5,7 +5,7 @@ import glob
 import shutil
 import tarfile
 import string
-
+import pandas
 
 def extract_jwst_from_vela(dirname='VELA01'):
 
@@ -47,6 +47,18 @@ def phot_from_vela(jd="jwst_VELA01"):
 
     fitsfiles=np.sort(np.asarray(glob.glob(jd+'/images_*_sunrise/*.fits')))
     print(fitsfiles)
+
+    outf=open(jd+'_photometry.txt')
+    outf.write('name,redshift,filter,apparentmag,distancemodulus')
+    for fn in fitsfiles:
+        header=pyfits.open(fn)[0].header
+        mag=header['MAG']
+        filname=header['FILTER']
+        redshift=header['REDSHIFT']
+        distmod=header['DISTMOD']
+        outf.write('{:20s} {:8.4f} {:20s} {:8.4f} {:8.4f}\n'.format(jd,redshift,filname,mag,distmod))
+
+    outf.close()
 
     return 
 
