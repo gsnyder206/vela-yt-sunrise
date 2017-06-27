@@ -51,7 +51,7 @@ def phot_from_vela(jd="jwst_VELA01"):
     print(fitsfiles)
 
     outf=open(jd+'_photometry.txt','w')
-    outf.write('name,redshift,filter,apparentmag,distancemodulus')
+    outf.write('name,redshift,filter,apparentmag,distancemodulus\n')
     for fn in fitsfiles:
         header=pyfits.open(fn)[0].header
         mag=header['MAG']
