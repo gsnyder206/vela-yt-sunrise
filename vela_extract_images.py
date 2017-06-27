@@ -40,8 +40,15 @@ def extract_jwst_from_vela(dirname='VELA01'):
 
             tfo.extractall(path=outdir,members=marr[barr])
 
-    return
+    return outdir
 
+
+def phot_from_vela(jd="jwst_VELA01"):
+
+    fitsfiles=np.sort(np.asarray(glob.glob(jd+'/images_*_sunrise/*.fits')))
+    print(fitsfiles)
+
+    return 
 
 
 if __name__=="__main__":
@@ -49,4 +56,3 @@ if __name__=="__main__":
     vdir= np.asarray(glob.glob('VELA??'))
     for vd in vdir:
         extract_jwst_from_vela(vd)
-    
