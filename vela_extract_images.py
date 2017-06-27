@@ -6,6 +6,8 @@ import shutil
 import tarfile
 import string
 import pandas
+import astropy
+import astropy.io.fits as pyfits
 
 def extract_jwst_from_vela(dirname='VELA01'):
 
