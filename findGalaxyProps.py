@@ -13,7 +13,7 @@ import numpy as np
 from numpy import *
 import astropy
 from astropy.cosmology import Planck13 as cosmo
-reload(yt)
+#reload(yt)
 
 def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_pos = 20):
 	'''
