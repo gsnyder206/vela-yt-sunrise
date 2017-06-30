@@ -182,7 +182,7 @@ def write_cameras(prefix, cameras):
     fh.write('\n'.join([c for c in cameras.keys()]))
     fh.close()
 
-def export_fits(ds, center, export_radius, prefix, star_particles, max_level=None, no_gas_p = False):
+def export_fits(ds, center, export_radius, prefix, star_particles, max_level=None, no_gas_p = False, form='VELA'):
     '''
     Convert the contents of a dataset to a FITS file format that Sunrise
     understands.
@@ -197,7 +197,7 @@ def export_fits(ds, center, export_radius, prefix, star_particles, max_level=Non
     info = {}
     
     fle, fre, ile, ire, nrefined, nleafs, nstars, output, output_array = \
-	                                                                 sunrise_octree_exporter.export_to_sunrise(ds, filename, star_particles,  center, width, max_level=max_level, grid_structure_fn = prefix+'_grid_struct.npy', no_gas_p = no_gas_p)
+	                                                                 sunrise_octree_exporter.export_to_sunrise(ds, filename, star_particles,  center, width, max_level=max_level, grid_structure_fn = prefix+'_grid_struct.npy', no_gas_p = no_gas_p, form=form)
     
     info['export_ile']=ile
     info['export_ire']=ire

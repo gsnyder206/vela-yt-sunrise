@@ -237,7 +237,7 @@ def OctreeDepthFirstHilbert(oct_list, oct_obj, hilbert, grid_structure, output, 
 			OctreeDepthFirstHilbert(oct_list, child_oct_obj, hilbert_child, grid_structure, output, field_names, debug, f)
 
 def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None, 
-    debug=False,ad=None,max_level=None, grid_structure_fn = 'grid_structure.npy', no_gas_p = False, **kwargs):
+    debug=False,ad=None,max_level=None, grid_structure_fn = 'grid_structure.npy', no_gas_p = False, form='VELA', **kwargs):
 
 
 	r"""Convert the contents of a dataset to a FITS file format that Sunrise
@@ -307,23 +307,104 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
     #we must create the octree region sitting 
     #ontop of the first mesh by providing a negative level
 	ad = ds.all_data()
-	output, grid_structure, nrefined, nleafs = prepare_octree(ds,ile,fle=fle,fre=fre, ad=ad,start_level=super_level, debug=debug)
+        if form=='Enzo':
+                output, grid_structure, nrefined, nleafs = None,None,None,None
+                create_simple_fits(ds,fn,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge, no_gas_p = no_gas_p,form=form)
+        elif form=='VELA':
+                output, grid_structure, nrefined, nleafs = prepare_octree(ds,ile,fle=fle,fre=fre, ad=ad,start_level=super_level, debug=debug)
 
+                output_array = zeros((len(output[output.keys()[0]]), len(output.keys())))
+                for i in arange(len(output_array[0])):
+                        output_array[:,i] = output[output.keys()[i]]
+                #grid_structure['level']+=6
+                refined = grid_structure['refined']
 
+                #np.savez('grid_structure.npz',grid_structure)
+                np.save(grid_structure_fn,grid_structure)  #way faster to load for some reason?
 
-
-	output_array = zeros((len(output[output.keys()[0]]), len(output.keys())))
-	for i in arange(len(output_array[0])):
-		output_array[:,i] = output[output.keys()[i]]
-	#grid_structure['level']+=6
-	refined = grid_structure['refined']
-
-	#np.savez('grid_structure.npz',grid_structure)
-	np.save(grid_structure_fn,grid_structure)  #way faster to load for some reason?
-
-	create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge, no_gas_p = no_gas_p)
+                create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge, no_gas_p = no_gas_p,form=form)
 
 	return fle, fre, ile, ire, nrefined, nleafs, nstars, output, output_array
+
+
+def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='VELA'):
+        refined=np.asarray([0,0,0,0,0,0,0,0])
+        
+        #first create the grid structure
+        structure = pyfits.Column("structure", format="B", array=array(refined).astype("bool"))
+        cols = pyfits.ColDefs([structure])
+        st_table = pyfits.BinTableHDU.from_columns(cols)
+        st_table.name = "GRIDSTRUCTURE"
+        st_table.header.set("hierarch lengthunit", "kpc", comment="Length unit for grid")
+        fre = ds.arr(fre, 'code_length').in_units('kpc').value
+        fle = ds.arr(fle, 'code_length').in_units('kpc').value
+        fdx = fre-fle
+
+
+
+        for i,a in enumerate('xyz'):
+                st_table.header.set("min%s" % a, fle[i])
+                st_table.header.set("max%s" % a, fre[i])
+                st_table.header.set("n%s" % a, fdx[i])
+                st_table.header.set("subdiv%s" % a, 2)
+        st_table.header.set("subdivtp", "OCTREE", "Type of grid subdivision")
+
+        #not the hydro grid data
+        fields = ["CellMassMsun","TemperatureTimesCellMassMsun", "MetalMassMsun", "CellVolumeKpc", "CellSFRtau","Cellpgascgsx", "Cellpgascgsy", "Cellpgascgsz"]
+
+        fd = {}
+        for i,f in enumerate(fields): 
+                fd[f]=np.zeros_like(refined) #array(output[f][:])
+        del output
+
+        col_list = []
+
+        col_list.append(pyfits.Column("mass_gas", format='D',
+                                      array=fd["CellMassMsun"], unit="Msun"))
+        col_list.append(pyfits.Column("mass_metals", format='D',
+                                      array=fd['MetalMassMsun'], unit="Msun"))
+        col_list.append(pyfits.Column("gas_temp_m", format='D',
+                                      array=fd['TemperatureTimesCellMassMsun'], unit="K*Msun"))
+        col_list.append(pyfits.Column("gas_teff_m", format='D',
+                                      array=fd['TemperatureTimesCellMassMsun'], unit="K*Msun"))
+        col_list.append(pyfits.Column("cell_volume", format='D',
+                                      array=fd['CellVolumeKpc'], unit="kpc^3"))
+        col_list.append(pyfits.Column("SFR", format='D',
+                                      array=fd['CellSFRtau'],  unit = 'Msun'))
+
+        m = 1
+        if no_gas_p: m = 0
+        p_gas_zipped = zip(fd['Cellpgascgsx']*m,
+                           fd['Cellpgascgsy']*m,
+                           fd['Cellpgascgsz']*m)
+        
+        col_list.append(pyfits.Column("p_gas", format='3D',
+                                      array=p_gas_zipped , unit = 'Msun*kpc/yr'))
+
+
+        cols = pyfits.ColDefs(col_list)
+        mg_table = pyfits.BinTableHDU.from_columns(cols)
+        #mg_table = pyfits.new_table(cols)
+        mg_table.header.set("M_g_tot", fd["CellMassMsun"].sum())
+        mg_table.header.set("timeunit", "yr")
+        mg_table.header.set("tempunit", "K")
+        mg_table.name = "GRIDDATA"
+
+        # Add a dummy Primary; might be a better way to do this!
+        col_list = [pyfits.Column("dummy", format="E", array=np.zeros(1, dtype='float32'))]
+        cols = pyfits.ColDefs(col_list)
+        md_table = pyfits.BinTableHDU.from_columns(cols, nrows = len(fd['CellSFRtau']))
+        #md_table = pyfits.new_table(cols)
+        md_table.header.set("snaptime", ds.current_time.in_units('yr').value[()])
+        md_table.name = "YT"
+
+        phdu = pyfits.PrimaryHDU()
+        phdu.header.set('nbodycod','yt')
+        hls = [phdu, st_table, mg_table,md_table]
+        hls.append(particle_data)
+        hdus = pyfits.HDUList(hls)
+        hdus.writeto(fn, clobber=True)
+
 
 def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level=0, debug=True):
 	if True: 
@@ -518,7 +599,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 	return output, grid_structure, grid_structure['nrefined'], grid_structure['nleafs']
 
-def create_fits_file(ds, fn, output, refined, particle_data, fle, fre, no_gas_p = False):
+def create_fits_file(ds, fn, output, refined, particle_data, fle, fre, no_gas_p = False,form='VELA'):
     #first create the grid structure
     structure = pyfits.Column("structure", format="B", array=array(refined).astype("bool"))
     cols = pyfits.ColDefs([structure])
