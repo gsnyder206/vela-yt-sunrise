@@ -333,9 +333,10 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                 
         except IndexError: # no stars found
                 stars_L = [None, None, None]
+                print("No stars exception")
                 galaxy_props['stars_L'].append(stars_L)
                 del(sc_sphere)
-        except:
+        else:
                 print("Other exception")
                 raise
 
