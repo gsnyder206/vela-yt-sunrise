@@ -331,7 +331,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                 except:
                         stars_L = L_crossing(x, y, z, vx, vy, vz, mass, sc_sphere.center)
                 
-	except IndexError: # no stars found
+        except IndexError: # no stars found
                 stars_L = [None, None, None]
                 galaxy_props['stars_L'].append(stars_L)
                 del(sc_sphere)
