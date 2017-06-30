@@ -420,26 +420,26 @@ if __name__ == "__main__":
 
 
         new_snapfiles = np.asarray(new_snapfiles)
-	galaxy_props = {}
-	fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
-	          'stars_rhalf', 'stars_mass_profile', 'stars_L',
-	          'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files']
-	for field in fields: 
-	    if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
-	        galaxy_props[field] = np.array([])                
-	    else :
-	        galaxy_props[field] = []
+        galaxy_props = {}
+        fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
+                  'stars_rhalf', 'stars_mass_profile', 'stars_L',
+                  'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files']
+        for field in fields: 
+                if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
+                        galaxy_props[field] = np.array([])                
+                else :
+                        galaxy_props[field] = []
 
-	ts = yt.DatasetSeries(new_snapfiles)
+        ts = yt.DatasetSeries(new_snapfiles)
 
-	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
+        for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print( "Getting galaxy props: ", ds._file_amr, snap_dir)
 
 
-		dd = ds.all_data()
-		ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
-		ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
-		print( ds.index.get_smallest_dx())
+                dd = ds.all_data()
+                ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
+                ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
+                print( ds.index.get_smallest_dx())
 
                 #need to exit gracefully here if there's no stars.
                 try:
@@ -450,53 +450,53 @@ if __name__ == "__main__":
                         continue
 
 
-		scale = round(1.0/(ds.current_redshift+1.0),3)
-		galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
+                scale = round(1.0/(ds.current_redshift+1.0),3)
+                galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
 
                 galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 
-		print( 'Determining center...')
-		max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
-		print( '\tCenter = ', max_ndens_arr)
+                print( 'Determining center...')
+                max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
+                print( '\tCenter = ', max_ndens_arr)
 
-		#Generate Sphere Selection
-		print( 'Determining virial radius...')
-		rvir = find_rvirial(dd, ds, max_ndens_arr)
-		print( '\tRvir = ', rvir)
+                #Generate Sphere Selection
+                print( 'Determining virial radius...')
+                rvir = find_rvirial(dd, ds, max_ndens_arr)
+                print( '\tRvir = ', rvir)
 
-		hc_sphere = ds.sphere(max_ndens_arr, rvir)
-
+                hc_sphere = ds.sphere(max_ndens_arr, rvir)
+                
  
-		galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
-		galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
-		galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
+                galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
+                galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
+                galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
 
 		
-		#Find Galaxy Properties
-		galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
+                #Find Galaxy Properties
+                galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
 
-		#Making Figures
-		#if False:
-			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=([10,10,10],'Mpc'), width = (25.,'Mpc')).save('test.png')
-			# p = yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr), width = (8.,'kpc'))
-			# p.save('projection_z.png')
-			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (40.,'kpc')).save('testproj_2nd_pass_3_z.png')
-			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (30, 'kpc')).save(yt_fig_dir+'/max_ndens_cen_30kpc.png')
-			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (1, 'Mpc')).save(yt_fig_dir+'/max_ndens_cen_1Mpc.png')
-			
-			# yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(galaxy_props['stars_com'][0],'kpc'),  width = (10, 'kpc')).save('max_ndens_arr.png')
-			# L = ds.arr([0,1./sqrt(2),1./sqrt(2)], 'kpc')
+                #Making Figures
+                #if False:
+                # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=([10,10,10],'Mpc'), width = (25.,'Mpc')).save('test.png')
+                # p = yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr), width = (8.,'kpc'))
+                # p.save('projection_z.png')
+                # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (40.,'kpc')).save('testproj_2nd_pass_3_z.png')
+                # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (30, 'kpc')).save(yt_fig_dir+'/max_ndens_cen_30kpc.png')
+                # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (1, 'Mpc')).save(yt_fig_dir+'/max_ndens_cen_1Mpc.png')
+                
+                # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(galaxy_props['stars_com'][0],'kpc'),  width = (10, 'kpc')).save('max_ndens_arr.png')
+                # L = ds.arr([0,1./sqrt(2),1./sqrt(2)], 'kpc')
+                
+                
+                # yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), width = (10, 'kpc')).save('off_axis_projection.png')
+                
+                # t0 = time.time()
+                # yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), depth = (1, "Mpc"), width = (25, "kpc")).save('off_axis_projection_2.png')
+                # t1 = time.time()
+                # print 'Took %.2f minutes'%((t1-t0)/60.)
 
-
-			# yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), width = (10, 'kpc')).save('off_axis_projection.png')
-
-			# t0 = time.time()
-			# yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), depth = (1, "Mpc"), width = (25, "kpc")).save('off_axis_projection_2.png')
-			# t1 = time.time()
-			# print 'Took %.2f minutes'%((t1-t0)/60.)
-
-		del (hc_sphere)
+                del (hc_sphere)
                 sys.stdout.flush()
 
 
