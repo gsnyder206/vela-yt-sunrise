@@ -95,11 +95,11 @@ if __name__ == "__main__":
 
     import yt
     import sunrise_octree_exporter
-    reload(sunrise_octree_exporter)
+    #reload(sunrise_octree_exporter)
     
     
-    print args
-    print args['no_export'], args['no_gas_p']
+    print( args)
+    print( args['no_export'], args['no_gas_p'])
 
     if args['snap_files'] is not None:
         snaps = np.asarray( [args['snap_files']])
@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     assert snaps.shape[0] > 0
 
-    print "Generating Sunrise Inputs for "+form+": ", snaps
+    print( "Generating Sunrise Inputs for "+form+": ", snaps)
 
     abssnap = os.path.abspath(snaps[0])
     assert os.path.lexists(abssnap)
@@ -131,7 +131,7 @@ if __name__ == "__main__":
         
     simname = os.path.basename(dirname) #assumes directory name for simulation name
     
-    print "Simulation name:  ", simname
+    print( "Simulation name:  ", simname)
 
     particle_headers = []
     particle_data = []
@@ -155,7 +155,7 @@ if __name__ == "__main__":
         anames.append(aname)
         snapdirs.append(snap_dir)
         
-        print "Sunrise directory: ", snap_dir
+        print( "Sunrise directory: ", snap_dir)
         assert os.path.lexists(snap_dir)
 
         if form=='VELA':
@@ -201,9 +201,9 @@ if __name__ == "__main__":
     # parallelization happens while generating the plots.
     for snapfile,aname,snap_dir in zip(new_snapfiles,anames,snapdirs):
         
-        print "Timestep name: ", aname
+        print( "Timestep name: ", aname)
 
-        print "Sunrise directory: ", snap_dir
+        print( "Sunrise directory: ", snap_dir)
         assert os.path.lexists(snap_dir)
 
 
@@ -243,7 +243,7 @@ if __name__ == "__main__":
         try:
 	    cameras = gSI.generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
         except np.linalg.linalg.LinAlgError:
-            print "Error in camera linear algebra: skipping"
+            print( "Error in camera linear algebra: skipping")
             continue
 
         prefix = os.path.join(out_dir,simname+'_'+aname)
@@ -259,10 +259,10 @@ if __name__ == "__main__":
     eaf.close()
     
     if args['no_export'] is True:
-        print "Skipping export stage, per command argument."
+        print( "Skipping export stage, per command argument.")
         exit()
 
-    print "Continuing to export grids."
+    print( "Continuing to export grids.")
 
     if form=='VELA':
         starfield='stars'
@@ -281,7 +281,7 @@ if __name__ == "__main__":
     for ds in ts.piter():
         if form=='VELA':
             aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
-            print "Timestep name: ", aname
+            print( "Timestep name: ", aname)
             snap_dir = os.path.dirname(ds._file_amr)
             assert os.path.lexists(snap_dir)
             
@@ -312,7 +312,7 @@ if __name__ == "__main__":
 	#export_radius = ds.arr(max(1.2*cam_dist, 1.2*cam_fov), 'kpc')
 	export_radius = ds.arr(1.2*cam_fov, 'kpc')
         
-	print export_radius
+	print( export_radius)
         
 	export_info = gSI.export_fits(ds, gal_center, export_radius, 
                                   prefix, star_particles = starfield, 
@@ -329,6 +329,6 @@ if __name__ == "__main__":
         sys.stdout.flush()
 
     b = time.time()
-    print 'Final time in seconds: ', b - a
+    print( 'Final time in seconds: ', b - a)
 
 
