@@ -384,14 +384,14 @@ if __name__ == "__main__":
 
 
 
-        print "Calculating Galaxy Props for: ", snaps
+        print( "Calculating Galaxy Props for: ", snaps)
 
         abssnap = os.path.abspath(snaps[0])
         assert os.path.lexists(abssnap)
 
         dirname = os.path.dirname(abssnap)
         simname = os.path.basename(dirname) #assumes directory name for simulation name
-        print "Simulation name:  ", simname
+        print( "Simulation name:  ", simname)
 
         particle_headers = []
         particle_data = []
@@ -404,7 +404,7 @@ if __name__ == "__main__":
                 stars_data.append('stars_'+aname+'.dat')
                 snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
                 yt_fig_dir = snap_dir+'/yt_projections'
-                print "Sunrise directory: ", snap_dir
+                print( "Sunrise directory: ", snap_dir)
                 if not os.path.lexists(snap_dir):
                     os.mkdir(snap_dir)        
                 if not os.path.lexists(yt_fig_dir):
@@ -433,20 +433,20 @@ if __name__ == "__main__":
 	ts = yt.DatasetSeries(new_snapfiles)
 
 	for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
-                print "Getting galaxy props: ", ds._file_amr, snap_dir
+                print( "Getting galaxy props: ", ds._file_amr, snap_dir)
 
 
 		dd = ds.all_data()
 		ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
 		ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
-		print ds.index.get_smallest_dx()
+		print( ds.index.get_smallest_dx())
 
                 #need to exit gracefully here if there's no stars.
                 try:
                         stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
                         assert stars_pos_x.shape > 5
                 except AttributeError,AssertionError:
-                        print "No star particles found, skipping: ", ds._file_amr
+                        print( "No star particles found, skipping: ", ds._file_amr)
                         continue
 
 
@@ -456,14 +456,14 @@ if __name__ == "__main__":
                 galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 
-		print 'Determining center...'
+		print( 'Determining center...')
 		max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
-		print '\tCenter = ', max_ndens_arr
+		print( '\tCenter = ', max_ndens_arr)
 
 		#Generate Sphere Selection
-		print 'Determining virial radius...'
+		print( 'Determining virial radius...')
 		rvir = find_rvirial(dd, ds, max_ndens_arr)
-		print '\tRvir = ', rvir
+		print( '\tRvir = ', rvir)
 
 		hc_sphere = ds.sphere(max_ndens_arr, rvir)
 
@@ -502,9 +502,8 @@ if __name__ == "__main__":
 
         # Save galaxy props file
         galaxy_props_file = simname+'_galprops.npy'
-        print '\nSuccessfully computed galaxy properties'
-        print 'Saving galaxy properties to ', galaxy_props_file
-        print
+        print( '\nSuccessfully computed galaxy properties')
+        print( 'Saving galaxy properties to ', galaxy_props_file)
         np.save(galaxy_props_file, galaxy_props)  
 
 
