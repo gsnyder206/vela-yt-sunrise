@@ -171,7 +171,7 @@ def write_cameras(prefix, cameras):
     print( "Writing cameras to ",  prefix+'.cameras')
     fn = prefix + '.cameras'
     campos = ()
-    for name,row in cameras.iteritems():
+    for name,row in cameras.items():
         campos += (tuple(row[1])+tuple(row[0])+tuple(row[2])+tuple([row[3]]),)
     campos = np.array(campos)
     np.savetxt(fn, campos)   
