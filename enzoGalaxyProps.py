@@ -95,8 +95,8 @@ if __name__=="__main__":
     for field in fields: 
         if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
             galaxy_props[field] = np.array([])                
-	else :
-	    galaxy_props[field] = []
+        else:
+            galaxy_props[field] = []
 
 
     yt.add_particle_filter("stars",function=_stars, filtered_type='all',requires=["particle_type"])
