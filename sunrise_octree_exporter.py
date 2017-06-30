@@ -306,7 +306,8 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
         #we must create the octree region sitting 
         #ontop of the first mesh by providing a negative level
         ad = ds.all_data()
-        if form=='Enzo':
+        print('Simulation format name:  ',form)
+        if form=='ENZO':
                 output, grid_structure, nrefined, nleafs = None,None,None,None
                 create_simple_fits(ds,fn,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge, no_gas_p = no_gas_p,form=form)
         elif form=='VELA':
