@@ -80,8 +80,8 @@ def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad
 	vir_check = 0
 	r0 = ds.arr(start_rad, rad_units)
 	critical_density = cosmo.critical_density(ds.current_redshift).value   #is in g/cm^3
-        max_ndens_arr=center
-        
+	max_ndens_arr=center
+
 	while True:
 		r0_prev = r0
 		r0 = r0_prev + ds.arr(delta_rad_coarse, rad_units)
