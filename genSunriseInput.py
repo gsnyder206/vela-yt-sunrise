@@ -141,7 +141,7 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
 
     i=0  
     cameras = OrderedDict()
-    for name,(normal,north,do_rot)  in camera_set.iteritems():
+    for name,(normal,north,do_rot)  in camera_set.items():
         print( name, normal, north, do_rot)
         
         orient = Orientation(normal_vector=normal, north_vector=north)
