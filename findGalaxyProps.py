@@ -310,7 +310,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                 stars_center = stars_com
         elif center == 'maxndens':
                 stars_center = max_ndens_arr
-	else: 
+        else: 
                 stars_center = stars_hist_center
 
         stars_center = ds.arr(stars_center, 'kpc')
