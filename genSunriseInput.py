@@ -360,40 +360,39 @@ if __name__ == "__main__":
         if os.path.abspath(snapfile) not in galprops['snap_files']: continue
         idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
 
-	#scale = round(1.0/(ds.current_redshift+1.0),4)
-	#if scale not in galprops['scale']: continue
-	#idx = np.argwhere(galprops['scale'] == scale)[0][0]
+        #scale = round(1.0/(ds.current_redshift+1.0),4)
+        #if scale not in galprops['scale']: continue
+        #idx = np.argwhere(galprops['scale'] == scale)[0][0]
 
-	stars_L = galprops['stars_L'][idx]
-	gas_L 	= galprops['gas_L'][idx]
-
-        
-	try:
-	    L_sum = stars_L + gas_L
-	except TypeError:
-	    L_sum = gas_L
+        stars_L = galprops['stars_L'][idx]
+        gas_L 	= galprops['gas_L'][idx]
 
         
-	L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
-        
-
-	#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
-	#This function is important for generating the cameras that we will be using
         try:
-	    cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
+            L_sum = stars_L + gas_L
+        except TypeError:
+            L_sum = gas_L
+
+        L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
+        
+
+        #L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
+        #This function is important for generating the cameras that we will be using
+        try:
+            cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
         except np.linalg.linalg.LinAlgError:
             print( "Error in camera linear algebra: skipping")
             continue
 
         prefix = os.path.join(out_dir,simname+'_'+aname)
-	write_cameras(prefix, cameras)
+        write_cameras(prefix, cameras)
         sys.stdout.flush()
 
         qsubfn = 'export_'+aname+'.qsub'
         write_qsub_exporters(snapfile,qsubfn,aname,args)
         submitline = 'qsub '+qsubfn
         eaf.write(submitline+'\n')
-        
+
 
     eaf.close()
     
