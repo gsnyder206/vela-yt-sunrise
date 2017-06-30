@@ -335,6 +335,9 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                 stars_L = [None, None, None]
                 galaxy_props['stars_L'].append(stars_L)
                 del(sc_sphere)
+        except:
+                print("Other exception")
+                raise
 
         # Get angular momentum of gas
         gas_center = ds.arr(gas_maxdens_loc, 'kpc')
