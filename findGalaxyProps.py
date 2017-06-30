@@ -320,29 +320,27 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
 
 
-	# Get angular momentum of stars
-	try:
-	    x, y, z = [sc_sphere[('stars', 'particle_position_%s'%s)] for s in 'xyz'] 
-	    vx, vy, vz = [sc_sphere[('stars', 'particle_velocity_%s'%s)] for s in 'xyz'] 
-	    mass = sc_sphere[('stars', 'particle_mass')]
-            try:
-	        metals = sc_sphere[('stars', 'particle_metallicity1')]
-	        stars_L = L_crossing(x, y, z, vx, vy, vz, mass*metals, sc_sphere.center)
-            except:
-	        stars_L = L_crossing(x, y, z, vx, vy, vz, mass, sc_sphere.center)
+        # Get angular momentum of stars
+        try:
+                x, y, z = [sc_sphere[('stars', 'particle_position_%s'%s)] for s in 'xyz'] 
+                vx, vy, vz = [sc_sphere[('stars', 'particle_velocity_%s'%s)] for s in 'xyz'] 
+                mass = sc_sphere[('stars', 'particle_mass')]
+                try:
+                        metals = sc_sphere[('stars', 'particle_metallicity1')]
+                        stars_L = L_crossing(x, y, z, vx, vy, vz, mass*metals, sc_sphere.center)
+                except:
+                        stars_L = L_crossing(x, y, z, vx, vy, vz, mass, sc_sphere.center)
                 
 	except IndexError: # no stars found
-	    stars_L = [None, None, None]
-	galaxy_props['stars_L'].append(stars_L)
-	del(sc_sphere)
+                stars_L = [None, None, None]
+                galaxy_props['stars_L'].append(stars_L)
+                del(sc_sphere)
 
-
-
-	# Get angular momentum of gas
-	gas_center = ds.arr(gas_maxdens_loc, 'kpc')
-	gc_sphere =  ds.sphere(gas_center, ssphere_r)
+        # Get angular momentum of gas
+        gas_center = ds.arr(gas_maxdens_loc, 'kpc')
+        gc_sphere =  ds.sphere(gas_center, ssphere_r)
         x, y, z = [gc_sphere[('gas', '%s'%s)] for s in 'xyz'] 
-	cell_volume = gc_sphere[('gas', 'cell_volume')]
+        cell_volume = gc_sphere[('gas', 'cell_volume')]
 
         try:
                 #for VELA runs
@@ -354,13 +352,13 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                 density=gc_sphere[('gas', 'density')]
                 vx, vy, vz = [gc_sphere[('gas', 'velocity_%s'%s)] for s in 'xyz'] 
                 metals=gc_sphere[('gas', 'metal_density')]
-	        gas_L = L_crossing(x, y, z, density*vx, density*vy, density*vz, metals*cell_volume**2, gc_sphere.center)
+                gas_L = L_crossing(x, y, z, density*vx, density*vy, density*vz, metals*cell_volume**2, gc_sphere.center)
                 
-	galaxy_props['gas_L'].append(gas_L)
-	del(gc_sphere)
+        galaxy_props['gas_L'].append(gas_L)
+        del(gc_sphere)
 
 
-	return galaxy_props
+        return galaxy_props
 
 
 
