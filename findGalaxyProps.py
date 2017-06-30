@@ -445,10 +445,12 @@ if __name__ == "__main__":
                 try:
                         stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
                         assert stars_pos_x.shape > 5
-                except AttributeError,AssertionError:
+                except AttributeError:
                         print( "No star particles found, skipping: ", ds._file_amr)
                         continue
-
+                except AssertionError:
+                        print( "No star particles found, skipping: ", ds._file_amr)
+                        continue
 
                 scale = round(1.0/(ds.current_redshift+1.0),3)
                 galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
