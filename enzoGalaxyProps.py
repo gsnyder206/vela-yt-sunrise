@@ -117,7 +117,7 @@ if __name__=="__main__":
         #need to exit gracefully here if there's no stars.
         try:
             stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
-            assert stars_pos_x.shape > 5
+            assert stars_pos_x.shape[0] > 5
         except AttributeError:
             print("No star particles found, skipping: ", snap_dir)
             continue
