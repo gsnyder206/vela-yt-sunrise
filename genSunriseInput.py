@@ -9,7 +9,7 @@ from numpy import *
 import os, sys, argparse
 from collections import OrderedDict
 import time
-from blist import blist
+#from blist import blist
 import glob
 
 def parse():
