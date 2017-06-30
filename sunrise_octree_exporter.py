@@ -806,7 +806,7 @@ def save_to_gridstructure(grid_structure, level, fcoords, refined, leaf):
     '''
     grid_structure['level'].append(level)
     grid_structure['refined'].append(refined)
-        grid_structure['coords'].append(fcoords)
+    grid_structure['coords'].append(fcoords)
     if leaf:
         grid_structure['nleafs']+=1
     if refined:
