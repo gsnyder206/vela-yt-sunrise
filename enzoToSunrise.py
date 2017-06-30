@@ -221,33 +221,32 @@ if __name__ == "__main__":
         if os.path.abspath(snapfile) not in galprops['snap_files']: continue
         idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
 
-	#scale = round(1.0/(ds.current_redshift+1.0),4)
-	#if scale not in galprops['scale']: continue
-	#idx = np.argwhere(galprops['scale'] == scale)[0][0]
+        #scale = round(1.0/(ds.current_redshift+1.0),4)
+        #if scale not in galprops['scale']: continue
+        #idx = np.argwhere(galprops['scale'] == scale)[0][0]
 
-	stars_L = galprops['stars_L'][idx]
-	gas_L 	= galprops['gas_L'][idx]
-
-        
-	try:
-	    L_sum = stars_L + gas_L
-	except TypeError:
-	    L_sum = gas_L
+        stars_L = galprops['stars_L'][idx]
+        gas_L = galprops['gas_L'][idx]
 
         
-	L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
-        
-
-	#L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
-	#This function is important for generating the cameras that we will be using
         try:
-	    cameras = gSI.generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
+            L_sum = stars_L + gas_L
+        except TypeError:
+            L_sum = gas_L
+
+        L = L_sum/np.sqrt(np.sum(L_sum*L_sum))
+        
+
+        #L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
+        #This function is important for generating the cameras that we will be using
+        try:
+            cameras = gSI.generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
         except np.linalg.linalg.LinAlgError:
             print( "Error in camera linear algebra: skipping")
             continue
 
         prefix = os.path.join(out_dir,simname+'_'+aname)
-	gSI.write_cameras(prefix, cameras)
+        gSI.write_cameras(prefix, cameras)
         sys.stdout.flush()
 
         qsubfn = 'export_'+aname+'.qsub'
@@ -303,29 +302,29 @@ if __name__ == "__main__":
         if os.path.abspath(snapfile) not in galprops['snap_files']: continue
         idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
         
-	scale = round(1.0/(ds.current_redshift+1.0),4)
-	#idx = np.argwhere(galprops['scale'] == scale)[0][0]
+        scale = round(1.0/(ds.current_redshift+1.0),4)
+        #idx = np.argwhere(galprops['scale'] == scale)[0][0]
 	
-	gal_center = galprops['stars_center'][idx]
-	gal_center = ds.arr(gal_center, 'kpc')
+        gal_center = galprops['stars_center'][idx]
+        gal_center = ds.arr(gal_center, 'kpc')
         
-	#export_radius = ds.arr(max(1.2*cam_dist, 1.2*cam_fov), 'kpc')
-	export_radius = ds.arr(1.2*cam_fov, 'kpc')
+        #export_radius = ds.arr(max(1.2*cam_dist, 1.2*cam_fov), 'kpc')
+        export_radius = ds.arr(1.2*cam_fov, 'kpc')
         
-	print( export_radius)
+        print( export_radius)
         
-	export_info = gSI.export_fits(ds, gal_center, export_radius, 
-                                  prefix, star_particles = starfield, 
+        export_info = gSI.export_fits(ds, gal_center, export_radius, 
+                                      prefix, star_particles = starfield, 
                                       max_level=max_level, no_gas_p = args['no_gas_p'], form=form)
-
+        
 
         
-	export_info['sim_name'] = simname
-	export_info['scale'] = scale
+        export_info['sim_name'] = simname
+        export_info['scale'] = scale
         export_info['snap_file'] = snapfile
-        
-	export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
-	np.save(export_info_file, export_info)
+
+        export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
+        np.save(export_info_file, export_info)
         sys.stdout.flush()
 
     b = time.time()
