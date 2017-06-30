@@ -86,7 +86,7 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
     '''
     from yt.utilities.orientation import Orientation
 
-    print "\nGenerating cameras"
+    print( "\nGenerating cameras")
     
     north = np.array([0.,1.,0.])
     orient = Orientation(normal_vector=normal_vector, north_vector=north)
@@ -128,7 +128,7 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
 
 
     for i,(theta, phi) in enumerate(zip(ts,ps)):
-    	print theta, phi
+    	print( theta, phi)
         #pos = [np.cos(theta),0.,np.sin(phi)]
         pos = [np.cos(theta)*np.sin(phi),np.sin(theta)*np.sin(phi),np.cos(phi)]
         #vc  = [np.cos(np.pi/2.-theta),0.,np.sin(np.pi/2.-phi)] 
@@ -144,7 +144,7 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
     i=0  
     cameras = OrderedDict()
     for name,(normal,north,do_rot)  in camera_set.iteritems():
-        print name, normal, north, do_rot
+        print( name, normal, north, do_rot)
         
         orient = Orientation(normal_vector=normal, north_vector=north)
         if do_rot:
@@ -166,11 +166,11 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
         cameras[name] = line
         i+=1
 
-    print "Successfully generated cameras\n"
+    print( "Successfully generated cameras\n")
     return cameras
 
 def write_cameras(prefix, cameras):
-    print "Writing cameras to ",  prefix+'.cameras'
+    print( "Writing cameras to ",  prefix+'.cameras')
     fn = prefix + '.cameras'
     campos = ()
     for name,row in cameras.iteritems():
@@ -189,7 +189,7 @@ def export_fits(ds, center, export_radius, prefix, star_particles, max_level=Non
     '''
     import sunrise_octree_exporter
 
-    print "\nExporting data in %s to FITS for Sunrise"%ds.parameter_filename.split('/')[-1]
+    print( "\nExporting data in %s to FITS for Sunrise"%ds.parameter_filename.split('/')[-1])
     
     filename = prefix+'.fits'
     center = center.in_units('kpc')
@@ -213,8 +213,8 @@ def export_fits(ds, center, export_radius, prefix, star_particles, max_level=Non
     info['export_nleafs']=nleafs
     info['input_filename']=filename
     
-    print "Successfully generated FITS for snapshot %s"%ds.parameter_filename.split('/')[-1]
-    print info,'\n'
+    print( "Successfully generated FITS for snapshot %s"%ds.parameter_filename.split('/')[-1])
+    print( info,'\n')
     #return info,  output, output_array
     return info  #output arrays not actually used later
 
@@ -256,8 +256,8 @@ if __name__ == "__main__":
     reload(sunrise_octree_exporter)
     
     
-    print args
-    print args['no_export'], args['no_gas_p']
+    print( args)
+    print( args['no_export'], args['no_gas_p'])
     
     if args['snap_files'] is not None:
         snaps = [args['snap_files']]
@@ -265,7 +265,7 @@ if __name__ == "__main__":
         snaps = np.asarray(glob.glob("*.d"))
 
         
-    print "Generating Sunrise Input for: ", snaps
+    print( "Generating Sunrise Input for: ", snaps)
 
     abssnap = os.path.abspath(snaps[0])
 
@@ -274,7 +274,7 @@ if __name__ == "__main__":
     
     dirname = os.path.dirname(abssnap)
     simname = os.path.basename(dirname) #assumes directory name for simulation name
-    print "Simulation name:  ", simname
+    print( "Simulation name:  ", simname)
     
     particle_headers = []
     particle_data = []
@@ -287,7 +287,7 @@ if __name__ == "__main__":
         stars_data.append('stars_'+aname+'.dat')
         snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
         
-        print "Sunrise directory: ", snap_dir
+        print( "Sunrise directory: ", snap_dir)
         if not os.path.lexists(snap_dir):
             os.mkdir(snap_dir)        
 
@@ -340,11 +340,11 @@ if __name__ == "__main__":
 
         aname = (os.path.basename(snapfile)).split('_')[-1].rstrip('.d')
         
-        print "Timestep name: ", aname
+        print( "Timestep name: ", aname)
 
         snap_dir = os.path.dirname(snapfile) #os.path.join(simname+'_'+aname+'_sunrise')
 
-        print "Sunrise directory: ", snap_dir
+        print( "Sunrise directory: ", snap_dir)
         assert os.path.lexists(snap_dir)
 
 
@@ -352,7 +352,7 @@ if __name__ == "__main__":
         galprops_file = simname+'_galprops.npy'
 
         out_dir = os.path.join(snap_dir,'input')
-        print os.path.lexists(out_dir)
+        print( os.path.lexists(out_dir))
         if not os.path.lexists(out_dir):
             os.mkdir(out_dir)
 
@@ -384,7 +384,7 @@ if __name__ == "__main__":
         try:
 	    cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
         except np.linalg.linalg.LinAlgError:
-            print "Error in camera linear algebra: skipping"
+            print( "Error in camera linear algebra: skipping")
             continue
 
         prefix = os.path.join(out_dir,simname+'_'+aname)
@@ -400,10 +400,10 @@ if __name__ == "__main__":
     eaf.close()
     
     if args['no_export'] is True:
-        print "Skipping export stage, per command argument."
+        print( "Skipping export stage, per command argument.")
         exit()
 
-    print "Continuing to export grids."
+    print( "Continuing to export grids.")
 
     yt.enable_parallelism()
     
@@ -413,7 +413,7 @@ if __name__ == "__main__":
 
     for ds in ts.piter():
         aname = (os.path.basename(ds._file_amr)).split('_')[-1].rstrip('.d')
-        print "Timestep name: ", aname
+        print( "Timestep name: ", aname)
         snap_dir = os.path.dirname(ds._file_amr)
         assert os.path.lexists(snap_dir)
         
@@ -427,33 +427,31 @@ if __name__ == "__main__":
         if os.path.abspath(snapfile) not in galprops['snap_files']: continue
         idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
         
-	scale = round(1.0/(ds.current_redshift+1.0),4)
-	#idx = np.argwhere(galprops['scale'] == scale)[0][0]
+        scale = round(1.0/(ds.current_redshift+1.0),4)
+        #idx = np.argwhere(galprops['scale'] == scale)[0][0]
 	
-	gal_center = galprops['stars_center'][idx]
-	gal_center = ds.arr(gal_center, 'kpc')
+        gal_center = galprops['stars_center'][idx]
+        gal_center = ds.arr(gal_center, 'kpc')
         
-	#export_radius = ds.arr(max(1.2*cam_dist, 1.2*cam_fov), 'kpc')
-	export_radius = ds.arr(1.2*cam_fov, 'kpc')
+        #export_radius = ds.arr(max(1.2*cam_dist, 1.2*cam_fov), 'kpc')
+        export_radius = ds.arr(1.2*cam_fov, 'kpc')
         
-	print export_radius
+        print( export_radius)
         
-	export_info = export_fits(ds, gal_center, export_radius, 
+        export_info = export_fits(ds, gal_center, export_radius, 
                                   prefix, star_particles = 'stars', 
                                   max_level=max_level, no_gas_p = args['no_gas_p'])
 
-
-        
-	export_info['sim_name'] = simname
-	export_info['scale'] = scale
+        export_info['sim_name'] = simname
+        export_info['scale'] = scale
         export_info['snap_file'] = snapfile
         
-	export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
-	np.save(export_info_file, export_info)
+        export_info_file = prefix + '_export_info.npy' #galprops_file.replace('galprops', 'export_info')
+        np.save(export_info_file, export_info)
         sys.stdout.flush()
 
     b = time.time()
-    print 'Final time in seconds: ', b - a
+    print( 'Final time in seconds: ', b - a)
 
 
 
