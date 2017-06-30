@@ -406,197 +406,198 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
 
 
 def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level=0, debug=True):
-	if True: 
-		def _MetalMass(field, data):
-			return (data['metal_density']*data['cell_volume']).in_units('Msun')
-		ad.ds.add_field('MetalMassMsun', function=_MetalMass, units='Msun')
-		
-		def _TempTimesMass(field, data):
-			te = data['thermal_energy']
-			hd = data['H_nuclei_density']
+        if True: 
+                def _MetalMass(field, data):
+                        return (data['metal_density']*data['cell_volume']).in_units('Msun')
+                ad.ds.add_field('MetalMassMsun', function=_MetalMass, units='Msun')
+        
+                def _TempTimesMass(field, data):
+                        te = data['thermal_energy']
+                        hd = data['H_nuclei_density']
                         try:
-			        temp = (2.0*te/(3.0*hd*yt.physical_constants.kb)).in_units('K')
+                                temp = (2.0*te/(3.0*hd*yt.physical_constants.kb)).in_units('K')
                         except:
                                 den=data['density']
                                 ted=(te*den).in_units('erg/cm**3')
                                 temp=(2.0*ted/(3.0*hd*yt.physical_constants.kb)).in_units('K')
-                                
-                        mass=data["cell_mass"].in_units('Msun')
-                        
-			return temp*mass
-		ad.ds.add_field('TemperatureTimesCellMassMsun', function=_TempTimesMass, units='K*Msun')
-		
-		def _cellMassMsun(field, data):
-			return data["cell_mass"].in_units('Msun')
-		ad.ds.add_field('CellMassMsun', function=_cellMassMsun, units='Msun')
+                                mass=data["cell_mass"].in_units('Msun')
+                
+                        return temp*mass
+        
+                ad.ds.add_field('TemperatureTimesCellMassMsun', function=_TempTimesMass, units='K*Msun')
+        
 
-		def _cellVolumeKpc(field, data):
-			return data["cell_volume"].in_units('kpc**3')
-		ad.ds.add_field('CellVolumeKpc', function=_cellVolumeKpc, units='kpc**3')
+                def _cellMassMsun(field, data):
+                        return data["cell_mass"].in_units('Msun')
+                ad.ds.add_field('CellMassMsun', function=_cellMassMsun, units='Msun')
+
+                def _cellVolumeKpc(field, data):
+                        return data["cell_volume"].in_units('kpc**3')
+                ad.ds.add_field('CellVolumeKpc', function=_cellVolumeKpc, units='kpc**3')
 
 
-		def _pgascgsx(field, data):
+                def _pgascgsx(field, data):
                         try:
-		                return data['momentum_x'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+                                return data['momentum_x'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
                         except:
                                 return data['velocity_x'].in_units('kpc/yr')*data['cell_mass'].in_units('Msun')
-		ad.ds.add_field('Cellpgascgsx', function=_pgascgsx, units = 'Msun*kpc/yr')
+                ad.ds.add_field('Cellpgascgsx', function=_pgascgsx, units = 'Msun*kpc/yr')
 
 
-		def _pgascgsy(field, data):
-		    try:
-                            return data['momentum_y'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
-                    except:
-                            return data['velocity_y'].in_units('kpc/yr')*data['cell_mass'].in_units('Msun')
-		ad.ds.add_field('Cellpgascgsy', function=_pgascgsy, units = 'Msun*kpc/yr')
-
-		def _pgascgsz(field, data):
+                def _pgascgsy(field, data):
                         try:
-		                return data['momentum_z'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+                                return data['momentum_y'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
+                        except:
+                                return data['velocity_y'].in_units('kpc/yr')*data['cell_mass'].in_units('Msun')
+                ad.ds.add_field('Cellpgascgsy', function=_pgascgsy, units = 'Msun*kpc/yr')
+
+                def _pgascgsz(field, data):
+                        try:
+                                return data['momentum_z'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
                         except:
                                 return data['velocity_z'].in_units('kpc/yr')*data['cell_mass'].in_units('Msun')
-		ad.ds.add_field('Cellpgascgsz', function=_pgascgsz, units = 'Msun*kpc/yr')
+                ad.ds.add_field('Cellpgascgsz', function=_pgascgsz, units = 'Msun*kpc/yr')
 
 
 
 
-		def _cellSFRtau(field, data):
-		    min_dens = 0.035 #Msun/pc^3 Ceverino et al. 2009
-		    density = data["density"].in_units('Msun/pc**3')
-		    temperature = data["temperature"].in_units('K')
-		    volume = data["cell_volume"].in_units('pc**3')
-		    sfr_times_tau = np.where(np.logical_and(density >= min_dens, temperature <= 1.0e4),density*volume,np.zeros_like(density))
-		    return ds.arr(sfr_times_tau,'Msun')
-		ad.ds.add_field('CellSFRtau', function=_cellSFRtau,units='Msun')
+                def _cellSFRtau(field, data):
+                        min_dens = 0.035 #Msun/pc^3 Ceverino et al. 2009
+                        density = data["density"].in_units('Msun/pc**3')
+                        temperature = data["temperature"].in_units('K')
+                        volume = data["cell_volume"].in_units('pc**3')
+                        sfr_times_tau = np.where(np.logical_and(density >= min_dens, temperature <= 1.0e4),density*volume,np.zeros_like(density))
+                        return ds.arr(sfr_times_tau,'Msun')
+                ad.ds.add_field('CellSFRtau', function=_cellSFRtau,units='Msun')
 
-		#Tau_SFR = 12 Myr for VELA_v2  Ceverino et al. 2015
-		#Not sure about VELA_v2.1 or VELA_v1
-		#Using this general version should be applicable for any values used across resolutions
-		#Must post-process SFR projections by dividing by Tau.
-
-
-
-
-
-		fields = ["CellMassMsun","TemperatureTimesCellMassMsun","MetalMassMsun","CellVolumeKpc", "CellSFRtau", "Cellpgascgsx", "Cellpgascgsy", "Cellpgascgsz"]
-
-	#gather the field data from octs 
-
-		print("Retrieving field data")
-		field_data = [] 
-		for fi,f in enumerate(fields):
-			print(fi, f)
-			field_data = ad[f]
-
-		del field_data
-
-
-	#Initialize dicitionary with arrays containig the needed
-	#properites of all octs
-	total_octs = ad.index.total_octs
-	print(shape(ad.fcoords))
-	mask_arr = np.zeros((2,2,2,total_octs), dtype='bool')
-
-	block_iter = ad.blocks.__iter__()  
-
-	for i in np.arange(total_octs):
-		octn, mask = block_iter.next()
-		mask_arr[:,:,:,i] = mask
-
-	#added .block_slice to conform to yt 3.3	
-
-	'''levels = octn.block_slice._ires[:,:,:, :]
-	icoords = octn.block_slice._icoords[:,:,:, :]
-	fcoords = octn.block_slice._fcoords[:,:,:, :]
-	fwidth = octn.block_slice._fwidth[:,:,:, :]
-	mask_arr = mask_arr[:,:,:,:]'''
-
-	levels = octn._ires[:,:,:, :]
-	icoords = octn._icoords[:,:,:, :]
-	fcoords = octn._fcoords[:,:,:, :]
-	fwidth = octn._fwidth[:,:,:, :]
-	mask_arr = mask_arr[:,:,:,:]
-
-
-	LeftEdge  = (fcoords[0,0,0,:,:]      - fwidth[0,0,0,:,:]*0.5)
-	RightEdge = (fcoords[-1,-1,-1,:,:]   + fwidth[-1,-1,-1,:,:]*0.5)
-
-
-
-	output = {}
-	for field in fields:
-	    output[field] = []
+                #Tau_SFR = 12 Myr for VELA_v2  Ceverino et al. 2015
+                #Not sure about VELA_v2.1 or VELA_v1
+                #Using this general version should be applicable for any values used across resolutions
+                #Must post-process SFR projections by dividing by Tau.
+                
 
 
 
 
-	#RCS commented out fill_octree_arrays, replaced with the code above
-	octs_dic = {}
-	total_octs = ad.index.total_octs
-	octs_dic['LeftEdge'] = LeftEdge[:,:]
-	octs_dic['dx']       = fwidth[0,0,0,:,0]
-	octs_dic['Level']    = levels[0,0,0,:]
+                fields = ["CellMassMsun","TemperatureTimesCellMassMsun","MetalMassMsun","CellVolumeKpc", "CellSFRtau", "Cellpgascgsx", "Cellpgascgsy", "Cellpgascgsz"]
+                
+                #gather the field data from octs 
 
-	octs_dic['Fields']    = np.array([ad[f] for f in fields])
-
-
-	#Location of all octrees, at a given level, and a counter
-
-	oct_loc = {}
-	for i in np.arange(max(levels[0,0,0,:])+1):
-		oct_loc[str(i)] = [0,where(levels[0,0,0,:] == i)[0]]
-	
-	oct_list = [None for i in arange (total_octs)]
+                print("Retrieving field data")
+                field_data = [] 
+                for fi,f in enumerate(fields):
+                        print(fi, f)
+                        field_data = ad[f]
+                        
+                del field_data
 
 
-	for i in arange(len(oct_loc['0'][1])):
-		if i%10000 == 0: print(i, len(oct_loc['0'][1]))
-		current_oct_id = oct_loc['0'][1][oct_loc['0'][0]]
-		current_level = 0
-		recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic)
-		oct_loc['0'][0]+=1
+                #Initialize dicitionary with arrays containig the needed
+                #properites of all octs
+                total_octs = ad.index.total_octs
+                print(shape(ad.fcoords))
+                mask_arr = np.zeros((2,2,2,total_octs), dtype='bool')
+                
+                block_iter = ad.blocks.__iter__()  
+                
+                for i in np.arange(total_octs):
+                        octn, mask = block_iter.next()
+                        mask_arr[:,:,:,i] = mask
 
-	#np.save('oct_list_orig.npy', oct_list)
+                #added .block_slice to conform to yt 3.3    
 
-	oct_list = array(oct_list)
-	oct_list_new = add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr)
+                '''levels = octn.block_slice._ires[:,:,:, :]
+                icoords = octn.block_slice._icoords[:,:,:, :]
+                fcoords = octn.block_slice._fcoords[:,:,:, :]
+                fwidth = octn.block_slice._fwidth[:,:,:, :]
+                mask_arr = mask_arr[:,:,:,:]'''
 
-	#np.save('oct_list.npy', oct_list_new)
-
-	#oct_list_new = np.load('oct_list.npy')
-
-
-
-
-
-	grid_structure 				  = {}
-	grid_structure['level'] 	  = []
-	grid_structure['refined'] 	  = []
-	grid_structure['coords'] 	  = []
-	grid_structure['level_index'] = []
-	grid_structure['nleafs']      = 0.
-	grid_structure['nrefined']    = 0.
+                levels = octn._ires[:,:,:, :]
+                icoords = octn._icoords[:,:,:, :]
+                fcoords = octn._fcoords[:,:,:, :]
+                fwidth = octn._fwidth[:,:,:, :]
+                mask_arr = mask_arr[:,:,:,:]
 
 
-	hs = hilbert_state()
-	oct_obj_init = oct_list_new[0]
-	
-	debug = False	
-
-	outfile = open('debug_hilbert.out', 'w+')
-	a = time.time()
-
-	OctreeDepthFirstHilbert(oct_list_new, oct_obj_init, hs, grid_structure, output, field_names = fields, debug = debug, f = outfile)
-	b = time.time()
+                LeftEdge  = (fcoords[0,0,0,:,:]      - fwidth[0,0,0,:,:]*0.5)
+                RightEdge = (fcoords[-1,-1,-1,:,:]   + fwidth[-1,-1,-1,:,:]*0.5)
 
 
-	print('DFH: ', int(b-a), 'seconds')
+
+                output = {}
+                for field in fields:
+                        output[field] = []
 
 
-	if debug: outfile.close()
 
 
-	return output, grid_structure, grid_structure['nrefined'], grid_structure['nleafs']
+                #RCS commented out fill_octree_arrays, replaced with the code above
+                octs_dic = {}
+                total_octs = ad.index.total_octs
+                octs_dic['LeftEdge'] = LeftEdge[:,:]
+                octs_dic['dx']       = fwidth[0,0,0,:,0]
+                octs_dic['Level']    = levels[0,0,0,:]
+
+                octs_dic['Fields']    = np.array([ad[f] for f in fields])
+
+
+                #Location of all octrees, at a given level, and a counter
+
+                oct_loc = {}
+                for i in np.arange(max(levels[0,0,0,:])+1):
+                        oct_loc[str(i)] = [0,where(levels[0,0,0,:] == i)[0]]
+                        
+                oct_list = [None for i in arange (total_octs)]
+
+
+                for i in arange(len(oct_loc['0'][1])):
+                        if i%10000 == 0: print(i, len(oct_loc['0'][1]))
+                        current_oct_id = oct_loc['0'][1][oct_loc['0'][0]]
+                        current_level = 0
+                        recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic)
+                        oct_loc['0'][0]+=1
+
+                #np.save('oct_list_orig.npy', oct_list)
+
+                oct_list = array(oct_list)
+                oct_list_new = add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_arr)
+
+                #np.save('oct_list.npy', oct_list_new)
+
+                #oct_list_new = np.load('oct_list.npy')
+
+
+
+
+
+                grid_structure                   = {}
+                grid_structure['level']       = []
+                grid_structure['refined']       = []
+                grid_structure['coords']       = []
+                grid_structure['level_index'] = []
+                grid_structure['nleafs']      = 0.
+                grid_structure['nrefined']    = 0.
+
+
+                hs = hilbert_state()
+                oct_obj_init = oct_list_new[0]
+    
+                debug = False    
+
+                outfile = open('debug_hilbert.out', 'w+')
+                a = time.time()
+
+                OctreeDepthFirstHilbert(oct_list_new, oct_obj_init, hs, grid_structure, output, field_names = fields, debug = debug, f = outfile)
+                b = time.time()
+
+
+                print('DFH: ', int(b-a), 'seconds')
+
+
+                if debug: outfile.close()
+
+
+                return output, grid_structure, grid_structure['nrefined'], grid_structure['nleafs']
 
 def create_fits_file(ds, fn, output, refined, particle_data, fle, fre, no_gas_p = False,form='VELA'):
     #first create the grid structure
@@ -644,8 +645,8 @@ def create_fits_file(ds, fn, output, refined, particle_data, fle, fre, no_gas_p 
     m = 1
     if no_gas_p: m = 0
     p_gas_zipped = zip(fd['Cellpgascgsx']*m,
-    				   fd['Cellpgascgsy']*m,
-    				   fd['Cellpgascgsz']*m)
+                       fd['Cellpgascgsy']*m,
+                       fd['Cellpgascgsz']*m)
 
     col_list.append(pyfits.Column("p_gas", format='3D',
                     array=p_gas_zipped , unit = 'Msun*kpc/yr'))
@@ -800,17 +801,17 @@ def prepare_star_particles(ds,star_type,pos=None,vel=None, age=None, creation_ti
     return pd_table, np.sum(idx)
 
 def save_to_gridstructure(grid_structure, level, fcoords, refined, leaf):
-	'''
-	Function to save grid information
-	'''
-	grid_structure['level'].append(level)
-	grid_structure['refined'].append(refined)
+    '''
+    Function to save grid information
+    '''
+    grid_structure['level'].append(level)
+    grid_structure['refined'].append(refined)
         grid_structure['coords'].append(fcoords)
-	if leaf:
-		grid_structure['nleafs']+=1
-	if refined:
-		grid_structure['nrefined']+=1
-	return
+    if leaf:
+        grid_structure['nleafs']+=1
+    if refined:
+        grid_structure['nrefined']+=1
+    return
 
 
 
