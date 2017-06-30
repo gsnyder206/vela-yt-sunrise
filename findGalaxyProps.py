@@ -46,7 +46,7 @@ def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_po
 
 
 	#end of First pass
-	print '\tDone with coarse pass searching for center, moving to fine pass'
+	print('\tDone with coarse pass searching for center, moving to fine pass')
 		
 
 	bin_width = 40
@@ -90,7 +90,7 @@ def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad
 		rho_internal = (pi*4/3.)*dark_mass.in_units('g')/(r0.in_units('cm'))**3.
 		if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
 			#now run fine test
-			print '\tNow running fine search on the virial radius'
+			print('\tNow running fine search on the virial radius')
 			r0 = r0_prev
 			while True:
 				r0 += ds.arr(delta_rad_fine, rad_units)
@@ -149,7 +149,7 @@ def find_shapes(center, pos, ds, nrad=10, rmax=None):
     rmax = max(r(pos)) if not given.
     '''
 
-    print 'Starting shape calculation'
+    print('Starting shape calculation')
 
     units = center.units
     center = center.value
@@ -182,7 +182,7 @@ def find_shapes(center, pos, ds, nrad=10, rmax=None):
             b_to_a[i] = axis_out[0][1]
             axes.append(axis_out[1])
         except UnboundLocalError:
-            print 'Not enough particles to find shapes at r = %g in snapshot %s'%(r, ds.parameter_filename )
+            print( 'Not enough particles to find shapes at r = %g in snapshot %s'%(r, ds.parameter_filename ))
             b_to_a[i] = c_to_a[i] = None
             axes.append([])
     
@@ -198,7 +198,7 @@ def L_crossing(x, y, z, vx, vy, vz, weight, center):
 
 def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
-	print 'Determining stellar and gas mass...'
+	print( 'Determining stellar and gas mass...')
 	# Get total stellar mass 
 	stars_mass = hc_sphere[('stars', 'particle_mass')].in_units('Msun')
 	stars_total_mass = stars_mass.sum().value[()]
@@ -209,8 +209,8 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	gas_total_mass = gas_mass.sum().value[()]
 	galaxy_props['gas_total_mass'] = np.append(galaxy_props['gas_total_mass'], 
 	                                           gas_total_mass)
-	print '\tlog Mgas/Msun = ', log10(gas_total_mass)
-	print '\tlog M*/Msun = ', log10(stars_total_mass)
+	print( '\tlog Mgas/Msun = ', log10(gas_total_mass))
+	print( '\tlog M*/Msun = ', log10(stars_total_mass))
 
 
 
@@ -218,22 +218,22 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
 
 
-	print 'Determining location of max stellar density...'
+	print( 'Determining location of max stellar density...')
 	# Get max density of stars (value, location)
 	stars_maxdens = hc_sphere.quantities.max_location(('deposit', 'stars_cic'))
 	stars_maxdens_val = stars_maxdens[0].in_units('Msun/kpc**3').value[()]
 
-        print stars_maxdens
+        print( stars_maxdens)
         #difference bt yt-3.2.3 and yt-3.3dev: stars_maxdens has different # elements; this works for both
 	stars_maxdens_loc = np.array([stars_maxdens[-3].in_units('kpc').value[()], 
 	                              stars_maxdens[-2].in_units('kpc').value[()], 
 	                              stars_maxdens[-1].in_units('kpc').value[()]])
 	galaxy_props['stars_maxdens'].append((stars_maxdens_val, stars_maxdens_loc))
-	print '\t Max Stellar Density = ', stars_maxdens_loc
+	print( '\t Max Stellar Density = ', stars_maxdens_loc)
 
 
 
-	print 'Determining location of max gas density...'
+	print( 'Determining location of max gas density...')
 	# Get max density of gas
 	gas_maxdens = hc_sphere.quantities.max_location(('gas', 'density'))
 	gas_maxdens_val = gas_maxdens[0].in_units('Msun/kpc**3').value[()]
@@ -241,11 +241,11 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	                            gas_maxdens[-2].in_units('kpc').value[()], 
 	                            gas_maxdens[-1].in_units('kpc').value[()]])
 	galaxy_props['gas_maxdens'].append((gas_maxdens_val, gas_maxdens_loc)) 
-	print '\t Max Gas Density = ', stars_maxdens_loc
+	print( '\t Max Gas Density = ', stars_maxdens_loc)
 
 
 
-	print 'Determining refined histogram center of stars...'
+	print( 'Determining refined histogram center of stars...')
 	#---Need to Check these--#
 	# Get refined histogram center of stars
 	stars_pos_x = hc_sphere[('stars', 'particle_position_x')].in_units('kpc')
@@ -255,10 +255,10 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	stars_pos = np.array([stars_pos_x, stars_pos_y, stars_pos_z]).transpose()
 	stars_hist_center = find_hist_center(stars_pos, stars_mass)
 	galaxy_props['stars_hist_center'].append(stars_hist_center)
-	print '\t Refined histogram center of stars = ', stars_hist_center
+	print( '\t Refined histogram center of stars = ', stars_hist_center)
 
 
-	print 'Computing stellar density profile...'
+	print( 'Computing stellar density profile...')
 	# Get stellar density profile
 	sc_sphere_r = 0.1
 	ssphere_r = sc_sphere_r*hc_sphere.radius
@@ -280,10 +280,10 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	galaxy_props['stars_rhalf'] = np.append(galaxy_props['stars_rhalf'], rhalf)
 	galaxy_props['stars_mass_profile'].append((radii, smass))       
 
-	print '\tStars half-light radius = ', rhalf
+	print( '\tStars half-light radius = ', rhalf)
 
 
-	print 'Determining center of mass within 15 kpc of the galaxy...'
+	print( 'Determining center of mass within 15 kpc of the galaxy...')
 	# Get center of mass of stars
 	gal_sphere = ds.sphere(max_ndens_arr, (15, 'kpc'))
 	stars_pos_x = gal_sphere[('stars', 'particle_position_x')].in_units('kpc')
@@ -297,7 +297,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	                      np.dot(stars_pos_y, gal_stars_mass)/gal_total_mass, 
 	                      np.dot(stars_pos_z, gal_stars_mass)/gal_total_mass])
 	galaxy_props['stars_com'].append(stars_com)
-	print '\tCenter of mass = ', stars_com
+	print( '\tCenter of mass = ', stars_com)
 
 
 
@@ -306,7 +306,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
 
 
-	print 'Setting stars center...'
+	print( 'Setting stars center...')
 	# Define center of stars
 	center = 'maxndens'
 	if center == 'max_dens': stars_center = stars_maxdens_loc	
@@ -315,7 +315,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 	else: stars_center = stars_hist_center
 	stars_center = ds.arr(stars_center, 'kpc')
 	galaxy_props['stars_center'].append(stars_hist_center)
-	print '\tStars Center = ', stars_center
+	print( '\tStars Center = ', stars_center)
 
 
 
