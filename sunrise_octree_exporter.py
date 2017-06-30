@@ -174,7 +174,7 @@ def add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_ar
 		octcens = [[gd.octcen[0], gd.octcen[1], gd.octcen[2], gd.oct_id] for gd in good]
 		octcens = array(octcens)
 
-		print i, len(good)
+		print(i, len(good))
 		if len(good) == 1:
 			#We've reached the root single oct (1 x 1 x 1)
 			return oct_list
@@ -188,7 +188,7 @@ def add_preamble(oct_list, levels, fwidth, fcoords, LeftEdge, RightEdge, mask_ar
 		delx = 2*flat_fwidth[0,0]
 		oct_list_2 = []
 		for ii in arange(dimens):
-			print ii, dimens
+			print(ii, dimens)
 			for jj in arange(dimens):
 				for kk in arange(dimens):
 					le_oct = array([ii, jj, kk])*delx
@@ -286,13 +286,13 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 	#we must round the dle,dre to the nearest root grid cells
 	ile,ire,super_level,nocts_wide = round_nocts_wide(Nocts_root,fc-fwidth,fc+fwidth,nwide=nocts_wide)
 	assert np.all((ile-ire)==(ile-ire)[0])
-	print "rounding specified region:"
-	print "from [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fc-fwidth)+tuple(fc+fwidth))
-	print "to (integer)   [%07i %07i %07i]-[%07i %07i %07i]"%(tuple(ile)+tuple(ire))
+	print("rounding specified region:")
+	print("from [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fc-fwidth)+tuple(fc+fwidth)))
+	print("to (integer)   [%07i %07i %07i]-[%07i %07i %07i]"%(tuple(ile)+tuple(ire)))
 	assert(len(np.unique(ds.domain_width)) == 1)
 	domain_width = ds.domain_width[0]
 	fle,fre = ile*domain_width/Nocts_root, ire*domain_width/Nocts_root
-	print "to (float)  [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fle)+tuple(fre))
+	print("to (float)  [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fle)+tuple(fre)))
 
 	#Create a list of the star particle properties in PARTICLE_DATA
     #Include ID, parent-ID, position, velocity, creation_mass, 
@@ -483,10 +483,10 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 	#gather the field data from octs 
 
-		print "Retrieving field data"
+		print("Retrieving field data")
 		field_data = [] 
 		for fi,f in enumerate(fields):
-			print fi, f
+			print(fi, f)
 			field_data = ad[f]
 
 		del field_data
@@ -495,7 +495,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	#Initialize dicitionary with arrays containig the needed
 	#properites of all octs
 	total_octs = ad.index.total_octs
-	print shape(ad.fcoords)
+	print(shape(ad.fcoords))
 	mask_arr = np.zeros((2,2,2,total_octs), dtype='bool')
 
 	block_iter = ad.blocks.__iter__()  
@@ -551,7 +551,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 
 
 	for i in arange(len(oct_loc['0'][1])):
-		if i%10000 == 0: print i, len(oct_loc['0'][1])
+		if i%10000 == 0: print(i, len(oct_loc['0'][1]))
 		current_oct_id = oct_loc['0'][1][oct_loc['0'][0]]
 		current_level = 0
 		recursive_generate_oct_list(oct_list, current_oct_id, current_level, mask_arr, fcoords, fwidth, oct_loc, octs_dic)
@@ -591,7 +591,7 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
 	b = time.time()
 
 
-	print 'DFH: ', int(b-a), 'seconds'
+	print('DFH: ', int(b-a), 'seconds')
 
 
 	if debug: outfile.close()
