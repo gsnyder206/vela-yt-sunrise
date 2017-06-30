@@ -236,82 +236,82 @@ def OctreeDepthFirstHilbert(oct_list, oct_obj, hilbert, grid_structure, output, 
 			OctreeDepthFirstHilbert(oct_list, child_oct_obj, hilbert_child, grid_structure, output, field_names, debug, f)
 
 def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None, 
-    debug=False,ad=None,max_level=None, grid_structure_fn = 'grid_structure.npy', no_gas_p = False, form='VELA', **kwargs):
+                      debug=False,ad=None,max_level=None, grid_structure_fn = 'grid_structure.npy', no_gas_p = False, form='VELA', **kwargs):
 
 
-	r"""Convert the contents of a dataset to a FITS file format that Sunrise
-	understands.
+        r"""Convert the contents of a dataset to a FITS file format that Sunrise
+        understands.
 
-	This function will accept a dataset, and from that dataset
-	construct a depth-first octree containing all of the data in the parameter
-	file.  This octree will be written to a FITS file.  It will probably be
-	quite big, so use this function with caution!  Sunrise is a tool for
-	generating synthetic spectra, available at
-	http://sunrise.googlecode.com/ .
+        This function will accept a dataset, and from that dataset
+        construct a depth-first octree containing all of the data in the parameter
+        file.  This octree will be written to a FITS file.  It will probably be
+        quite big, so use this function with caution!  Sunrise is a tool for
+        generating synthetic spectra, available at
+        http://sunrise.googlecode.com/ .
 
-	Parameters
-	----------
-	ds : `Dataset`
-	   The dataset to convert.
-	fn : string
-	   The filename of the output FITS file.
-	fc : array
-	   The center of the extraction region
-	fwidth  : array  
-	   Ensure this radius around the center is enclosed
-	   Array format is (nx,ny,nz) where each element is floating point
-	   in unitary position units where 0 is leftmost edge and 1
-	   the rightmost. 
+        Parameters
+        ----------
+        ds : `Dataset`
+        The dataset to convert.
+        fn : string
+        The filename of the output FITS file.
+        fc : array
+        The center of the extraction region
+        fwidth  : array  
+        Ensure this radius around the center is enclosed
+        Array format is (nx,ny,nz) where each element is floating point
+        in unitary position units where 0 is leftmost edge and 1
+        the rightmost. 
 
-	Notes
-	-----
+        Notes
+        -----
 
-	Note that the process of generating simulated images from Sunrise will
-	require substantial user input; see the Sunrise wiki at
-	http://sunrise.googlecode.com/ for more information.
+        Note that the process of generating simulated images from Sunrise will
+        require substantial user input; see the Sunrise wiki at
+        http://sunrise.googlecode.com/ for more information.
 
-	"""
-	'''
-	fc = fc.in_units('code_length').value
-	fwidth = fwidth.in_units('code_length').value
-	Nocts_root = ds.domain_dimensions/2
-	'''
+        """
+        '''
+        fc = fc.in_units('code_length').value
+        fwidth = fwidth.in_units('code_length').value
+        Nocts_root = ds.domain_dimensions/2
+        '''
 
 
-	fc = fc.in_units('code_length').value
-	fwidth = fwidth.in_units('code_length').value
-	Nocts_root = ds.domain_dimensions/2
+        fc = fc.in_units('code_length').value
+        fwidth = fwidth.in_units('code_length').value
+        Nocts_root = ds.domain_dimensions/2
 
-	#we must round the dle,dre to the nearest root grid cells
-	ile,ire,super_level,nocts_wide = round_nocts_wide(Nocts_root,fc-fwidth,fc+fwidth,nwide=nocts_wide)
-	assert np.all((ile-ire)==(ile-ire)[0])
-	print("rounding specified region:")
-	print("from [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fc-fwidth)+tuple(fc+fwidth)))
-	print("to (integer)   [%07i %07i %07i]-[%07i %07i %07i]"%(tuple(ile)+tuple(ire)))
-	assert(len(np.unique(ds.domain_width)) == 1)
-	domain_width = ds.domain_width[0]
-	fle,fre = ile*domain_width/Nocts_root, ire*domain_width/Nocts_root
-	print("to (float)  [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fle)+tuple(fre)))
+        #we must round the dle,dre to the nearest root grid cells
+        ile,ire,super_level,nocts_wide = round_nocts_wide(Nocts_root,fc-fwidth,fc+fwidth,nwide=nocts_wide)
+        assert np.all((ile-ire)==(ile-ire)[0])
+        print("rounding specified region:")
+        print("from [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fc-fwidth)+tuple(fc+fwidth)))
+        print("to (integer)   [%07i %07i %07i]-[%07i %07i %07i]"%(tuple(ile)+tuple(ire)))
+        assert(len(np.unique(ds.domain_width)) == 1)
+        domain_width = ds.domain_width[0]
+        fle,fre = ile*domain_width/Nocts_root, ire*domain_width/Nocts_root
+        print("to (float)  [%1.5f %1.5f %1.5f]-[%1.5f %1.5f %1.5f]"%(tuple(fle)+tuple(fre)))
 
-	#Create a list of the star particle properties in PARTICLE_DATA
-    #Include ID, parent-ID, position, velocity, creation_mass, 
-    #formation_time, mass, age_m, age_l, metallicity, L_bol
-	
+        #Create a list of the star particle properties in PARTICLE_DATA
+        #Include ID, parent-ID, position, velocity, creation_mass, 
+        #formation_time, mass, age_m, age_l, metallicity, L_bol
 
-	particle_data,nstars = prepare_star_particles(ds,star_particle_type,fle=fle,fre=fre, ad=ad,**kwargs)
-	#Create the refinement depth-first hilbert octree structure
-    #For every leaf (not-refined) oct we have a column n OCTDATA
-    #Include mass_gas, mass_metals, gas_temp_m, gas_teff_m, cell_volume, SFR
-    #since our 0-level mesh may have many octs,
-    #we must create the octree region sitting 
-    #ontop of the first mesh by providing a negative level
-	ad = ds.all_data()
+
+        particle_data,nstars = prepare_star_particles(ds,star_particle_type,fle=fle,fre=fre, ad=ad,**kwargs)
+        #Create the refinement depth-first hilbert octree structure
+        #For every leaf (not-refined) oct we have a column n OCTDATA
+        #Include mass_gas, mass_metals, gas_temp_m, gas_teff_m, cell_volume, SFR
+        #since our 0-level mesh may have many octs,
+        #we must create the octree region sitting 
+        #ontop of the first mesh by providing a negative level
+        ad = ds.all_data()
         if form=='Enzo':
                 output, grid_structure, nrefined, nleafs = None,None,None,None
                 create_simple_fits(ds,fn,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge, no_gas_p = no_gas_p,form=form)
         elif form=='VELA':
                 output, grid_structure, nrefined, nleafs = prepare_octree(ds,ile,fle=fle,fre=fre, ad=ad,start_level=super_level, debug=debug)
-
+                
                 output_array = zeros((len(output[output.keys()[0]]), len(output.keys())))
                 for i in arange(len(output_array[0])):
                         output_array[:,i] = output[output.keys()[i]]
@@ -323,7 +323,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 
                 create_fits_file(ds,fn,output,refined,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge, no_gas_p = no_gas_p,form=form)
 
-	return fle, fre, ile, ire, nrefined, nleafs, nstars, output, output_array
+        return fle, fre, ile, ire, nrefined, nleafs, nstars, output, output_array
 
 
 def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='VELA'):
