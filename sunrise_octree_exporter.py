@@ -11,7 +11,6 @@ from numpy import *
 import astropy.io.fits as pyfits
 import yt
 from yt.funcs import get_pbar
-from blist import blist
 from yt.funcs import *
 import scipy
 
