@@ -402,6 +402,7 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
         md_table = pyfits.BinTableHDU.from_columns(cols, nrows = len(fd['CellSFRtau']))
         #md_table = pyfits.new_table(cols)
         md_table.header.set("snaptime", ds.current_time.in_units('yr').value[()])
+        md_table.header.set("redshift",ds.current_redshift)
         md_table.name = "YT"
 
         phdu = pyfits.PrimaryHDU()
