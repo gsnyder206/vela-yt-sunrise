@@ -329,7 +329,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
 
 
 def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='VELA'):
-        refined=np.asarray([0,0,0,0,0,0,0,0])
+        refined=np.asarray([1,0,0,0,0,0,0,0,0])
         
         #first create the grid structure
         structure = pyfits.Column("structure", format="B", array=array(refined).astype("bool"))
