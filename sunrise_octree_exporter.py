@@ -371,8 +371,8 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
         col_list.append(pyfits.Column("SFR", format='D',
                                       array=fd['CellSFRtau'],  unit = 'Msun'))
 
-        m = 1
-        if no_gas_p: m = 0
+        m = 1.0
+        if no_gas_p: m = 0.0
         p_gas_zipped = zip(fd['Cellpgascgsx']*m,
                            fd['Cellpgascgsy']*m,
                            fd['Cellpgascgsz']*m)
