@@ -376,10 +376,13 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
         p_gas_zipped = zip(fd['Cellpgascgsx']*m,
                            fd['Cellpgascgsy']*m,
                            fd['Cellpgascgsz']*m)
+
+        print(fd)
+        print(p_gas_zipped)
+        print(refined)
         
         col_list.append(pyfits.Column("p_gas", format='3D',
                                       array=p_gas_zipped , unit = 'Msun*kpc/yr'))
-
 
         cols = pyfits.ColDefs(col_list)
         mg_table = pyfits.BinTableHDU.from_columns(cols)
