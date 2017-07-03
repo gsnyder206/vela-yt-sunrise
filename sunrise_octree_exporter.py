@@ -310,6 +310,7 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
         if form=='ENZO':
                 output, grid_structure, nrefined, nleafs = None,None,None,None
                 create_simple_fits(ds,fn,particle_data,fle = ds.domain_left_edge,fre = ds.domain_right_edge, no_gas_p = no_gas_p,form=form)
+                output_array=None
         elif form=='VELA':
                 output, grid_structure, nrefined, nleafs = prepare_octree(ds,ile,fle=fle,fre=fre, ad=ad,start_level=super_level, debug=debug)
                 
