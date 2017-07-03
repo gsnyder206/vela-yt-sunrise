@@ -373,10 +373,10 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
 
         m = 1.0
         if no_gas_p: m = 0.0
-        p_gas_zipped = np.ndarray((3,fd['Cellpgascgsx'].shape[0]))
-        p_gas_zipped[0]=fd['Cellpgascgsx']*m
-        p_gas_zipped[1]=fd['Cellpgascgsy']*m
-        p_gas_zipped[2]=fd['Cellpgascgsz']*m
+        p_gas_zipped = np.ndarray((fd['Cellpgascgsx'].shape[0],3))
+        p_gas_zipped[:,0]=fd['Cellpgascgsx']*m
+        p_gas_zipped[:,1]=fd['Cellpgascgsy']*m
+        p_gas_zipped[:,2]=fd['Cellpgascgsz']*m
 
         #array(zip(fd['Cellpgascgsx']*m,
         #                   fd['Cellpgascgsy']*m,
