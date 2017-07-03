@@ -354,7 +354,7 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
 
         fd = {}
         for i,f in enumerate(fields): 
-                fd[f]=np.asarray([0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]) #array(output[f][:])
+                fd[f]=array([0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]) #array(output[f][:])
 
         col_list = []
 
