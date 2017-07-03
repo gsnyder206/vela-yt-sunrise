@@ -373,9 +373,9 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
 
         m = 1.0
         if no_gas_p: m = 0.0
-        p_gas_zipped = zip(fd['Cellpgascgsx']*m,
+        p_gas_zipped = array(zip(fd['Cellpgascgsx']*m,
                            fd['Cellpgascgsy']*m,
-                           fd['Cellpgascgsz']*m)
+                           fd['Cellpgascgsz']*m))
 
         print(fd)
         print(p_gas_zipped)
