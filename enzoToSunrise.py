@@ -240,7 +240,7 @@ if __name__ == "__main__":
         #L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
         #This function is important for generating the cameras that we will be using
         try:
-            cameras = gSI.generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
+            cameras = gSI.generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov, segments_fixed=1, segments_random=1)
         except np.linalg.linalg.LinAlgError:
             print( "Error in camera linear algebra: skipping")
             continue

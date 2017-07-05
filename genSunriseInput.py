@@ -80,7 +80,7 @@ def parse():
 
 
 
-def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang = 0., movie = False):
+def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang = 0., movie = False, segments_random=7, segments_fixed=4):
     '''
     Set camera positions and orientations
     '''
@@ -101,11 +101,6 @@ def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang 
             ['Y-axis',([0.,1.,0.],[0.,0.,-1.],False)],#up is along z
             ['X-axis',([1.,0.,0.],[0.,0.,-1.],False)],#up is along z
             ])  
-
-
-
-    segments_fixed  = 4
-    segments_random = 7
 
 
     np.random.seed()
