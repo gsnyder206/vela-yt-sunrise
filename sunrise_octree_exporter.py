@@ -297,8 +297,12 @@ def export_to_sunrise(ds, fn, star_particle_type, fc, fwidth, nocts_wide=None,
         #Include ID, parent-ID, position, velocity, creation_mass, 
         #formation_time, mass, age_m, age_l, metallicity, L_bol
 
+        if form=='ENZO':
+                radkpc=0.05
+        elif form=='VELA':
+                radkpc=0.01
 
-        particle_data,nstars = prepare_star_particles(ds,star_particle_type,fle=fle,fre=fre, ad=ad,**kwargs)
+        particle_data,nstars = prepare_star_particles(ds,star_particle_type,fle=fle,fre=fre, ad=ad,radkpc=radkpc,**kwargs)
         #Create the refinement depth-first hilbert octree structure
         #For every leaf (not-refined) oct we have a column n OCTDATA
         #Include mass_gas, mass_metals, gas_temp_m, gas_teff_m, cell_volume, SFR
@@ -728,7 +732,7 @@ def round_nocts_wide(dds,fle,fre,nwide=None):
 
 def prepare_star_particles(ds,star_type,pos=None,vel=None, age=None, creation_time=None,
     initial_mass=None, current_mass=None,metallicity=None, radius = None, 
-    fle=[0.,0.,0.],fre=[1.,1.,1.], ad=None):
+                           fle=[0.,0.,0.],fre=[1.,1.,1.], ad=None, radkpc=0.01):
 
     if ad is None:
         ad = ds.all_data()
@@ -780,7 +784,7 @@ def prepare_star_particles(ds,star_type,pos=None,vel=None, age=None, creation_ti
                 
                 
     if radius is None:
-        radius = ds.arr(metallicity*0.0 + 10.0/1000.0, 'kpc') #10pc radius
+        radius = ds.arr(metallicity*0.0 + radkpc, 'kpc') #10pc radius
     
     #create every column
     col_list = []
