@@ -253,7 +253,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                                     gas_maxdens[-2].in_units('kpc').value[()], 
                                     gas_maxdens[-1].in_units('kpc').value[()]])
         galaxy_props['gas_maxdens'].append((gas_maxdens_val, gas_maxdens_loc)) 
-        print( '\t Max Gas Density = ', stars_maxdens_loc)
+        print( '\t Max Gas Density = ', gas_maxdens_loc)
 
 
 
