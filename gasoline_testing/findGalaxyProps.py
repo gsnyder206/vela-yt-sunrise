@@ -16,15 +16,15 @@ from astropy.cosmology import Planck13 as cosmo
 #reload(yt)
 
 def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_pos = 20):
-	'''
-	find the center using the number density
-	all lengths are in kpc
-	returns ndarray of max_ndens_arr = ([cenx, ceny, cenz])
-	'''
-	units = 'kpc' 
-	#stars_pos_x = dd['stars', 'particle_position_x'].in_units(units)
-	#stars_pos_y = dd['stars', 'particle_position_y'].in_units(units)
-	#stars_pos_z = dd['stars', 'particle_position_z'].in_units(units)
+    '''
+    find the center using the number density
+    all lengths are in kpc
+    returns ndarray of max_ndens_arr = ([cenx, ceny, cenz])
+    '''
+    units = 'kpc' 
+    #stars_pos_x = dd['stars', 'particle_position_x'].in_units(units)
+    #stars_pos_y = dd['stars', 'particle_position_y'].in_units(units)
+    #stars_pos_z = dd['stars', 'particle_position_z'].in_units(units)
 
     stars_pos_x = dd['stars', 'Coordinates'][:,0].in_units('kpc')
     stars_pos_y = dd['stars', 'Coordinates'][:,1].in_units('kpc')
@@ -33,55 +33,55 @@ def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_po
 
 
 
-	star_pos = [stars_pos_x.value, stars_pos_y.value, stars_pos_z.value]
+    star_pos = [stars_pos_x.value, stars_pos_y.value, stars_pos_z.value]
 
-	min_pos = cen_pos - bin_width
-	max_pos = cen_pos + bin_width
-	bins = [arange(min_pos,max_pos,del_pos), arange(min_pos,max_pos,del_pos), arange(min_pos,max_pos,del_pos)]
-
-
-
-	H, edges = histogramdd(star_pos, bins = bins)
-	max_ndens_index = unravel_index(H.argmax(), H.shape)
-
-	max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2., 
-						   (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
-						   (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
-
-	max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
-	
+    min_pos = cen_pos - bin_width
+    max_pos = cen_pos + bin_width
+    bins = [arange(min_pos,max_pos,del_pos), arange(min_pos,max_pos,del_pos), arange(min_pos,max_pos,del_pos)]
 
 
-	#end of First pass
-	print('\tDone with coarse pass searching for center, moving to fine pass')
-		
 
-	bin_width = 40
-	del_pos = 0.5
+    H, edges = histogramdd(star_pos, bins = bins)
+    max_ndens_index = unravel_index(H.argmax(), H.shape)
 
-	min_pos_x = float(max_ndens_arr[0]) - bin_width
-	max_pos_x = float(max_ndens_arr[0]) + bin_width
+    max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2., 
+    					   (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
+    					   (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
 
-	min_pos_y = float(max_ndens_arr[1]) - bin_width
-	max_pos_y = float(max_ndens_arr[1]) + bin_width
-
-	min_pos_z = float(max_ndens_arr[2]) - bin_width
-	max_pos_z = float(max_ndens_arr[2]) + bin_width
+    max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
 
 
-	bins = [arange(min_pos_x,max_pos_x,del_pos), arange(min_pos_y,max_pos_y,del_pos), arange(min_pos_z,max_pos_z,del_pos)]
 
-	H, edges = histogramdd(star_pos, bins = bins)
-	max_ndens_index = unravel_index(H.argmax(), H.shape)
+    #end of First pass
+    print('\tDone with coarse pass searching for center, moving to fine pass')
+    	
 
-	max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2., 
-						   (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
-						   (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
+    bin_width = 40
+    del_pos = 0.5
 
-	max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
+    min_pos_x = float(max_ndens_arr[0]) - bin_width
+    max_pos_x = float(max_ndens_arr[0]) + bin_width
+
+    min_pos_y = float(max_ndens_arr[1]) - bin_width
+    max_pos_y = float(max_ndens_arr[1]) + bin_width
+
+    min_pos_z = float(max_ndens_arr[2]) - bin_width
+    max_pos_z = float(max_ndens_arr[2]) + bin_width
 
 
-	return max_ndens_arr
+    bins = [arange(min_pos_x,max_pos_x,del_pos), arange(min_pos_y,max_pos_y,del_pos), arange(min_pos_z,max_pos_z,del_pos)]
+
+    H, edges = histogramdd(star_pos, bins = bins)
+    max_ndens_index = unravel_index(H.argmax(), H.shape)
+
+    max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2., 
+    					   (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
+    					   (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
+
+    max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
+
+
+    return max_ndens_arr
 
 def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad_fine = 1, rad_units = 'kpc'):
 	vir_check = 0
