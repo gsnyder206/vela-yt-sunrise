@@ -90,25 +90,25 @@ def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad
 	max_ndens_arr=center
 
 	while True:
-		r0_prev = r0
-		r0 = r0_prev + ds.arr(delta_rad_coarse, rad_units)
-		v_sphere = ds.sphere(max_ndens_arr, r0)
-		dark_mass 	= v_sphere[('DarkMatter', 'Mass')].in_units('Msun').sum()	
-		rho_internal = (pi*4/3.)*dark_mass.in_units('g')/(r0.in_units('cm'))**3.
+        r0_prev = r0
+        r0 = r0_prev + ds.arr(delta_rad_coarse, rad_units)
+        v_sphere = ds.sphere(max_ndens_arr, r0)
+        dark_mass 	= v_sphere[('DarkMatter', 'Mass')].in_units('Msun').sum()	
+        rho_internal = (pi*4/3.)*dark_mass.in_units('g')/(r0.in_units('cm'))**3.
         print rho_internal, r0, dark_mass
-		if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
-			#now run fine test
-			print('\tNow running fine search on the virial radius')
-			r0 = r0_prev
-			while True:
-				r0 += ds.arr(delta_rad_fine, rad_units)
-				v_sphere = ds.sphere(max_ndens_arr, r0)
-				dark_mass 	= v_sphere[('DarkMatter', 'Mass')].in_units('Msun').sum()	
-				rho_internal = (pi*4/3.)*dark_mass.in_units('g')/(r0.in_units('cm'))**3.
+        if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
+        	#now run fine test
+            print('\tNow running fine search on the virial radius')
+            r0 = r0_prev
+            while True:
+                r0 += ds.arr(delta_rad_fine, rad_units)
+                v_sphere = ds.sphere(max_ndens_arr, r0)
+                dark_mass 	= v_sphere[('DarkMatter', 'Mass')].in_units('Msun').sum()	
+                rho_internal = (pi*4/3.)*dark_mass.in_units('g')/(r0.in_units('cm'))**3.
                 print rho_internal, r0
-				if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
-					rvir = r0
-					return rvir
+                if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
+                    rvir = r0
+                    return rvir
 
 def find_hist_center(positions, masses):
     '''
