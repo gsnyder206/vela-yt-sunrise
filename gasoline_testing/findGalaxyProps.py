@@ -26,9 +26,9 @@ def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_po
     #stars_pos_y = dd['stars', 'particle_position_y'].in_units(units)
     #stars_pos_z = dd['stars', 'particle_position_z'].in_units(units)
 
-    stars_pos_x = dd['stars', 'Coordinates'][:,0].in_units('kpc')
-    stars_pos_y = dd['stars', 'Coordinates'][:,1].in_units('kpc')
-    stars_pos_z = dd['stars', 'Coordinates'][:,2].in_units('kpc')
+    stars_pos_x = dd['Stars', 'Coordinates'][:,0].in_units('kpc')
+    stars_pos_y = dd['Stars', 'Coordinates'][:,1].in_units('kpc')
+    stars_pos_z = dd['Stars', 'Coordinates'][:,2].in_units('kpc')
 
 
 
