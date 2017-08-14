@@ -435,7 +435,7 @@ if __name__ == "__main__":
                         galaxy_props[field] = []
 
         ts = yt.DatasetSeries(new_snapfiles)
-        '''
+
         for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print( "Getting galaxy props: ", ds._file_amr, snap_dir)
 
@@ -505,7 +505,7 @@ if __name__ == "__main__":
                 del (hc_sphere)
                 sys.stdout.flush()
 
-
+        '''
         # Save galaxy props file
         galaxy_props_file = simname+'_galprops.npy'
         print( '\nSuccessfully computed galaxy properties')
