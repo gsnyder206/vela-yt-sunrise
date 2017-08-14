@@ -15,7 +15,7 @@ import astropy
 from astropy.cosmology import Planck13 as cosmo
 #reload(yt)
 
-def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_pos = 20):
+def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e4, del_pos = 20):
     '''
     find the center using the number density
     all lengths are in kpc
