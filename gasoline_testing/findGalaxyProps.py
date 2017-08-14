@@ -366,6 +366,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
         # Get angular momentum of gas
         gas_center = ds.arr(gas_maxdens_loc, 'kpc')
+        print ssphere_r, gas_center
         gc_sphere =  ds.sphere(gas_center, ssphere_r)
         x = gc_sphere[('gas', 'x')]
         x, y, z = [gc_sphere[('gas', '%s'%s)] for s in 'xyz'] 
