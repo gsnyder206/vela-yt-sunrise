@@ -436,7 +436,12 @@ if __name__ == "__main__":
 
         ts = yt.DatasetSeries(new_snapfiles)
 
-        for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
+        cosmology_parameters = {'current_redshift': 0.0,
+                                'omega_lambda': 0.728,
+                                'omega_matter': 0.272,
+                                'hubble_constant': 0.702}
+        
+        for ds,snap_dir in zip(reversed(ts, cosmology_parameters=cosmology_parameters),np.flipud(new_snapfiles)):
 
                 dd = ds.all_data()
                 ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
