@@ -378,15 +378,15 @@ if __name__ == "__main__":
 
 
 	#assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
-
 	
         if len(sys.argv)==2:
             snaps = np.asarray([sys.argv[1]])
         else:
-            snaps = np.sort(np.asarray(glob.glob("*.d")))
+            snaps = np.sort(np.asarray(glob.glob("*.01024")))
 
 
 
+        '''
         print( "Calculating Galaxy Props for: ", snaps)
 
         abssnap = os.path.abspath(snaps[0])
@@ -510,7 +510,7 @@ if __name__ == "__main__":
         print( '\nSuccessfully computed galaxy properties')
         print( 'Saving galaxy properties to ', galaxy_props_file)
         np.save(galaxy_props_file, galaxy_props)  
-
+        '''
 
 
 
