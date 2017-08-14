@@ -274,7 +274,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         galaxy_props['stars_hist_center'].append(stars_hist_center)
         print( '\t Refined histogram center of stars = ', stars_hist_center)
         '''
-
+        '''
         print( 'Computing stellar density profile...')
         # Get stellar density profile
         sc_sphere_r = 0.1
@@ -284,12 +284,12 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         sc_sphere =  ds.sphere(max_ndens_arr, ssphere_r)
 
         try:
-                p_plot = yt.ProfilePlot(sc_sphere, 'radius', 'stars_mass', n_bins=50, weight_field=None, accumulation=True)
+                p_plot = yt.ProfilePlot(sc_sphere, 'radius', 'Stars_Mass', n_bins=50, weight_field=None, accumulation=True)
                 p_plot.set_unit('radius', 'kpc')
-                p_plot.set_unit('stars_mass', 'Msun')
+                p_plot.set_unit('Stars_Mass', 'Msun')
                 p = p_plot.profiles[0]
 
-                radii, smass = p.x.value, p['stars_mass'].value 
+                radii, smass = p.x.value, p['Stars_Mass'].value 
                 rhalf = radii[smass >= 0.5*smass.max()][0]
         except (IndexError, ValueError): # not enough stars found
                 radii, smass = None, None 
@@ -299,7 +299,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
         print( '\tStars half-light radius = ', rhalf)
 
-
+        '''
         print( 'Determining center of mass within 15 kpc of the galaxy...')
         # Get center of mass of stars
         gal_sphere = ds.sphere(max_ndens_arr, (15, 'kpc'))
