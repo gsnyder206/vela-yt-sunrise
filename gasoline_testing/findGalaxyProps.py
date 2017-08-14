@@ -384,9 +384,8 @@ if __name__ == "__main__":
         else:
             snaps = np.sort(np.asarray(glob.glob("*.01024")))
 
-        print 'hi'
 
-        '''
+
         print( "Calculating Galaxy Props for: ", snaps)
 
         abssnap = os.path.abspath(snaps[0])
@@ -400,6 +399,7 @@ if __name__ == "__main__":
         particle_data = []
         stars_data = []
         new_snapfiles = []
+        '''
         for sn in snaps:
                 aname = sn.split('_')[-1].rstrip('.d')
                 particle_headers.append('PMcrd'+aname+'.DAT')
@@ -408,10 +408,10 @@ if __name__ == "__main__":
                 snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
                 yt_fig_dir = snap_dir+'/yt_projections'
                 print( "Sunrise directory: ", snap_dir)
-                if not os.path.lexists(snap_dir):
-                    os.mkdir(snap_dir)        
-                if not os.path.lexists(yt_fig_dir):
-                    os.mkdir(yt_fig_dir)        
+                #if not os.path.lexists(snap_dir):
+                #    os.mkdir(snap_dir)        
+                #if not os.path.lexists(yt_fig_dir):
+                #    os.mkdir(yt_fig_dir)        
 
                 newf = os.path.join(snap_dir,sn)
                 new_snapfiles.append(newf)
@@ -420,7 +420,8 @@ if __name__ == "__main__":
                         os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
                         os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
                         os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
-
+        '''
+        new_snapfiles = snaps
 
         new_snapfiles = np.asarray(new_snapfiles)
         galaxy_props = {}
@@ -434,7 +435,7 @@ if __name__ == "__main__":
                         galaxy_props[field] = []
 
         ts = yt.DatasetSeries(new_snapfiles)
-
+        '''
         for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print( "Getting galaxy props: ", ds._file_amr, snap_dir)
 
