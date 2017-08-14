@@ -229,7 +229,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         print( '\tlog Mgas/Msun = ', log10(gas_total_mass))
         print( '\tlog M*/Msun = ', log10(stars_total_mass))
 
-
+        '''
         print( 'Determining location of max stellar density...')
         # Get max density of stars (value, location)
         stars_maxdens = hc_sphere.quantities.max_location(('deposit', 'stars_cic'))
@@ -242,7 +242,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                                       stars_maxdens[-1].in_units('kpc').value[()]])
         galaxy_props['stars_maxdens'].append((stars_maxdens_val, stars_maxdens_loc))
         print( '\t Max Stellar Density = ', stars_maxdens_loc)
-
+        '''
 
 
         print( 'Determining location of max gas density...')
