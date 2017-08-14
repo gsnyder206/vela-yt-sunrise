@@ -440,7 +440,7 @@ if __name__ == "__main__":
                                 'omega_lambda': 0.728,
                                 'omega_matter': 0.272,
                                 'hubble_constant': 0.702}
-        ds = yt.load(ts[0])
+        ds = yt.load(ts[0], cosmology_parameters=cosmology_parameters)
         #for ds,snap_dir in zip(reversed(ts, cosmology_parameters=cosmology_parameters),np.flipud(new_snapfiles)):
 
         dd = ds.all_data()
