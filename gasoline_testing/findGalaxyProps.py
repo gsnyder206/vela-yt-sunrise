@@ -337,7 +337,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                 stars_center = stars_hist_center
 
         stars_center = ds.arr(stars_center, 'kpc')
-        galaxy_props['stars_center'].append(stars_hist_center)
+        galaxy_props['stars_center'].append(stars_center)
         print( '\tStars Center = ', stars_center)
 
 
