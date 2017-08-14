@@ -384,7 +384,7 @@ if __name__ == "__main__":
         else:
             snaps = np.sort(np.asarray(glob.glob("*.01024")))
 
-
+        print 'hi'
 
         '''
         print( "Calculating Galaxy Props for: ", snaps)
