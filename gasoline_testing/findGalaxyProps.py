@@ -342,15 +342,15 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         print( '\tStars Center = ', stars_center)
 
 
-
+        '''
 
         # Get angular momentum of stars
         try:
-                x, y, z = [sc_sphere[('stars', 'particle_position_%s'%s)] for s in 'xyz'] 
-                vx, vy, vz = [sc_sphere[('stars', 'particle_velocity_%s'%s)] for s in 'xyz'] 
-                mass = sc_sphere[('stars', 'particle_mass')]
+                x, y, z = [sc_sphere[('Stars', 'particle_position_%s'%s)] for s in 'xyz'] 
+                vx, vy, vz = [sc_sphere[('Stars', 'particle_velocity_%s'%s)] for s in 'xyz'] 
+                mass = sc_sphere[('Stars', 'particle_mass')]
                 try:
-                        metals = sc_sphere[('stars', 'particle_metallicity1')]
+                        metals = sc_sphere[('Stars', 'metallicity')]
                         stars_L = L_crossing(x, y, z, vx, vy, vz, mass*metals, sc_sphere.center)
                 except:
                         stars_L = L_crossing(x, y, z, vx, vy, vz, mass, sc_sphere.center)
@@ -372,7 +372,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         try:
                 #for VELA runs
                 vx, vy, vz = [gc_sphere[('gas', 'momentum_%s'%s)] for s in 'xyz'] # momentum density
-                metals = gc_sphere[('gas', 'metal_ia_density')] + gc_sphere[('gas', 'metal_ii_density')]
+                #metals = gc_sphere[('gas', 'metal_ia_density')] + gc_sphere[('gas', 'metal_ii_density')]
                 gas_L = L_crossing(x, y, z, vx, vy, vz, metals*cell_volume**2, gc_sphere.center)
         except:
                 #for enzo runs
@@ -383,7 +383,6 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                 
         galaxy_props['gas_L'].append(gas_L)
         del(gc_sphere)
-        '''
 
         return galaxy_props
 
