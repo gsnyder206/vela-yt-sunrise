@@ -274,15 +274,16 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         galaxy_props['stars_hist_center'].append(stars_hist_center)
         print( '\t Refined histogram center of stars = ', stars_hist_center)
         '''
-        '''
+        
         print( 'Computing stellar density profile...')
+
         # Get stellar density profile
         sc_sphere_r = 0.1
         ssphere_r = sc_sphere_r*hc_sphere.radius
         while ssphere_r < ds.index.get_smallest_dx():
                 ssphere_r = 2.0*ssphere_r
         sc_sphere =  ds.sphere(max_ndens_arr, ssphere_r)
-
+        '''
         try:
                 p_plot = yt.ProfilePlot(sc_sphere, 'radius', 'Stars_Mass', n_bins=50, weight_field=None, accumulation=True)
                 p_plot.set_unit('radius', 'kpc')
