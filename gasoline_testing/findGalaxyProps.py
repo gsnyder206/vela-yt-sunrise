@@ -84,10 +84,10 @@ def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_po
     return max_ndens_arr
 
 def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad_fine = 1, rad_units = 'kpc'):
-	vir_check = 0
-	r0 = ds.arr(start_rad, rad_units)
-	critical_density = cosmo.critical_density(ds.current_redshift).value   #is in g/cm^3
-	max_ndens_arr=center
+    vir_check = 0
+    r0 = ds.arr(start_rad, rad_units)
+    critical_density = cosmo.critical_density(ds.current_redshift).value   #is in g/cm^3
+    max_ndens_arr=center
 
     while True:
         r0_prev = r0
