@@ -107,6 +107,7 @@ def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad
                 rho_internal = (pi*4/3.)*dark_mass.in_units('g')/(r0.in_units('cm'))**3.
                 print rho_internal, r0
                 if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
+                    print dark_mass
                     rvir = r0
                     return rvir
 
