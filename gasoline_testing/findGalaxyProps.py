@@ -95,6 +95,7 @@ def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad
 		v_sphere = ds.sphere(max_ndens_arr, r0)
 		dark_mass 	= v_sphere[('DarkMatter', 'Mass')].in_units('Msun').sum()	
 		rho_internal = (pi*4/3.)*dark_mass.in_units('g')/(r0.in_units('cm'))**3.
+        print rho_internal, dark_mass
 		if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
 			#now run fine test
 			print('\tNow running fine search on the virial radius')
@@ -104,6 +105,7 @@ def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad
 				v_sphere = ds.sphere(max_ndens_arr, r0)
 				dark_mass 	= v_sphere[('DarkMatter', 'Mass')].in_units('Msun').sum()	
 				rho_internal = (pi*4/3.)*dark_mass.in_units('g')/(r0.in_units('cm'))**3.
+                print rho_internal, r0
 				if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
 					rvir = r0
 					return rvir
