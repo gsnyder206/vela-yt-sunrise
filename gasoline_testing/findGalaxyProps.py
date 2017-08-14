@@ -217,12 +217,12 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
         print( 'Determining stellar and gas mass...')
         # Get total stellar mass 
-        stars_mass = hc_sphere[('stars', 'particle_mass')].in_units('Msun')
+        stars_mass = hc_sphere[('Stars', 'Mass')].in_units('Msun')
         stars_total_mass = stars_mass.sum().value[()]
         galaxy_props['stars_total_mass'] = np.append(galaxy_props['stars_total_mass'], stars_total_mass)
 
         # Get total mass of gas
-        gas_mass = hc_sphere[('gas', 'cell_mass')].in_units('Msun')
+        gas_mass = hc_sphere[('Gas', 'Mass')].in_units('Msun')
         gas_total_mass = gas_mass.sum().value[()]
         galaxy_props['gas_total_mass'] = np.append(galaxy_props['gas_total_mass'], 
                                                    gas_total_mass)
@@ -247,7 +247,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
         print( 'Determining location of max gas density...')
         # Get max density of gas
-        gas_maxdens = hc_sphere.quantities.max_location(('gas', 'density'))
+        gas_maxdens = hc_sphere.quantities.max_location(('Gas', 'Density'))
         gas_maxdens_val = gas_maxdens[0].in_units('Msun/kpc**3').value[()]
         gas_maxdens_loc = np.array([gas_maxdens[-3].in_units('kpc').value[()], 
                                     gas_maxdens[-2].in_units('kpc').value[()], 
@@ -260,9 +260,14 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         print( 'Determining refined histogram center of stars...')
         #---Need to Check these--#
         # Get refined histogram center of stars
-        stars_pos_x = hc_sphere[('stars', 'particle_position_x')].in_units('kpc')
-        stars_pos_y = hc_sphere[('stars', 'particle_position_y')].in_units('kpc')
-        stars_pos_z = hc_sphere[('stars', 'particle_position_z')].in_units('kpc')
+        stars_pos_x = dd['Stars', 'Coordinates'][:,0].in_units('kpc')
+        stars_pos_y = dd['Stars', 'Coordinates'][:,1].in_units('kpc')
+        stars_pos_z = dd['Stars', 'Coordinates'][:,2].in_units('kpc')
+
+
+
+
+
 
         stars_pos = np.array([stars_pos_x, stars_pos_y, stars_pos_z]).transpose()
         stars_hist_center = find_hist_center(stars_pos, stars_mass)
@@ -298,12 +303,12 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         print( 'Determining center of mass within 15 kpc of the galaxy...')
         # Get center of mass of stars
         gal_sphere = ds.sphere(max_ndens_arr, (15, 'kpc'))
-        stars_pos_x = gal_sphere[('stars', 'particle_position_x')].in_units('kpc')
-        stars_pos_y = gal_sphere[('stars', 'particle_position_y')].in_units('kpc')
-        stars_pos_z = gal_sphere[('stars', 'particle_position_z')].in_units('kpc')
-        gal_stars_mass = gal_sphere[('stars', 'particle_mass')].in_units('Msun')
-        gal_total_mass = gal_stars_mass.sum().value[()]
+        stars_pos_x = dd['Stars', 'Coordinates'][:,0].in_units('kpc')
+        stars_pos_y = dd['Stars', 'Coordinates'][:,1].in_units('kpc')
+        stars_pos_z = dd['Stars', 'Coordinates'][:,2].in_units('kpc')
 
+        gal_stars_mass = gal_sphere[('Stars', 'Mass')].in_units('Msun')
+        gal_total_mass = gal_stars_mass.sum().value[()]
 
         stars_com = np.array([np.dot(stars_pos_x, gal_stars_mass)/gal_total_mass, 
                               np.dot(stars_pos_y, gal_stars_mass)/gal_total_mass, 
@@ -489,14 +494,13 @@ if __name__ == "__main__":
         rvir = find_rvirial(dd, ds, max_ndens_arr)
         print( '\tRvir = ', rvir)
 
-        '''
 
         hc_sphere = ds.sphere(max_ndens_arr, rvir)
         
 
         galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
         galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
-        galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
+        galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('DarkMatter', 'Mass')].in_units('Msun').sum().value[()])
 
 
         #Find Galaxy Properties
@@ -504,14 +508,13 @@ if __name__ == "__main__":
 
         del (hc_sphere)
         sys.stdout.flush()
-        '''
-        '''
+
+
         # Save galaxy props file
-        galaxy_props_file = simname+'_galprops.npy'
+        galaxy_props_file = '/u/rcsimons/gasoline_testing/galprops.npy'
         print( '\nSuccessfully computed galaxy properties')
         print( 'Saving galaxy properties to ', galaxy_props_file)
         np.save(galaxy_props_file, galaxy_props)  
-        '''
 
 
 
