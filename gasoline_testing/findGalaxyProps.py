@@ -301,6 +301,8 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
         '''
         print( 'Determining center of mass within 15 kpc of the galaxy...')
+
+        '''
         # Get center of mass of stars
         gal_sphere = ds.sphere(max_ndens_arr, (15, 'kpc'))
         stars_pos_x = dd['Stars', 'Coordinates'][:,0].in_units('kpc')
@@ -315,11 +317,11 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                               np.dot(stars_pos_z, gal_stars_mass)/gal_total_mass])
         galaxy_props['stars_com'].append(stars_com)
         print( '\tCenter of mass = ', stars_com)
+        '''
 
 
 
-
-
+        '''
 
 
 
@@ -381,7 +383,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
                 
         galaxy_props['gas_L'].append(gas_L)
         del(gc_sphere)
-
+        '''
 
         return galaxy_props
 
