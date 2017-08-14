@@ -472,7 +472,8 @@ if __name__ == "__main__":
 
 
         print( 'Determining center...')
-        max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
+        #max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
+        max_ndens_arr = find_center(dd, ds, cen_pos = 0., units = 'kpc')
         print( '\tCenter = ', max_ndens_arr)
 
 
