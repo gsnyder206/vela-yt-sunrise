@@ -44,9 +44,16 @@ def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_po
     H, edges = histogramdd(star_pos, bins = bins)
     max_ndens_index = unravel_index(H.argmax(), H.shape)
 
+
+    print min_pos, max_pos, del_pos
+
+
     max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2., 
     					   (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
     					   (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
+
+
+
 
     max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
 
