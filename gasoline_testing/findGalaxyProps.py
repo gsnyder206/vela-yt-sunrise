@@ -370,7 +370,7 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         gc_sphere =  ds.sphere(gas_center, ssphere_r)
         x = gc_sphere[('index', 'x')]
         x, y, z = [gc_sphere[('index', '%s'%s)] for s in 'xyz'] 
-        cell_volume = gc_sphere[('gas', 'cell_volume')]
+        cell_volume = gc_sphere[('index', 'cell_volume')]
 
         try:
                 #for VELA runs
