@@ -454,9 +454,9 @@ if __name__ == "__main__":
         #for ds,snap_dir in zip(reversed(ts, cosmology_parameters=cosmology_parameters),np.flipud(new_snapfiles)):
 
         dd = ds.all_data()
-        ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
-        ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
-        print( ds.index.get_smallest_dx())
+        #ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
+        #ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
+        #print( ds.index.get_smallest_dx())
 
         #need to exit gracefully here if there's no stars.
         try:
