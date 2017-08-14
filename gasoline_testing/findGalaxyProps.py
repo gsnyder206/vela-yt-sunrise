@@ -268,12 +268,12 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
 
 
 
-
+        '''
         stars_pos = np.array([stars_pos_x, stars_pos_y, stars_pos_z]).transpose()
         stars_hist_center = find_hist_center(stars_pos, stars_mass)
         galaxy_props['stars_hist_center'].append(stars_hist_center)
         print( '\t Refined histogram center of stars = ', stars_hist_center)
-
+        '''
 
         print( 'Computing stellar density profile...')
         # Get stellar density profile
