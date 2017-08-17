@@ -25,29 +25,12 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
     #sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(nan, nan, nan))
     #sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(nan, nan, nan))
 
-
-    if run_type == 'images':
-        sf.write('min_wavelength			%s\n'%("0.02e-6"))
-        sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
-
-        sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel-lores128.fits"))
-        sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/Patrik-imfKroupa-Zmulti-ml.fits"))
-
-
-    elif run_type == 'ifu':
+    if run_type == 'ifu':
         sf.write('min_wavelength			%s\n'%("0.653e-6"))
         sf.write('max_wavelength			%s\n\n'%("0.660e-6"))
         #Use the sigma = 10 km/s smoothed mappings model
         sf.write('mappings_sed_file			%s\n'%("/u/rcsimons/scripts/vela-yt-sunrise/Smodel_full_hires_smooth.fits"))
         sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
-
-    elif run_type == 'grism':
-        sf.write('min_wavelength			%s\n'%("0.02e-6"))
-        sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
-
-        sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Mappings_Smodels_gfs.fits"))
-        sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/GFS_combined_nolines.fits"))   #or Patrik's hires.fits inputs
-
 
 
     sf.close()
@@ -69,91 +52,16 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     mf.write('n_threads          		'+nthreads+'\n')
     mf.write('camera_positions      %s\n'%(cam_file))
 
-    if run_type != 'ifu':
-        mf.write('use_kinematics	   %s\n'%('false #True for IFU'))
-    else:
-        mf.write('use_kinematics	   %s\n'%('true #False for images'))
-
 	#move npixels to .config file
 
-    if run_type == 'images':
-        mf.write('npixels     800\n')
-    elif run_type == 'ifu':
+    if run_type == 'ifu':
+        mf.write('use_kinematics       %s\n'%('true #False for images'))
         mf.write('npixels     400\n')
-    else:
-        mf.write('npixels     200\n')
-
-
     mf.close()
 
-
-
     print '\t\tSuccessfully generated %s'%filename
 
     return
-
-
-def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, galprops_data, idx = None):
-
-    #copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
-
-    bf = open(run_dir+'/'+filename,'w+')
-
-    redshift = 1./galprops_data['scale'][idx] - 1
-    bf.write('#Parameter File for Sunrise, broadband\n\n')
-    bf.write('include_file                      %s\n\n'%stub_name)
-    bf.write('redshift                          %.3f\n\n'%redshift)
-    bf.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
-    bf.write('output_file                       %s\n'%(run_dir+'/broadband.fits'))
-    bf.write('filter_list                       %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/filters_rest'))
-    bf.write('filter_file_directory             %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/'))
-    bf.close()
-
-    bfz = open(run_dir+'/'+filename.replace('broadband','broadbandz'),'w+')
-
-    redshift = 1./galprops_data['scale'][idx] - 1
-    bfz.write('#Parameter File for Sunrise, broadband\n\n')
-    bfz.write('include_file                      %s\n\n'%stub_name)
-    bfz.write('redshift                          %.3f\n\n'%redshift)
-    bfz.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
-    bfz.write('output_file                       %s\n'%(run_dir+'/broadbandz.fits'))
-    bfz.write('filter_list                       %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/filters_st'))
-    bfz.write('filter_file_directory             %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/'))
-    bfz.close()
-
-
-
-
-    print '\t\tSuccessfully generated %s'%filename
-
-    return
-
-
-def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galprops_data, idx = None):
-
-    #copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
-    #I uploaded these to '~gfsnyder/sunrise_data/' on Pleiades
-
-    bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
-
-    redshift = 1./galprops_data['scale'][idx] - 1
-    bfg.write('#Parameter File for Sunrise, broadband\n\n')
-    bfg.write('include_file                      %s\n\n'%stub_name)
-    bfg.write('redshift                          %.3f\n\n'%redshift)
-    bfg.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
-    bfg.write('output_file                       %s\n'%(run_dir+'/grism.fits'))
-    bfg.write('filter_list                       %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/filters_grism'))
-    bfg.write('filter_file_directory             %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/'))
-    bfg.close()
-
-
-
-
-    print '\t\tSuccessfully generated %s'%filename
-
-    return
-
-
 
 
 def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='12', model='wes', queue='normal',email='rsimons@jhu.edu',walltime='04:00:00',isnap=0):
@@ -171,22 +79,9 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
     bsubf.write('#PBS -V\n')    #export environment variables at start of job
 
     bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
-    bsubf.write('/u/gfsnyder/bin/debug/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
-    bsubf.write('/u/gfsnyder/bin/debug/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
-    if run_type=='images':
-        bsubf.write('/u/gfsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
-        bsubf.write('/u/gfsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
-        bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-        bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
-        bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
-        #bsubf.write('gzip -9 broadband.fits\n')
-    elif run_type=='ifu':
-    #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-        bsubf.write('gzip -9 mcrx.fits\n')
-    elif run_type=='grism':
-        bsubf.write('/u/gfsnyder/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
-        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-        #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+    bsubf.write('/u/rcsimons/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
+    bsubf.write('/u/rcsimons/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
+    bsubf.write('gzip -9 mcrx.fits\n')
 
     bsubf.close()
 
@@ -224,7 +119,7 @@ if __name__ == "__main__":
     simname = os.path.basename(dirname) #assumes directory name for simulation name
     print "Simulation name:  ", simname
 
-    smf_ifu = open('submit_sunrise_ifu.sh','w')
+    smf_ifu = open('/nobackupp2/rcsimons/runs_files/submit_%s_sunrise_ifu.sh','w')
     
     new_snapfiles = []
 
@@ -294,40 +189,14 @@ if __name__ == "__main__":
                                      galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file, idx = idx)
 
 
-
-                if run_type == 'images': 
-                        print '\tGenerating broadband.config file for %s...'%run_type
-                        broadband_fn   = 'broadband.config'
-                        broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
-
-                        generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
-                                                         stub_name = broadband_stub, 
-                                                         galprops_data = galprops_data, idx = idx)
-                if run_type == 'grism': 
-                        print '\tGenerating broadband.config file for %s...'%run_type
-                        broadband_fn   = 'broadband.config'
-                        broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
-
-                        generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
-                                                        stub_name = broadband_stub, 
-                                                        galprops_data = galprops_data, idx = idx)
-
-
-
-
-
                 print '\tGenerating sunrise.qsub file for %s...'%run_type
                 qsub_fn   = 'sunrise.qsub'		
                 final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
                 submitline = 'qsub '+final_fn
 
-                if run_type=='images':
-                        smf_images.write(submitline+'\n')
                 if run_type=='ifu':
                         smf_ifu.write(submitline+'\n')
-                if run_type=='grism':
-                        smf_grism.write(submitline+'\n')
 
     
     smf_ifu.close()
