@@ -71,7 +71,7 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
     bsubf.write('#PBS -l select=1:ncpus='+ncpus+':model='+model+'\n')   #selects cpu model and number (sunrise uses 1 node)
     bsubf.write('#PBS -l walltime='+walltime+'\n')    #hh:mm:ss before job is killed
     bsubf.write('#PBS -q '+queue+'\n')       #selects queue to submit to 
-    bsubf.write('#PBS -N sunrise_'+run_type+'_'+run_dir.split('/')[::-2]+'\n')     #selects job name
+    bsubf.write('#PBS -N sunrise_'+run_type+'_'+run_dir.split('/')[-2]+'\n')     #selects job name
     bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
     bsubf.write('#PBS -m abe\n')  #set notification types (abe=abort, begin, end)
     bsubf.write('#PBS -o '+run_dir+'/sunrise_pbs.out\n')  #save standard output here
