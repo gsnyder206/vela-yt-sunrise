@@ -24,7 +24,9 @@ def parse():
                                 ''')
  
     parser.add_argument('snap_files', nargs='?', default=None, help='Snapshot files to be analyzed.')
-    
+
+    parser.add_argument('segments_random', nargs='?', default=None, help='Number of random cameras.')
+
     #parser.add_argument('-s', '--snap_base', default='10MpcBox_csf512_',
     #                    help='Base of the snapshots file names.') 
 
@@ -263,6 +265,10 @@ if __name__ == "__main__":
     else:
         snaps = np.asarray(glob.glob("*.d"))
 
+    if args['segments_random'] is not None:
+        segments_random=int(args['segments_random'])
+    else:
+        segments_random=7
         
     print( "Generating Sunrise Input for: ", snaps)
 
@@ -380,7 +386,7 @@ if __name__ == "__main__":
         #L_temp = array([0.229307690083501, 0.973325655982054, 0.00742635009091421]) #to Match with C Moody
         #This function is important for generating the cameras that we will be using
         try:
-            cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov)
+            cameras = generate_cameras(L, seed = seed, distance = cam_dist, fov = cam_fov, segments_random=segments_random)
         except np.linalg.linalg.LinAlgError:
             print( "Error in camera linear algebra: skipping")
             continue
