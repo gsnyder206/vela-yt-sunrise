@@ -233,7 +233,7 @@ def write_qsub_exporters(snapname,qsubfn,aname,args):
     qsfo.write('#!/bin/bash\n')
     qsfo.write('#PBS -S /bin/bash\n')
     if group is not None:
-        qsfo.write('#PBS -W group_list='+group)
+        qsfo.write('#PBS -W group_list='+group+'\n')
     qsfo.write('#PBS -l select=1:ncpus=1:model=has\n')
     qsfo.write('#PBS -l walltime=04:00:00\n')
     qsfo.write('#PBS -q normal\n')
