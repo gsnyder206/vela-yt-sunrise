@@ -82,6 +82,8 @@ def parse():
     
     parser.add_argument('--email',default='gsnyder@stsci.edu',type=str,
                         help='email address for job notifications')
+    parser.add_argument('--group',default='s1938',type=str,
+                        help='group for compute charge')
     
 
     args = vars(parser.parse_args())
@@ -99,7 +101,7 @@ if __name__ == "__main__":
     
     
     print( args)
-    print( args['no_export'], args['no_gas_p'])
+    print( args['no_export'], args['no_gas_p'], args['group'])
 
     if args['snap_files'] is not None:
         snaps = np.asarray( [args['snap_files']])
