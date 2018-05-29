@@ -372,7 +372,7 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
         col_list.append(pyfits.Column("gas_teff_m", format='D',
                                       array=fd['TemperatureTimesCellMassMsun'], unit="K*Msun"))
         col_list.append(pyfits.Column("cell_volume", format='D',
-                                      array=fd['CellVolumeKpc'], unit="kpc^3"))
+                                      array=fd['CellVolumeKpc']+1.0, unit="kpc^3"))
         col_list.append(pyfits.Column("SFR", format='D',
                                       array=fd['CellSFRtau'],  unit = 'Msun'))
 
