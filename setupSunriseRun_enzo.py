@@ -233,7 +233,7 @@ if __name__ == "__main__":
     if len(sys.argv)==2:
         snaps = np.asarray([sys.argv[1]])
     else:
-        snaps = np.asarray(glob.glob("*.d"))
+        snaps = np.asarray(glob.glob("*/RD*.boundary"))
 
 
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
@@ -276,8 +276,8 @@ if __name__ == "__main__":
     new_snapfiles = []
 
     for sn in snaps:
-        aname = sn.split('_')[-1].rstrip('.d')
-
+        #aname = sn.split('_')[-1].rstrip('.d')
+		aname = sn.split('/')[-1].rstrip('.boundary')
         snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
 
         print "Sunrise directory: ", snap_dir
@@ -289,7 +289,7 @@ if __name__ == "__main__":
 
 
     new_snapfiles = np.asarray(new_snapfiles)
-
+    '''
     for isnap, snapfile in enumerate(new_snapfiles):
         snap_dir = os.path.abspath(os.path.dirname(snapfile))
         sunrise_dir = os.path.basename(snap_dir)
@@ -381,7 +381,7 @@ if __name__ == "__main__":
                         smf_ifu.write(submitline+'\n')
                 if run_type=='grism':
                         smf_grism.write(submitline+'\n')
-
+	'''
 
     smf_images.close()
     smf_ifu.close()
