@@ -33,6 +33,12 @@ if __name__=="__main__":
         snap_dir = os.path.join(adir,simname+'_'+aname+'_sunrise')
         yt_fig_dir = snap_dir+'/yt_projections'
         print( "Sunrise directory: ", snap_dir)
+        if not os.path.lexists(snap_dir):
+            print ("Creating Sunrise directory:", snap_dir)
+            os.mkdir(snap_dir)        
+        if not os.path.lexists(yt_fig_dir):
+            print ("Creating YT figure directory:", yt_fig_dir)
+            os.mkdir(yt_fig_dir)        
 
 
 
