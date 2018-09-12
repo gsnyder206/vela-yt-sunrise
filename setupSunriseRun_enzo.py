@@ -287,14 +287,15 @@ if __name__ == "__main__":
             assert os.path.lexists(snap_dir)
         except:
             os.system('mkdir %s'%snap_dir)
-
+        '''
         newf = os.path.join(snap_dir,sn)
         new_snapfiles.append(newf)
         try:
             assert os.path.lexists(newf)
         except:
             os.system('mkdir %s'%newf)
-
+        '''
+        print sn
 
 
 
