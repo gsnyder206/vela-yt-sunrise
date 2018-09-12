@@ -311,7 +311,9 @@ if __name__ == "__main__":
 
         prop_file = os.path.abspath(simname+'_galprops.npy')
 
-        print snap_dir
+        print 'snap_dir': sunrise_dir
+        print 'sunrise_dir': sunrise_dir
+        print 'snap_name': snap_name
 
         '''
         #Clean exit for galaxies with no prop file
