@@ -44,3 +44,8 @@ if __name__=="__main__":
         new_snapfiles.append(os.path.abspath(sn))
 
 
+    new_snapfiles = np.asarray(new_snapfiles)
+    galaxy_props = {}
+    fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
+              'stars_rhalf', 'stars_mass_profile', 'stars_L','gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 
+              'Mvir_dm', 'stars_center','snap_files']
