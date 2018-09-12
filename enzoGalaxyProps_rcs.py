@@ -22,3 +22,18 @@ if __name__=="__main__":
     simname = os.path.basename(dirname) #assumes directory name for simulation name
 
     print( "Simulation name:  ", simname)
+
+    particle_headers = []
+    particle_data = []
+    stars_data = []
+    new_snapfiles = []
+    for sn in snaps:
+        aname=os.path.basename(sn)
+        adir=os.path.abspath(os.path.dirname(sn))
+        snap_dir = os.path.join(adir,simname+'_'+aname+'_sunrise')
+        yt_fig_dir = snap_dir+'/yt_projections'
+        print( "Sunrise directory: ", snap_dir)
+
+
+
+
