@@ -41,5 +41,6 @@ if __name__=="__main__":
             os.mkdir(yt_fig_dir)        
 
 
+        new_snapfiles.append(os.path.abspath(sn))
 
 
