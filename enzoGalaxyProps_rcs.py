@@ -49,3 +49,34 @@ if __name__=="__main__":
     fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
               'stars_rhalf', 'stars_mass_profile', 'stars_L','gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 
               'Mvir_dm', 'stars_center','snap_files']
+    for field in fields: 
+        if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
+            galaxy_props[field] = np.array([])                
+        else:
+            galaxy_props[field] = []
+
+
+    yt.add_particle_filter("stars",function=_stars, filtered_type='all',requires=["particle_type"])
+    yt.add_particle_filter("darkmatter",function=_darkmatter, filtered_type='all',requires=["particle_type"])
+
+    ts = yt.DatasetSeries(new_snapfiles)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
