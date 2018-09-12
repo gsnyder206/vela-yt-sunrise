@@ -17,9 +17,8 @@ if __name__=="__main__":
 
     print("Calculating Galaxy Props for "+form+": ", snaps)
 
+    abssnap = os.path.abspath(snaps[0])
+    dirname = os.path.dirname(os.path.dirname(abssnap))
+    simname = os.path.basename(dirname) #assumes directory name for simulation name
 
-
-
-
-
-
+    print( "Simulation name:  ", simname)
