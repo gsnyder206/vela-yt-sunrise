@@ -93,12 +93,47 @@ if __name__=="__main__":
             continue
 
 
+        scale = round(1.0/(ds.current_redshift+1.0),3)
+        galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
+    
+        galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],snap_dir)
+
+
+        print( 'Determining center...')
+        max_ndens_arr = fGP.find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
+        print( '\tCenter = ', max_ndens_arr)
+        sys.stdout.flush()
+
+        #Generate Sphere Selection
+        print( 'Determining virial radius...')
+        rvir = fGP.find_rvirial(dd, ds, max_ndens_arr)
+        print( '\tRvir = ', rvir)
+        sys.stdout.flush()
+
+        hc_sphere = ds.sphere(max_ndens_arr, rvir)
+
+ 
+        galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
+        galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
+        galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
+
+        
+        #Find Galaxy Properties
+        galaxy_props = fGP.find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
+
+
+        del (hc_sphere)
+        sys.stdout.flush()
 
 
 
 
+    # Save galaxy props file
+    galaxy_props_file = simname+'_galprops.npy'
+    print( '\nSuccessfully computed galaxy properties')
+    print( 'Saving galaxy properties to ', galaxy_props_file)
 
-
+    np.save(galaxy_props_file, galaxy_props)  
 
 
 
