@@ -302,7 +302,7 @@ if __name__ == "__main__":
 
 
     new_snapfiles = np.asarray(new_snapfiles)
-    '''
+
     for isnap, snapfile in enumerate(new_snapfiles):
         snap_dir = os.path.abspath(os.path.dirname(snapfile))
         sunrise_dir = os.path.basename(snap_dir)
@@ -394,7 +394,6 @@ if __name__ == "__main__":
                         smf_ifu.write(submitline+'\n')
                 if run_type=='grism':
                         smf_grism.write(submitline+'\n')
-    '''
 
     smf_images.close()
     smf_ifu.close()
