@@ -256,7 +256,9 @@ if __name__ == "__main__":
     assert os.path.lexists(abssnap)
 
     dirname = os.path.dirname(abssnap)
-    simname = os.path.basename(dirname) #assumes directory name for simulation name
+    #simname = os.path.basename(dirname) #assumes directory name for simulation name
+    simname = os.path.basename(os.getcwd()) #assumes directory name for simulation name
+
     print "Simulation name:  ", simname
 
     #smf_images = open('submit_sunrise_images_gfs.sh','w')
