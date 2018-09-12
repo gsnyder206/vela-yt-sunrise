@@ -286,11 +286,18 @@ if __name__ == "__main__":
         try:
             assert os.path.lexists(snap_dir)
         except:
-            assert os.System('mkdir %s'%snap_dir)
+            os.System('mkdir %s'%snap_dir)
 
         newf = os.path.join(snap_dir,sn)
         new_snapfiles.append(newf)
-        assert os.path.lexists(newf)
+        try:
+            assert os.path.lexists(newf)
+        except:
+            os.System('mkdir %s'%newf)
+
+
+
+
 
 
     new_snapfiles = np.asarray(new_snapfiles)
