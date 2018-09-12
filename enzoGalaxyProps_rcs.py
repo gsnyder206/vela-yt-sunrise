@@ -73,6 +73,16 @@ if __name__=="__main__":
     ts = yt.DatasetSeries(new_snapfiles)
 
 
+    for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
+        print( "Getting galaxy props: ",  snap_dir)
+
+        ds.add_particle_filter('stars')
+        ds.add_particle_filter('darkmatter')
+
+        dd = ds.all_data()
+        ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
+        ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
+        print(ds.index.get_smallest_dx())
 
 
 
