@@ -71,7 +71,7 @@ def parse():
     #parser.add_argument('--no_plots',action='store_true',
     #                    help='Do not generate projection plots.') 
 
-    parser.add_argument('--format',default='VELA',type=str,
+    parser.add_argument('--format',default='ENZO',type=str,
                         help='Simulation type (ENZO or VELA)') 
     
     parser.add_argument('--no_export',action='store_true',
@@ -80,9 +80,12 @@ def parse():
     parser.add_argument('--no_gas_p',action='store_true',
                         help='Shut off momentum of gas grid.')
     
-    parser.add_argument('--email',default='gsnyder@stsci.edu',type=str,
-                        help='email address for job notifications')
-    parser.add_argument('--group',default='s1938',type=str,
+    #parser.add_argument('--email',default='gsnyder@stsci.edu',type=str,
+    #                    help='email address for job notifications')
+    parser.add_argument('--email',default='rsimons@jhu.edu',type=str,
+                    help='email address for job notifications')
+
+    parser.add_argument('--group',default='s1698',type=str,
                         help='group for compute charge')
     
 
@@ -134,7 +137,7 @@ if __name__ == "__main__":
     simname = os.path.basename(dirname) #assumes directory name for simulation name
     
     print( "Simulation name:  ", simname)
-
+    
     particle_headers = []
     particle_data = []
     stars_data = []
