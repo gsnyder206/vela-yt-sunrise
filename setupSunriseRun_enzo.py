@@ -296,12 +296,8 @@ if __name__ == "__main__":
         except:
             os.system('mkdir %s'%newf)
         '''
-        print snap_dir
 
 
-
-
-    '''
     new_snapfiles = np.asarray(new_snapfiles)
 
     for isnap, snapfile in enumerate(new_snapfiles):
@@ -315,6 +311,9 @@ if __name__ == "__main__":
 
         prop_file = os.path.abspath(simname+'_galprops.npy')
 
+        print snap_dir
+
+        '''
         #Clean exit for galaxies with no prop file
         if os.path.lexists(fits_file) and os.path.lexists(cam_file):
             print prop_file
@@ -395,7 +394,7 @@ if __name__ == "__main__":
                         smf_ifu.write(submitline+'\n')
                 if run_type=='grism':
                         smf_grism.write(submitline+'\n')
-    '''
+        '''
     smf_images.close()
     smf_ifu.close()
     smf_grism.close()
