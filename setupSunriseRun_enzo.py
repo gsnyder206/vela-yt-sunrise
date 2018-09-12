@@ -179,9 +179,9 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
         bsubf.write('/u/gfsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
         bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
         bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
-        if candelize==True:
-                bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
-        bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
+                if candelize==True:
+                        bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
+                bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
     elif run_type=='ifu':
         #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
                 bsubf.write('gzip -9 mcrx.fits\n')
@@ -233,19 +233,16 @@ if __name__ == "__main__":
     if len(sys.argv)==2:
         snaps = np.asarray([sys.argv[1]])
     else:
-        snaps = np.asarray(glob.glob("*/RD*.boundary"))
+        snaps = np.asarray(glob.glob("*.d"))
 
 
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
     nthreads = '24'  #comet
-    queue='devel'   #options devel, debug, low, normal, long
-    #notify='gsnyder@stsci.edu'
-    notify='rsimons@jhu.edu'
-
+    queue='normal'   #options devel, debug, low, normal, long
+    notify='gsnyder@stsci.edu'
     walltime_limit='02:00:00'
 
-    #stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
-    stub_dir = '/u/rcsimons/sunrise_data/stub_files'
+    stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
 
     #list_of_types = ['images','ifu','grism']
     list_of_types = ['images']
@@ -256,46 +253,27 @@ if __name__ == "__main__":
     assert os.path.lexists(abssnap)
 
     dirname = os.path.dirname(abssnap)
-    #simname = os.path.basename(dirname) #assumes directory name for simulation name
-    simname = os.path.basename(os.getcwd()) #assumes directory name for simulation name
-
+    simname = os.path.basename(dirname) #assumes directory name for simulation name
     print "Simulation name:  ", simname
 
-    #smf_images = open('submit_sunrise_images_gfs.sh','w')
-    #smf_ifu = open('submit_sunrise_ifu_gfs.sh','w')
-    #smf_grism = open('submit_sunrise_grism_gfs.sh','w')
-    #smf_candelize = open('submit_sunrise_candelize_gfs.sh','w')
-
-    #for run_type in list_of_types:
-    smf_images = open('submit_sunrise_images_rcs.sh','w')
-    smf_ifu = open('submit_sunrise_ifu_rcs.sh','w')
-    smf_grism = open('submit_sunrise_grism_rcs.sh','w')
-    smf_candelize = open('submit_sunrise_candelize_rcs.sh','w')
-
-
-
+    smf_images = open('submit_sunrise_images_gfs.sh','w')
+    smf_ifu = open('submit_sunrise_ifu_gfs.sh','w')
+    smf_grism = open('submit_sunrise_grism_gfs.sh','w')
+    smf_candelize = open('submit_sunrise_candelize_gfs.sh','w')
     
     new_snapfiles = []
 
     for sn in snaps:
-        #aname = sn.split('_')[-1].rstrip('.d')
-        aname = sn.split('/')[-1].rstrip('.boundary')
+        aname = sn.split('_')[-1].rstrip('.d')
+
         snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
 
         print "Sunrise directory: ", snap_dir
-        try:
-            assert os.path.lexists(snap_dir)
-        except:
-            os.system('mkdir %s'%snap_dir)
-        new_snapfiles.append(snap_dir)
-        '''
+        assert os.path.lexists(snap_dir)
+
         newf = os.path.join(snap_dir,sn)
         new_snapfiles.append(newf)
-        try:
-            assert os.path.lexists(newf)
-        except:
-            os.system('mkdir %s'%newf)
-        '''
+        assert os.path.lexists(newf)
 
 
     new_snapfiles = np.asarray(new_snapfiles)
@@ -311,17 +289,6 @@ if __name__ == "__main__":
 
         prop_file = os.path.abspath(simname+'_galprops.npy')
 
-        print 'snap_dir:', snap_dir
-        print 'sunrise_dir:', sunrise_dir
-        print 'snap_name:', snap_name
-        print 'fits_file:', fits_file
-        print 'info_file:', info_file
-        print 'cam_file:', cam_file
-
-
-
-
-        '''
         #Clean exit for galaxies with no prop file
         if os.path.lexists(fits_file) and os.path.lexists(cam_file):
             print prop_file
@@ -402,13 +369,13 @@ if __name__ == "__main__":
                         smf_ifu.write(submitline+'\n')
                 if run_type=='grism':
                         smf_grism.write(submitline+'\n')
-        '''
+
+
     smf_images.close()
     smf_ifu.close()
     smf_grism.close()
     smf_candelize.close()
     
-
 
 
 
