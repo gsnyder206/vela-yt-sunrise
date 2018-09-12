@@ -238,11 +238,14 @@ if __name__ == "__main__":
 
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
     nthreads = '24'  #comet
-    queue='normal'   #options devel, debug, low, normal, long
-    notify='gsnyder@stsci.edu'
+    queue='devel'   #options devel, debug, low, normal, long
+    #notify='gsnyder@stsci.edu'
+    notify='rsimons@jhu.edu'
+
     walltime_limit='02:00:00'
 
-    stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
+    #stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
+    stub_dir = '/u/rcsimons/sunrise_data/stub_files'
 
     #list_of_types = ['images','ifu','grism']
     list_of_types = ['images']
@@ -256,10 +259,19 @@ if __name__ == "__main__":
     simname = os.path.basename(dirname) #assumes directory name for simulation name
     print "Simulation name:  ", simname
 
-    smf_images = open('submit_sunrise_images_gfs.sh','w')
-    smf_ifu = open('submit_sunrise_ifu_gfs.sh','w')
-    smf_grism = open('submit_sunrise_grism_gfs.sh','w')
-    smf_candelize = open('submit_sunrise_candelize_gfs.sh','w')
+    #smf_images = open('submit_sunrise_images_gfs.sh','w')
+    #smf_ifu = open('submit_sunrise_ifu_gfs.sh','w')
+    #smf_grism = open('submit_sunrise_grism_gfs.sh','w')
+    #smf_candelize = open('submit_sunrise_candelize_gfs.sh','w')
+
+	#for run_type in list_of_types:
+    smf_images = open('submit_sunrise_images_rcs.sh'%run_type,'w')
+    smf_ifu = open('submit_sunrise_ifu_rcs.sh'%run_type,'w')
+    smf_grism = open('submit_sunrise_grism_rcs.sh'%run_type,'w')
+    smf_candelize = open('submit_sunrise_candelize_rcs.sh'%run_type,'w')
+
+
+
     
     new_snapfiles = []
 
