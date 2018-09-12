@@ -265,10 +265,10 @@ if __name__ == "__main__":
     #smf_candelize = open('submit_sunrise_candelize_gfs.sh','w')
 
     #for run_type in list_of_types:
-    smf_images = open('submit_sunrise_images_rcs.sh'%run_type,'w')
-    smf_ifu = open('submit_sunrise_ifu_rcs.sh'%run_type,'w')
-    smf_grism = open('submit_sunrise_grism_rcs.sh'%run_type,'w')
-    smf_candelize = open('submit_sunrise_candelize_rcs.sh'%run_type,'w')
+    smf_images = open('submit_sunrise_images_rcs.sh','w')
+    smf_ifu = open('submit_sunrise_ifu_rcs.sh','w')
+    smf_grism = open('submit_sunrise_grism_rcs.sh','w')
+    smf_candelize = open('submit_sunrise_candelize_rcs.sh','w')
 
 
 
