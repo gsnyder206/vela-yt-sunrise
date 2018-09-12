@@ -8,6 +8,7 @@ import astropy
 from astropy.cosmology import Planck13 as cosmo
 import findGalaxyProps as fGP
 
+
 def _stars(pfilter, data):
     return data[(pfilter.filtered_type, "particle_type")] == 2
 

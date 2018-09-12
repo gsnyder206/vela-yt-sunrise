@@ -9,6 +9,9 @@ from astropy.cosmology import Planck13 as cosmo
 import findGalaxyProps as fGP
 
 
+
+
+
 if __name__=="__main__":
     snaps = np.sort(np.asarray(glob.glob("RD????/RD????")))  #ENZO format a list of snapshots in separate directories
     form='ENZO'
@@ -56,10 +59,27 @@ if __name__=="__main__":
             galaxy_props[field] = []
 
 
+
+    def _stars(pfilter, data):
+        return data[(pfilter.filtered_type, "particle_type")] == 2
+
+    #this gets dark matter particles in zoom region only
+    def _darkmatter(pfilter, data):
+        return data[(pfilter.filtered_type, "particle_type")] == 4
+
     yt.add_particle_filter("stars",function=_stars, filtered_type='all',requires=["particle_type"])
     yt.add_particle_filter("darkmatter",function=_darkmatter, filtered_type='all',requires=["particle_type"])
 
     ts = yt.DatasetSeries(new_snapfiles)
+
+
+
+
+
+
+
+
+
 
 
 
