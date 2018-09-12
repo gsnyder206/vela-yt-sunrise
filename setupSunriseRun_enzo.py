@@ -287,6 +287,7 @@ if __name__ == "__main__":
             assert os.path.lexists(snap_dir)
         except:
             os.system('mkdir %s'%snap_dir)
+        new_snapfiles.append(snap_dir)
         '''
         newf = os.path.join(snap_dir,sn)
         new_snapfiles.append(newf)
@@ -295,12 +296,12 @@ if __name__ == "__main__":
         except:
             os.system('mkdir %s'%newf)
         '''
-        print sn
+        print snap_dir
 
 
 
 
-
+    '''
     new_snapfiles = np.asarray(new_snapfiles)
 
     for isnap, snapfile in enumerate(new_snapfiles):
@@ -394,7 +395,7 @@ if __name__ == "__main__":
                         smf_ifu.write(submitline+'\n')
                 if run_type=='grism':
                         smf_grism.write(submitline+'\n')
-
+    '''
     smf_images.close()
     smf_ifu.close()
     smf_grism.close()
