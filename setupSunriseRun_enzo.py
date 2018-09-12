@@ -283,7 +283,10 @@ if __name__ == "__main__":
         snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
 
         print "Sunrise directory: ", snap_dir
-        assert os.path.lexists(snap_dir)
+        try:
+            assert os.path.lexists(snap_dir)
+        except:
+            assert os.sys('mkdir %s'%snap_dir)
 
         newf = os.path.join(snap_dir,sn)
         new_snapfiles.append(newf)
