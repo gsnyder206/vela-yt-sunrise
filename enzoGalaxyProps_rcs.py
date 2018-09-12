@@ -82,10 +82,11 @@ if __name__=="__main__":
         dd = ds.all_data()
         ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
         ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
-        print(ds.index.get_smallest_dx())
-        
+
         try:
+            print 'Loading data...'
             stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
+            print 'Loaded.'
             assert stars_pos_x.shape[0] > 5
         except AttributeError:
             print("No star particles found, skipping: ", snap_dir)
