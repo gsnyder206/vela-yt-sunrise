@@ -13,8 +13,9 @@ if __name__=="__main__":
     snaps = np.sort(np.asarray(glob.glob("RD????/RD????")))  #ENZO format a list of snapshots in separate directories
     form='ENZO'
 
+    assert snaps.shape[0] > 0
 
-    print snaps, form
+    print("Calculating Galaxy Props for "+form+": ", snaps)
 
 
 
