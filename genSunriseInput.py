@@ -82,7 +82,7 @@ def parse():
 
 
 
-def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang = 0., movie = False, segments_random=15, segments_fixed=4):
+def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang = 0., movie = False, segments_random=12, segments_fixed=2):
     '''
     Set camera positions and orientations
     '''

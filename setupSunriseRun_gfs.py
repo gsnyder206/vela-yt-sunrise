@@ -3,6 +3,8 @@ import sys
 import numpy as np
 import glob
 from numpy import *
+import shutil
+
 
 '''
 Generate the configuration files required to run Sunrise and
@@ -27,8 +29,8 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 	if run_type == 'images':
-		sf.write('min_wavelength			%s\n'%("0.02e-6"))
-		sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
+		sf.write('min_wavelength			%s\n'%("0.06e-6"))
+		sf.write('max_wavelength			%s\n\n'%("3.0e-6"))
 
 		sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel-lores128.fits"))
 		sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/Patrik-imfKroupa-Zmulti-ml.fits"))
@@ -97,6 +99,8 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
+        shutil.copy2('/u/gfsnyder/sunrise_data/sunrise_filters.tar',run_dir)
+        
 	bf = open(run_dir+'/'+filename,'w+')
 
 	redshift = 1./galprops_data['scale'][idx] - 1
