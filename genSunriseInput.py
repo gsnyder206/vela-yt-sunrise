@@ -82,7 +82,7 @@ def parse():
 
 
 
-def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang = 0., movie = False, segments_random=7, segments_fixed=4):
+def generate_cameras(normal_vector, seed = 0, distance=100.0, fov=50.0, mov_ang = 0., movie = False, segments_random=15, segments_fixed=4):
     '''
     Set camera positions and orientations
     '''
@@ -281,7 +281,7 @@ if __name__ == "__main__":
     if args['segments_random'] is not None:
         segments_random=int(args['segments_random'])
     else:
-        segments_random=7
+        segments_random=15
         
     print( "Generating Sunrise Input for: ", snaps)
 
