@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.neighbors import KDTree
 
 
-def update_star_radius(sf):
+def update_star_radius(sf,k=16):
 
 
     sfo = fits.open(sf)
@@ -19,10 +19,12 @@ def update_star_radius(sf):
 
     tree = KDTree(pos,leaf_size=128)
 
-    dist16, ind = tree.query(pos,k=16)
+    distk, ind = tree.query(pos,k=k)
 
-    dist = dist16[:,-1]
-    
+    dist = distk[:,-1]
+
+    uval=np.min([dist*0.0 + 10.0, dist], axis=0)
+    finalval=np.max([0.010+0.0*uval,uval], axis=0)
     
     '''  older try
     mins=np.min(pos,axis=0)
@@ -61,5 +63,5 @@ def update_star_radius(sf):
     return H, edges, Nvals, Q, uval, finalval
     '''
 
-    return dist
+    return finalval
     
