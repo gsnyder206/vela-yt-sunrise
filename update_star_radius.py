@@ -24,7 +24,7 @@ def update_star_radius(sf):
 
     alm = np.argmax([limits[0][1]-limits[0][0], limits[1][1]-limits[1][0], limits[2][1]-limits[2][0]])
 
-    target_size= 1.0 #in kpc
+    target_size= 0.070 #in kpc
     
     bins=np.int32((limits[alm][1]-limits[alm][0])/target_size)
 
