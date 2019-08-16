@@ -19,7 +19,7 @@ def update_star_radius(sf):
 
     tree = KDTree(pos,leaf_size=128)
 
-    dist, ind = tree.query(pos[:1],k=64)
+    dist, ind = tree.query(pos,k=64)
 
     print(dist)
     
