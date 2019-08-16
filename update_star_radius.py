@@ -29,10 +29,10 @@ def update_star_radius(sf):
     bins=np.int32((limits[alm][1]-limits[alm][0])/target_size)
 
     binsize=(limits[alm][1]-limits[alm][0])/bins
-    print(limits)
-    print(bins)
-    print(binsize)
+    print('star position limits: ', limits)
+    print('star radius histogram bins: ', bins)
+    print('star radius histogram binsize: ', binsize)
     
     H,edges = np.histogramdd(pos,bins=bins,range=limits)
     
-    return
+    return H, edges
