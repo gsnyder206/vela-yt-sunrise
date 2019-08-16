@@ -1,6 +1,6 @@
 import astropy.io.fits as fits
 import numpy as np
-
+from sklearn.neighbors import KDTree
 
 
 def update_star_radius(sf):
@@ -17,6 +17,14 @@ def update_star_radius(sf):
     #test values only!  future: 
     #actually, need to verify that we get ALL particles here
 
+    tree = KDTree(pos,leaf_size=128)
+
+    dist, ind = tree.query(pos[:1],k=64)
+
+    print(dist)
+    
+    
+    '''
     mins=np.min(pos,axis=0)
     maxs=np.max(pos,axis=0)
     
@@ -50,5 +58,8 @@ def update_star_radius(sf):
     uval=np.min([Q,Q*0.0+10.0],axis=0)
 
     finalval=np.max([0.01+0.0*uval,uval],axis=0)
-
     return H, edges, Nvals, Q, uval, finalval
+    '''
+
+    return dist
+    
