@@ -34,5 +34,21 @@ def update_star_radius(sf):
     print('star radius histogram binsize: ', binsize)
     
     H,edges = np.histogramdd(pos,bins=bins,range=limits)
+
+    xi=np.digitize(pos[:,0],edges[0],right=True)-1 #subtract 1 because 0 is reserved for below left bound -- can never happen
+    yi=np.digitize(pos[:,1],edges[1],right=True)-1
+    zi=np.digitize(pos[:,2],edges[2],right=True)-1
+
+    assert(np.min(xi) >= 0)
+    assert(np.min(yi) >= 0)
+    assert(np.min(zi) >= 0)
+
+    Nvals=H[xi,yi,zi]
+
+    Q = binsize*(Nvals/64.0)**(-1.0/3.0)
     
-    return H, edges
+    uval=np.min([Q,Q*0.0+10.0],axis=0)
+
+    finalval=np.max([0.01+0.0*uval,uval],axis=0)
+
+    return H, edges, Nvals, Q, uval, finalval
