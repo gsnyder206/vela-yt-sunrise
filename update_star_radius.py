@@ -19,12 +19,12 @@ def update_star_radius(sf):
 
     tree = KDTree(pos,leaf_size=128)
 
-    dist, ind = tree.query(pos,k=64)
+    dist16, ind = tree.query(pos,k=16)
 
-    print(dist)
+    dist = dist16[:,-1]
     
     
-    '''
+    '''  older try
     mins=np.min(pos,axis=0)
     maxs=np.max(pos,axis=0)
     
