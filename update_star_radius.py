@@ -33,6 +33,6 @@ def update_star_radius(sf):
     print(bins)
     print(binsize)
     
-    H,edges = np.histogramd(pos,bins=bins,range=limits)
+    H,edges = np.histogramdd(pos,bins=bins,range=limits)
     
     return
