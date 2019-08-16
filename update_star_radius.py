@@ -6,7 +6,7 @@ from sklearn.neighbors import KDTree
 def update_star_radius(sf,k=16):
 
 
-    sfo = fits.open(sf)
+    sfo = fits.open(sf,mode='update')
 
     pd=sfo['PARTICLEDATA']
 
@@ -25,6 +25,10 @@ def update_star_radius(sf,k=16):
 
     uval=np.min([dist*0.0 + 10.0, dist], axis=0)
     finalval=np.max([0.010+0.0*uval,uval], axis=0)
+
+    pd.data['radius']=finalval
+    
+    sfo.flush()
     
     '''  older try
     mins=np.min(pos,axis=0)
