@@ -23,7 +23,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 	sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
 	sf.write('n_threads          		'+nthreads+'\n')
 
-	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['stars_maxndens'][idx][0], galprops_data['stars_maxndens'][idx][1], galprops_data['stars_maxndens'][idx][2]))
+	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['true_center'][idx][0], galprops_data['true_center'][idx][1], galprops_data['true_center'][idx][2]))
 	#sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(nan, nan, nan))
 	#sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(nan, nan, nan))
 
