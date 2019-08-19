@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -S /bin/bash
+#PBS -l select=1:ncpus=1:model=bro
+#PBS -l walltime=08:00:00
+#PBS -q normal
+#PBS -N sunrise_export
+#PBS -M gsnyder@stsci.edu
+#PBS -m abe
+#PBS -o sunrise_export_pbs.out
+#PBS -e sunrise_export_pbs.err
+#PBS -V
+python $VELAYTSUNRISE_CODE/findGalaxyProps.py > props_test.out 2> props_test.err #use without snapshot name input to do whole folder
+python $VELAYTSUNRISE_CODE/genSunriseInput.py --no_export > export_test.out 2> export_test.err  #use without snapshot name input to do whole folder

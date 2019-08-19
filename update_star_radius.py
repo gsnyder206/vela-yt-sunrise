@@ -69,3 +69,12 @@ def update_star_radius(sf,k=16):
 
     return finalval
     
+
+
+if __name__=="__main__":
+    if len(sys.argv) != 2:
+        print('usage: update_star_radius.py <FITS file name>')
+        assert(False)
+
+
+    update_star_radius(sys.argv[1])

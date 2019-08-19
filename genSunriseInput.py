@@ -467,6 +467,9 @@ if __name__ == "__main__":
         np.save(export_info_file, export_info)
         sys.stdout.flush()
 
+        #update star radii
+        update_star_radius.update_star_radius(export_info['input_filename'])
+        
     b = time.time()
     print( 'Final time in seconds: ', b - a)
 
