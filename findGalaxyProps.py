@@ -280,6 +280,8 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd):
         print( '\tStars half-light radius = ', rhalf)
 
 
+
+        
         #do FOV stuff here?
 
         fov_rhalf_factor = 60.0
@@ -299,41 +301,6 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd):
         galaxy_props['fov_kpc']=np.append(galaxy_props['fov_kpc'],fov_kpc)
         galaxy_props['fov_rhalf_factor']=np.append(galaxy_props['fov_rhalf_factor'],real_rhalf_factor)
         galaxy_props['image_npix']=np.append(galaxy_props['image_npix'],int_npix)
-
-        
-        #find true_center here
-
-        
-        genstring=galaxy_props['genname'].lower()
-        simstring=galaxy_props['simname'].upper()
-        
-        cname='vela_'+genstring+'_center_ids.txt'
-        
-        center_catalog_file=os.path.join('/u/gfsnyder/vela_data/',cname)
-
-        center_data=ascii.read(center_catalog_file)
-        
-        cd_sim=center_data['col1']
-        cd_scale=center_data['col2']
-        cd_pid=center_data['col3']
-
-        this_pid = cd_pid[np.logical_and(cd_sim==simstring,cd_scale==scale)]
-
-        assert(this_pid.shape[0]==1)
-
-        pos_x=dd['particle_position_x'].in_units('kpc')
-        pos_y=dd['particle_position_y'].in_units('kpc')
-        pos_z=dd['particle_position_z'].in_units('kpc')
-        pid=dd['particle_index']
-
-        this_i = pid==this_pid
-        assert(np.sum(this_i)==1)
-        
-        this_x=pos_x[this_i][0]
-        this_y=pos_y[this_i][0]
-        this_z=pos_z[this_i][0]
-
-        galaxy_props['true_center'].append(np.asarray([this_x,this_y,this_z]))
 
 
 
@@ -534,12 +501,57 @@ if __name__ == "__main__":
                 max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
                 print( '\tCenter = ', max_ndens_arr)
 
+
+        
+                #find true_center here
+
+        
+                genstring=galaxy_props['genname'].lower()
+                simstring=galaxy_props['simname'].upper()
+        
+                cname='vela_'+genstring+'_center_ids.txt'
+        
+                center_catalog_file=os.path.join('/u/gfsnyder/vela_data/',cname)
+
+                center_data=ascii.read(center_catalog_file)
+        
+                cd_sim=center_data['col1']
+                cd_scale=center_data['col2']
+                cd_pid=center_data['col3']
+
+                this_pid = cd_pid[np.logical_and(cd_sim==simstring,cd_scale==scale)]
+
+                assert(this_pid.shape[0]==1)
+
+                pos_x=dd['particle_position_x'].in_units('kpc')
+                pos_y=dd['particle_position_y'].in_units('kpc')
+                pos_z=dd['particle_position_z'].in_units('kpc')
+                pid=dd['particle_index']
+
+                this_i = pid==this_pid
+                assert(np.sum(this_i)==1)
+        
+                this_x=pos_x[this_i][0]
+                this_y=pos_y[this_i][0]
+                this_z=pos_z[this_i][0]
+
+                true_center = np.asarray([this_x,this_y,this_z])
+                galaxy_props['true_center'].append(true_center)
+                print( '\tTrue Center = ', true_center)
+
+
+
+
+
+                
                 #Generate Sphere Selection
                 print( 'Determining virial radius...')
-                rvir = find_rvirial(dd, ds, max_ndens_arr)
+                #rvir = find_rvirial(dd, ds, max_ndens_arr)
+                rvir = find_rvirial(dd, ds, true_center)
+
                 print( '\tRvir = ', rvir)
 
-                hc_sphere = ds.sphere(max_ndens_arr, rvir)
+                hc_sphere = ds.sphere(true_center, rvir)
                 
  
                 galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
