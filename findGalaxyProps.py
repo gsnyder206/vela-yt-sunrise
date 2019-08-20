@@ -519,10 +519,12 @@ if __name__ == "__main__":
                 cd_scale=center_data['col2']
                 cd_pid=center_data['col3']
 
-                this_pid = cd_pid[np.logical_and(cd_sim==simstring,cd_scale==scale)][0]
+                match=np.logical_and(cd_sim==simstring,cd_scale==scale)
+                assert(match.shape[0]==1)
+
+                this_pid = cd_pid[match][0]
                 #the ID in this catalog is the index into the 'stars' particle array in YT
                 
-                assert(this_pid.shape[0]==1)
 
                 pos_x=dd['stars','particle_position_x'].in_units('kpc')
                 pos_y=dd['stars','particle_position_y'].in_units('kpc')
