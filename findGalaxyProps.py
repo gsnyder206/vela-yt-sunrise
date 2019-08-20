@@ -457,7 +457,7 @@ if __name__ == "__main__":
         galaxy_props = {}
         fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
                   'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor','image_npix',
-                  'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files']
+                  'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files','scale_string']
         for field in fields: 
                 if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
                         galaxy_props[field] = np.array([])                
@@ -474,7 +474,8 @@ if __name__ == "__main__":
         for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print( "Getting galaxy props: ", ds._file_amr, snap_dir)
 
-
+                aname=os.path.basename(snap_dir).split('_')[1]
+                
                 dd = ds.all_data()
                 ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
                 ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
@@ -494,6 +495,8 @@ if __name__ == "__main__":
                 scale = round(1.0/(ds.current_redshift+1.0),3)
                 galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
 
+                galaxy_props['scale_string']=np.append(galaxy_props['scale_string'],aname)
+                
                 galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 
@@ -519,7 +522,7 @@ if __name__ == "__main__":
                 cd_scale=center_data['col2']
                 cd_pid=center_data['col3']
 
-                match=np.logical_and(cd_sim==simstring,cd_scale==scale)
+                match=np.logical_and(cd_sim==simstring,cd_scale==np.float32(aname[1:]))
                 assert(np.sum(match)==1)
 
                 this_pid = cd_pid[match][0]
