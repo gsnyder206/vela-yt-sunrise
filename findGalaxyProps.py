@@ -474,7 +474,7 @@ if __name__ == "__main__":
         for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print( "Getting galaxy props: ", ds._file_amr, snap_dir)
 
-                aname=os.path.basename(snap_dir).split('_')[1]
+                aname=os.path.basename(os.path.dirname(snap_dir)).split('_')[1]
                 
                 dd = ds.all_data()
                 ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
