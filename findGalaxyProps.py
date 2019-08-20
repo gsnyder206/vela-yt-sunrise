@@ -539,6 +539,10 @@ if __name__ == "__main__":
 
                 true_center = np.asarray([this_x,this_y,this_z])
                 galaxy_props['true_center'].append(true_center)
+
+                #max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
+                true_center = ds.arr(true_center,'kpc')
+                
                 print( '\tTrue Center = ', true_center)
 
 
