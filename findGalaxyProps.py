@@ -520,20 +520,20 @@ if __name__ == "__main__":
                 cd_pid=center_data['col3']
 
                 this_pid = cd_pid[np.logical_and(cd_sim==simstring,cd_scale==scale)]
-
+                #the ID in this catalog is the index into the 'stars' particle array in YT
+                
                 assert(this_pid.shape[0]==1)
 
-                pos_x=dd['particle_position_x'].in_units('kpc')
-                pos_y=dd['particle_position_y'].in_units('kpc')
-                pos_z=dd['particle_position_z'].in_units('kpc')
-                pid=dd['particle_index']
+                pos_x=dd['stars','particle_position_x'].in_units('kpc')
+                pos_y=dd['stars','particle_position_y'].in_units('kpc')
+                pos_z=dd['stars','particle_position_z'].in_units('kpc')
+                #pid=dd['stars','particle_index']
 
-                this_i = pid==this_pid
-                assert(np.sum(this_i)==1)
+                assert(pos_x.shape[0] > this_pid)
         
-                this_x=pos_x[this_i][0]
-                this_y=pos_y[this_i][0]
-                this_z=pos_z[this_i][0]
+                this_x=pos_x[this_pid]
+                this_y=pos_y[this_pid]
+                this_z=pos_z[this_pid]
 
                 true_center = np.asarray([this_x,this_y,this_z])
                 galaxy_props['true_center'].append(true_center)
