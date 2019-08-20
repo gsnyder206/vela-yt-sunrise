@@ -289,11 +289,16 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd):
         fov_kpc = np.min([fov_kpc,100.0])
         fov_kpc = np.max([28.0,fov_kpc])
 
+        approx_npix = fov_kpc/galaxy_props['pixsize_kpc']
+        int_npix = np.int32(np.ceil(approx_npix))
+        fov_kpc = int_npix*galaxy_props['pixsize_kpc']
+        
+        
         real_rhalf_factor = fov_kpc/rhalf
         
         galaxy_props['fov_kpc']=np.append(galaxy_props['fov_kpc'],fov_kpc)
         galaxy_props['fov_rhalf_factor']=np.append(galaxy_props['fov_rhalf_factor'],real_rhalf_factor)
-        
+        galaxy_props['image_npix']=np.append(galaxy_props['image_npix'],int_npix)
 
         
         #find true_center here
@@ -484,7 +489,7 @@ if __name__ == "__main__":
         new_snapfiles = np.asarray(new_snapfiles)
         galaxy_props = {}
         fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
-                  'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor',
+                  'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor','image_npix',
                   'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files']
         for field in fields: 
                 if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
@@ -497,6 +502,7 @@ if __name__ == "__main__":
 
         galaxy_props['simname']=simname
         galaxy_props['genname']=genname
+        galaxy_props['pixsize_kpc']=0.070
         
         for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print( "Getting galaxy props: ", ds._file_amr, snap_dir)
@@ -544,6 +550,8 @@ if __name__ == "__main__":
                 #Find Galaxy Properties
                 galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd)
 
+                print('Found galaxy properties: ', galaxy_props)
+                
                 #Making Figures
                 #if False:
                 # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=([10,10,10],'Mpc'), width = (25.,'Mpc')).save('test.png')

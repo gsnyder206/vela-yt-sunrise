@@ -79,7 +79,8 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	#move npixels to .config file
 
 	if run_type == 'images':
-		mf.write('npixels     800\n')
+                npix=galprops_data['image_npix'][idx]
+		mf.write('npixels     {:8d}\n'.format(npix))
 	elif run_type == 'ifu':
 		mf.write('npixels     400\n')
 	else:
