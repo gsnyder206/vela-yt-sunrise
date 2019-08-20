@@ -321,17 +321,17 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd):
 
         assert(this_pid.shape[0]==1)
 
-        pos_x=dd['particle_position_x']
-        pos_y=dd['particle_position_y']
-        pos_z=dd['particle_position_z']
+        pos_x=dd['particle_position_x'].in_units('kpc')
+        pos_y=dd['particle_position_y'].in_units('kpc')
+        pos_z=dd['particle_position_z'].in_units('kpc')
         pid=dd['particle_index']
 
         this_i = pid==this_pid
         assert(np.sum(this_i)==1)
         
-        this_x=pos_x[this_i]
-        this_y=pos_y[this_i]
-        this_z=pos_z[this_i]
+        this_x=pos_x[this_i][0]
+        this_y=pos_y[this_i][0]
+        this_z=pos_z[this_i][0]
 
         galaxy_props['true_center'].append(np.asarray([this_x,this_y,this_z]))
 
