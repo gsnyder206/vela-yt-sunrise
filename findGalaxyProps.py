@@ -520,7 +520,7 @@ if __name__ == "__main__":
                 cd_pid=center_data['col3']
 
                 match=np.logical_and(cd_sim==simstring,cd_scale==scale)
-                assert(match.shape[0]==1)
+                assert(np.sum(match)==1)
 
                 this_pid = cd_pid[match][0]
                 #the ID in this catalog is the index into the 'stars' particle array in YT
