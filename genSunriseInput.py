@@ -293,6 +293,8 @@ if __name__ == "__main__":
     dirname = os.path.dirname(abssnap)
     simname = os.path.basename(dirname) #assumes directory name for simulation name
     print( "Simulation name:  ", simname)
+
+
     
     particle_headers = []
     particle_data = []
@@ -336,12 +338,11 @@ if __name__ == "__main__":
     a = time.time()
 
 
+    galprops_file = simname+'_galprops.npy'
+    galprops = np.load(galprops_file)[()]
 
+    
     cam_dist = 100000
-    if args['fov'] is not None:
-        cam_fov = float(args['fov'])
-    else:
-        cam_fov  = 50.0
 
     max_level = None
     seed = 0
@@ -364,22 +365,26 @@ if __name__ == "__main__":
 
         print( "Sunrise directory: ", snap_dir)
         assert os.path.lexists(snap_dir)
-
-
-                    
-        galprops_file = simname+'_galprops.npy'
+                   
 
         out_dir = os.path.join(snap_dir,'input')
         print( os.path.lexists(out_dir))
         if not os.path.lexists(out_dir):
             os.mkdir(out_dir)
 
-        galprops = np.load(galprops_file)[()]
 
 
         if os.path.abspath(snapfile) not in galprops['snap_files']: continue
         idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
 
+        if args['fov'] is not None:
+            cam_fov = float(args['fov'])
+        else:
+            cam_fov = galprops['fov_kpc'][idx]
+            #cam_fov  = 50.0
+
+
+        
         #scale = round(1.0/(ds.current_redshift+1.0),4)
         #if scale not in galprops['scale']: continue
         #idx = np.argwhere(galprops['scale'] == scale)[0][0]
@@ -447,11 +452,11 @@ if __name__ == "__main__":
         scale = round(1.0/(ds.current_redshift+1.0),4)
         #idx = np.argwhere(galprops['scale'] == scale)[0][0]
 	
-        gal_center = galprops['stars_center'][idx]
+        gal_center = galprops['true_center'][idx]
         gal_center = ds.arr(gal_center, 'kpc')
         
         #export_radius = ds.arr(max(1.2*cam_dist, 1.2*cam_fov), 'kpc')
-        export_radius = ds.arr(1.2*cam_fov, 'kpc')
+        export_radius = ds.arr(2.0*cam_fov, 'kpc')
         
         print( export_radius)
         

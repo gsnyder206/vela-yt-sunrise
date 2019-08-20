@@ -13,6 +13,8 @@ import numpy as np
 from numpy import *
 import astropy
 from astropy.cosmology import Planck13 as cosmo
+import astropy.io.ascii as ascii
+
 #reload(yt)
 
 def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_pos = 20):
@@ -196,7 +198,7 @@ def L_crossing(x, y, z, vx, vy, vz, weight, center):
     L /= np.sqrt(np.sum(L*L))
     return L
 
-def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
+def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd):
 
         print( 'Determining stellar and gas mass...')
         # Get total stellar mass 
@@ -278,6 +280,59 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr):
         print( '\tStars half-light radius = ', rhalf)
 
 
+        #do FOV stuff here?
+
+        fov_rhalf_factor = 60.0
+        
+        fov_kpc = fov_rhalf_factor*rhalf
+
+        fov_kpc = np.min([fov_kpc,100.0])
+        fov_kpc = np.max([28.0,fov_kpc])
+
+        real_rhalf_factor = fov_kpc/rhalf
+        
+        galaxy_props['fov_kpc']=np.append(galaxy_props['fov_kpc'],fov_kpc)
+        galaxy_props['fov_rhalf_factor']=np.append(galaxy_props['fov_rhalf_factor'],real_rhalf_factor)
+        
+
+        
+        #find true_center here
+
+        
+        genstring=galaxy_props['genname'].lower()
+        simstring=galaxy_props['simname'].upper()
+        
+        cname='vela_'+genstring+'_center_ids.txt'
+        
+        center_catalog_file=os.path.join('/u/gfsnyder/vela_data/',cname)
+
+        center_data=ascii.read(center_catalog_file)
+        
+        cd_sim=center_data['col1']
+        cd_scale=center_data['col2']
+        cd_pid=center_data['col3']
+
+        this_pid = cd_pid[np.logical_and(cd_sim==simstring,cd_scale==scale)]
+
+        assert(this_pid.shape[0]==1)
+
+        pos_x=dd['particle_position_x']
+        pos_y=dd['particle_position_y']
+        pos_z=dd['particle_position_z']
+        pid=dd['particle_index']
+
+        this_i = pid==this_pid
+        assert(np.sum(this_i)==1)
+        
+        this_x=pos_x[this_i]
+        this_y=pos_y[this_i]
+        this_z=pos_z[this_i]
+
+        galaxy_props['true_center'].append(np.asarray([this_x,this_y,this_z]))
+
+
+
+        
         print( 'Determining center of mass within 15 kpc of the galaxy...')
         # Get center of mass of stars
         gal_sphere = ds.sphere(max_ndens_arr, (15, 'kpc'))
@@ -396,6 +451,10 @@ if __name__ == "__main__":
         simname = os.path.basename(dirname) #assumes directory name for simulation name
         print( "Simulation name:  ", simname)
 
+        genname = os.path.basename(os.path.dirname(dirname))
+        print( "Generation name:  ", genname)
+        
+        
         particle_headers = []
         particle_data = []
         stars_data = []
@@ -425,7 +484,7 @@ if __name__ == "__main__":
         new_snapfiles = np.asarray(new_snapfiles)
         galaxy_props = {}
         fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
-                  'stars_rhalf', 'stars_mass_profile', 'stars_L',
+                  'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor',
                   'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files']
         for field in fields: 
                 if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
@@ -435,6 +494,10 @@ if __name__ == "__main__":
 
         ts = yt.DatasetSeries(new_snapfiles)
 
+
+        galaxy_props['simname']=simname
+        galaxy_props['genname']=genname
+        
         for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
                 print( "Getting galaxy props: ", ds._file_amr, snap_dir)
 
@@ -479,7 +542,7 @@ if __name__ == "__main__":
 
 		
                 #Find Galaxy Properties
-                galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr)
+                galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd)
 
                 #Making Figures
                 #if False:
