@@ -524,7 +524,16 @@ if __name__ == "__main__":
                 cd_pid=center_data['col3']
 
                 match=np.logical_and(cd_sim==simstring,cd_scale==np.float64(aname[1:]))
-                assert(np.sum(match)==1)
+                try:
+                        assert(np.sum(match)==1)
+                except AssertionError:
+                        if np.sum(match)==0:
+                                print('No matches found in input center catalogs, skipping: ', ds._file_amr)
+                                continue
+                        else:
+                                print('Weird error in center, more than 1 found in catalogs, skipping: ', ds._file_amr)
+                                continue
+
 
                 this_pid = cd_pid[match][0]
                 #the ID in this catalog is the index into the 'stars' particle array in YT

@@ -396,6 +396,8 @@ def parse_vela_files(dirname='VELA01'):
         scalefloat=float(scalestr)
         zfloat=(1.0/scalefloat) - 1.0
 
+
+        #this is actually problematic because apparently the filenames aren't exact?
         mvirdm=dat[b'Mvir_dm'][dat[b'scale']==scalefloat]
 
         auxfo.flush()

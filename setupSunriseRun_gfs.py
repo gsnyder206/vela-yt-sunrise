@@ -60,7 +60,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file='', idx = None):
+def generate_mcrx_configs(run_dir, snap_dir, filename, stub_name, stub_name_smc, galprops_data, run_type, nthreads='1',cam_file='', idx = None):
 	mf = open(run_dir+'/'+filename,'w+')
 
 	redshift = 1./galprops_data['scale'][idx] - 1
@@ -89,10 +89,40 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 
 	mf.close()
 
-
-
 	print '\t\tSuccessfully generated %s'%filename
 
+
+        mfs = open(run_dir+'/'+filename.replace('mcrx','mcrxsmc'),'w+')
+
+	redshift = 1./galprops_data['scale'][idx] - 1
+	mfs.write('#Parameter File for Sunrise, mcrx\n\n')
+	mfs.write('include_file         %s\n\n'%stub_name_smc)
+	mfs.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
+	mfs.write('output_file          %s\n'%(run_dir+'/mcrxsmc.fits'))
+	mfs.write('n_threads          		'+nthreads+'\n')
+	mfs.write('camera_positions      %s\n'%(cam_file))
+
+	if run_type != 'ifu':
+		mfs.write('use_kinematics	   %s\n'%('false #True for IFU'))
+	else:
+		mfs.write('use_kinematics	   %s\n'%('true #False for images'))
+
+	#move npixels to .config file
+
+	if run_type == 'images':
+                npix=np.int32(galprops_data['image_npix'][idx])
+		mfs.write('npixels     {:8d}\n'.format(npix))
+	elif run_type == 'ifu':
+		mfs.write('npixels     400\n')
+	else:
+		mfs.write('npixels     200\n')
+
+
+	mfs.close()
+
+	print '\t\tSuccessfully generated %s'%filename.replace('mcrx','mcrxsmc')
+
+        
 	return
 
 
@@ -102,15 +132,15 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 
         shutil.copy2('/u/gfsnyder/sunrise_data/sunrise_filters.tar',run_dir)
         
-	bf = open(run_dir+'/'+filename,'w+')
+	bf = open(run_dir+'/'+filename.replace('broadband','broadbandzsmc'),'w+')
 
 	redshift = 1./galprops_data['scale'][idx] - 1
 	bf.write('#Parameter File for Sunrise, broadband\n\n')
 	bf.write('include_file                      %s\n\n'%stub_name)
 	bf.write('redshift                          %.3f\n\n'%redshift)
-	bf.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
-	bf.write('output_file                       %s\n'%(run_dir+'/broadband.fits'))
-	bf.write('filter_list                       %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/filters_rest'))
+	bf.write('input_file                        %s\n'%(run_dir+'/mcrxsmc.fits'))
+	bf.write('output_file                       %s\n'%(run_dir+'/broadbandzsmc.fits'))
+	bf.write('filter_list                       %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/filters_st'))
 	bf.write('filter_file_directory             %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/'))
 	bf.close()
 
@@ -330,9 +360,12 @@ if __name__ == "__main__":
                 mcrx_fn   = 'mcrx.config'
                 mcrx_stub = os.path.join(stub_dir,'mcrx_base.stub')
 
-                generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
-                                     stub_name = mcrx_stub,
-                                     galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file, idx = idx)
+                mcrx_stub_smc = os.path.join(stub_dir,'mcrx_base_smc.stub')
+
+                
+                generate_mcrx_configs(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
+                                      stub_name = mcrx_stub,stub_name_smc=mcrx_stub_smc,
+                                      galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file, idx = idx)
 
 
 
