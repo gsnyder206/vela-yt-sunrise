@@ -493,12 +493,6 @@ if __name__ == "__main__":
                         print( "No star particles found, skipping: ", ds._file_amr)
                         continue
 
-                scale = round(1.0/(ds.current_redshift+1.0),3)
-                galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
-
-                galaxy_props['scale_string']=np.append(galaxy_props['scale_string'],aname)
-                
-                galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 
                 print( 'Determining center...')
@@ -535,6 +529,16 @@ if __name__ == "__main__":
                                 continue
 
 
+
+                scale = round(1.0/(ds.current_redshift+1.0),3)
+                galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
+
+                galaxy_props['scale_string']=np.append(galaxy_props['scale_string'],aname)
+                
+                galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
+
+
+                
                 this_pid = cd_pid[match][0]
                 #the ID in this catalog is the index into the 'stars' particle array in YT
                 
