@@ -33,8 +33,9 @@ def parse():
     parser.add_argument('-d', '--distance', default=100000, type=float,
                         help='Distance between cameras and the center of the galaxy (in [kpc]).')
 
-    parser.add_argument('-f', '--fov', default=50, type=float,
-                        help='Field of view of the cameras at the image plane (in [kpc]).')
+    #fov now set only by findGalaxyProps.py
+    ##parser.add_argument('-f', '--fov', default=50, type=float,
+    #                    help='Field of view of the cameras at the image plane (in [kpc]).')
 
     parser.add_argument('--format',default='VELA',type=str,
                         help='Simulation type (ENZO or VELA)') 
@@ -258,7 +259,7 @@ def write_qsub_exporters(snapname,qsubfn,aname,args):
     qsfo.write('#PBS -e sunrise_export_'+aname+'pbs.err\n')
     qsfo.write('#PBS -V\n\n')
     
-    qsfo.write('python $VELAYTSUNRISE_CODE/'+code+' '+os.path.basename(snapname)+' --fov='+str(args['fov'])+' --format='+str(args['format'])+' > export_test_'+aname+'.out 2> export_test_'+aname+'.err\n')
+    qsfo.write('python $VELAYTSUNRISE_CODE/'+code+' '+os.path.basename(snapname)+' --format='+str(args['format'])+' > export_test_'+aname+'.out 2> export_test_'+aname+'.err\n')
     qsfo.close()
     
 
@@ -388,11 +389,8 @@ if __name__ == "__main__":
             print('Snapfile exists in galprops but data does not, skipping...')
             continue
             
-        if args['fov'] is not None:
-            cam_fov = float(args['fov'])
-        else:
-            cam_fov = galprops['fov_kpc'][idx]
-            #cam_fov  = 50.0
+
+        cam_fov = galprops['fov_kpc'][idx]
 
 
         
