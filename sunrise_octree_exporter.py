@@ -418,6 +418,7 @@ def create_simple_fits(ds, fn, particle_data, fle, fre, no_gas_p = False,form='V
 
 
 def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level=0, debug=True):
+        ad=ds.all_data()
         if True: 
                 def _MetalMass(field, data):
                         return (data['metal_density']*data['cell_volume']).in_units('Msun')
@@ -448,7 +449,11 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
                         return data["cell_volume"].in_units('kpc**3')
                 ad.ds.add_field('CellVolumeKpc', function=_cellVolumeKpc, units='kpc**3')
 
-
+                cv=ad['cell_volume']
+                mx=ad['momentum_x']
+                my=ad['momentum_y']
+                mz=ad['momentum_z']
+                
                 def _pgascgsx(field, data):
                         try:
                                 return data['momentum_x'].in_units('Msun/(kpc**2*yr)')*data['cell_volume'].in_units('kpc**3')
