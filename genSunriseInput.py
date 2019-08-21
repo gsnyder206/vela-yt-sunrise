@@ -468,7 +468,7 @@ if __name__ == "__main__":
         gal_center = ds.arr(gal_center, 'kpc')
         
         #export_radius = ds.arr(max(1.2*cam_dist, 1.2*cam_fov), 'kpc')
-        export_radius = ds.arr(2.0*cam_fov, 'kpc')
+        export_radius = ds.arr(1.2*cam_fov, 'kpc')
         
         print( export_radius)
         
