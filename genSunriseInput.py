@@ -380,8 +380,10 @@ if __name__ == "__main__":
 
 
         if os.path.abspath(snapfile) not in galprops['snap_files']: continue
+        idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
+
         try:
-            idx = np.argwhere(galprops['snap_files']==os.path.abspath(snapfile))[0][0]
+            npix=galprops['image_npix'][idx]
         except:
             print('Snapfile exists in galprops but data does not, skipping...')
             continue
