@@ -35,6 +35,10 @@ def parse():
 
     parser.add_argument('-f', '--fov', default=50, type=float,
                         help='Field of view of the cameras at the image plane (in [kpc]).')
+
+    parser.add_argument('--format',default='VELA',type=str,
+                        help='Simulation type (ENZO or VELA)') 
+    
     
     #I think many of these aren't needed for now.
     '''
@@ -230,14 +234,15 @@ def write_qsub_exporters(snapname,qsubfn,aname,args):
     else:
         en = 'gsnyder@stsci.edu'
         
-
+    
     if args['format']=='ENZO':
         code='enzoToSunrise.py'
         group=args['group']
     elif args['format']=='VELA':
         code='genSunriseInput.py'
         group=None
-        
+    
+    
     qsfo = open(qsubfn,'w')
     qsfo.write('#!/bin/bash\n')
     qsfo.write('#PBS -S /bin/bash\n')
