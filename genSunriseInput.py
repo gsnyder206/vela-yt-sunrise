@@ -12,6 +12,9 @@ import time
 #from blist import blist
 import glob
 
+import update_star_radius
+
+
 def parse():
     '''
     Parse command line arguments
