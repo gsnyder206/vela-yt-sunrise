@@ -426,13 +426,14 @@ def prepare_octree(ds, ile, fle=[0.,0.,0.], fre=[1.,1.,1.], ad=None, start_level
                 def _TempTimesMass(field, data):
                         te = data['thermal_energy']
                         hd = data['H_nuclei_density']
+                        mass=data["cell_mass"].in_units('Msun')
+
                         try:
                                 temp = (2.0*te/(3.0*hd*yt.physical_constants.kb)).in_units('K')
                         except:
                                 den=data['density']
                                 ted=(te*den).in_units('erg/cm**3')
                                 temp=(2.0*ted/(3.0*hd*yt.physical_constants.kb)).in_units('K')
-                                mass=data["cell_mass"].in_units('Msun')
                 
                         return temp*mass
         
