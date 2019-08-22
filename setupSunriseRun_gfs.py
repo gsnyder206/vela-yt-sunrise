@@ -209,13 +209,17 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 	bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
 	bsubf.write('/u/gfsnyder/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
 	bsubf.write('/u/gfsnyder/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
+	bsubf.write('/u/gfsnyder/bin/mcrx mcrxsmc.config > mcrxsmc.out 2> mcrxsmc.err\n')
+
 	if run_type=='images':
 		bsubf.write('/u/gfsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
-		bsubf.write('/u/gfsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
+		bsubf.write('/u/gfsnyder/bin/broadband broadbandzsmc.config > broadbandzsmc.out 2> broadbandzsmc.err\n')
 		bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
 		bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+		bsubf.write('rm -rf mcrxsmc.fits\n')   #enable this after testing
+
                 #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
-                bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
+                #bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
 	elif run_type=='ifu':
 		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
                 bsubf.write('gzip -9 mcrx.fits\n')
@@ -251,7 +255,7 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
 	bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
 
 	if run_type=='images':
-                bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
+                bsubf.write(os.path.expandvars('python $VELAYTSUNRISE_CODE/candelize_vela.py\n'))
 
 	bsubf.close()
 
@@ -273,7 +277,7 @@ if __name__ == "__main__":
     #I'd suggest moving nthreads to the config files and passing this to the sfrhist and mcrx config creators
     #Pleiades values:
     nthreads = '28'  #cpu models have 12, 16, 20, 24, respectively
-    model='bro_ele'      #options are 'wes', 'san', 'ivy', 'has', in increasing goodness and expense
+    model='bro'      #options are 'wes', 'san', 'ivy', 'has', 'bro', 'sky_ele', in increasing goodness and expense
     queue='normal'   #options devel, debug, low, normal, long
     notify='gsnyder@stsci.edu'
     walltime_limit='08:00:00'
@@ -340,6 +344,13 @@ if __name__ == "__main__":
 
             galprops_data = np.load(prop_file)[()]
             idx = np.argwhere(galprops_data['snap_files']==os.path.abspath(snapfile))[0][0]
+
+            try:
+                    npix=galprops['image_npix'][idx]
+            except:
+                    print('Snapfile exists in galprops but data does not, skipping...')
+                    continue
+            
 
 
             for run_type in list_of_types:
