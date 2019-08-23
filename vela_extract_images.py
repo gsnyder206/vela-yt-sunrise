@@ -161,6 +161,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
 
     target_dir=os.path.basename(imagedir)
     aname=target_dir.split('_')[2]
+    sim=target_dir.split('_')[1]
     
     dirname=imagedir.split('_')[1]
     
