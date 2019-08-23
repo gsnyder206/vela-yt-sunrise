@@ -243,7 +243,7 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
 	bsubf.write('#!/bin/bash\n')
 	bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
 	bsubf.write('#PBS -l select=1:ncpus=4:model=ivy\n')   #selects cpu model and number (sunrise uses 1 node)
-	bsubf.write('#PBS -l walltime=05:00:00\n')    #hh:mm:ss before job is killed
+	bsubf.write('#PBS -l walltime=12:00:00\n')    #hh:mm:ss before job is killed
 	bsubf.write('#PBS -q '+queue+'\n')       #selects queue to submit to 
 	bsubf.write('#PBS -N candelize_'+run_type+'\n')     #selects job name
 	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
@@ -254,8 +254,15 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
 
 	bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
 
+        if galprops_data['genname']=='Gen3':
+                genstr='v3-2'
+        elif galprops_data['genname']=='Gen6':
+                genstr='v6'
+        else:
+                assert(False)
+                
 	if run_type=='images':
-                bsubf.write(os.path.expandvars('python $VELAYTSUNRISE_CODE/candelize_vela.py\n'))
+                bsubf.write(os.path.expandvars('python $VELAYTSUNRISE_CODE/candelize_vela.py '+genstr+'\n'))
 
 	bsubf.close()
 
@@ -329,6 +336,7 @@ if __name__ == "__main__":
 
         prop_file = os.path.abspath(simname+'_galprops.npy')
 
+        
         #Clean exit for galaxies with no prop file
         if os.path.lexists(fits_file) and os.path.lexists(cam_file):
             print prop_file
@@ -357,11 +365,15 @@ if __name__ == "__main__":
                 run_dir = snap_dir+'/%s'%run_type
                 if not os.path.lexists(run_dir):
                         os.mkdir(run_dir)
-                        
+
+
+                shutil.copy2(prop_file,run_dir)
+
                 print '\tGenerating sfrhist.config file for %s...'%run_type
                 sfrhist_fn   = 'sfrhist.config'
                 sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
 
+                
                 generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, 
                                         stub_name = sfrhist_stub,  fits_file = fits_file, 
                                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, idx = idx)

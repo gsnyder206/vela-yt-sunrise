@@ -25,7 +25,7 @@ import subprocess
        'jwst/miri_F1130W', 'jwst/miri_F1280W', 'jwst/miri_F1500W',
        'jwst/miri_F1800W', 'jwst/miri_F2100W', 'jwst/miri_F2550W']
 '''
-
+'''
 insdict={'hst':['wfc3','acs'],
          'jwst':['nircam','miri'],
          'wfirst':['wfidrm15'],
@@ -52,6 +52,35 @@ filfil={'F275W':'hst/wfc3_f275w', 'F336W':'hst/wfc3_f336w', 'F435W':'hst/acs_f43
        'F560W':'jwst/miri_F560W', 'F770W':'jwst/miri_F770W', 'F1000W':'jwst/miri_F1000W',
        'F1130W':'jwst/miri_F1130W', 'F1280W':'jwst/miri_F1280W', 'F1500W':'jwst/miri_F1500W',
         'F1800W':'jwst/miri_F1800W', 'F2100W':'jwst/miri_F2100W', 'F2550W':'jwst/miri_F2550W','aux':'aux'}
+'''
+
+insdict={'hst':['wfc3','acs'],
+         'jwst':['nircam','miri'],
+         'wfirst':['wfi'],
+         'aux':['aux']}
+
+cams=['cam00','cam01','cam02','cam03','cam04','cam05','cam06','cam07','cam08','cam09',
+      'cam10','cam11','cam12','cam13','cam14','cam15','cam16','cam17','cam18','cam19',
+      'cam20','cam21','cam22','cam23','cam24']
+
+fildict={'wfc3':['F336W','F125W','F160W'],
+         'acs':['F435W','F606W','F814W'],
+         'nircam':['F115W','F150W','F200W','F277W','F356W','F444W'],
+         'miri':['F770W','F1500W'],
+         'wfi':['Z087','Y106','J129','W146','H158','F184'],
+         'aux':['aux']}
+
+filfil={'F336W':'hst/wfc3_f336w', 'F435W':'hst/acs_f435w',
+        'F606W':'hst/acs_f606w', 'F814W':'hst/acs_f814w',
+        'F125W':'hst/wfc3_f125w', 'F160W':'hst/wfc3_f160w',
+        'Z087':'wfirst/wfi_z087', 'Y106':'wfirst/wfi_y106',
+        'J129':'wfirst/wfi_j129', 'W146':'wfirst/wfi_w146', 'H158':'wfirst/wfi_h158',
+        'F184':'wfirst/wfi_f184','R062':'wfirst/wfi_r062',
+        'F115W':'jwst/nircam_f115w', 'F150W':'jwst/nircam_f150w', 'F200W':'jwst/nircam_f200w',
+        'F277W':'jwst/nircam_f277w', 'F356W':'jwst/nircam_f356w', 'F444W':'jwst/nircam_f444w',
+        'F770W':'jwst/miri_F770W', 
+        'F1500W':'jwst/miri_F1500W','aux':'aux'}
+
 
 ilh = 0.704
 illcos = astropy.cosmology.FlatLambdaCDM(H0=70.4,Om0=0.2726,Ob0=0.0456)
@@ -114,6 +143,176 @@ def vela_export_image(hdulist,camnum,filtername,label='',nonscatter=False):
     
     return outhdu
 
+
+#utility to help with integrating pleiades pipeline
+def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False, output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP',genstr='v3-2'):
+
+    #assume run within /images/ subdirectory?
+
+    imagedir=glob.glob('images_*_sunrise_mw')
+
+    bb_fits='broadbandz.fits'
+    bb_fits_smc='broadbandzsmc.fits'
+
+    hdulist=pyfits.open(bb_fits)
+    hdulist_smc=pyfits.open(bb_fits_smc)
+
+    target_dir=os.path.basename(imagedir)
+
+    dirname=imagedir.split('_')[1]
+    
+    if True:
+        for obs in obslist:
+            for instrument in insdict[obs]:
+                if instrument is 'wfc3':
+                    instrumentfind='WFC3'
+                elif instrument is 'acs':
+                    instrumentfind='ACS'
+                elif instrument is 'nircam':
+                    instrumentfind='NC'
+                elif instrument is 'miri':
+                    instrumentfind='MIRI'
+                elif instrument is 'wfi':
+                    instrumentfind='WFI'
+                for cam in camlist:
+                    auxdir=os.path.join(output_dir,'vela',dirname.lower(),cam)
+                    if not os.path.lexists(auxdir):
+                        os.makedirs(auxdir,exist_ok=True)
+                    auxhdu=hdulist['CAMERA'+str(int(cam[-2:]))+'-AUX']
+                    auxoutfile=os.path.join(auxdir,'hlsp_vela_none_none_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_aux_'+genstr+'_sim.fits')
+
+                    if not os.path.lexists(auxoutfile):
+                        auxhdu.writeto(auxoutfile,overwrite=True)
+
+                        auxfo=pyfits.open(auxoutfile,mode='update')
+                        auxpri=auxfo[0]
+                        auxpri.header['HLSPID']='vela'
+                        auxpri.header['HLSPLEAD']='Gregory F. Snyder'
+                        auxpri.header['HLSPNAME']='Vela-Sunrise Mock Images'
+                        auxpri.header['HLSPVER']=genstr
+                        auxpri.header['HLSPDOI']='10.17909/t9-ge0b-jm58'
+                        auxpri.header['LICENSE']='CC BY 4.0'
+                        auxpri.header['LICENURL']='https://creativecommons.org/licenses/by/4.0/'
+                        auxpri.header['PROPOSID']='HST-AR#13887'
+                        auxpri.header['REFERENC']='Simons et al. 2019'
+                        auxpri.header['REFDOI']='10.3847/1538-4357/ab07c9'
+
+                        sfr_tau = 1.2e7 #12 Myr, from Ceverino et al. 2015.  SFR values are actually SFR*Tau, so must divide by this factor to get true SFR values
+
+                    
+                        auxmain=auxfo[1]
+                        kpc_per_pix=auxmain.header['CD1_1']
+                        stellar_mass_per_pix=auxmain.data[4,:,:]*(kpc_per_pix**2)
+                        gas_mass_per_pix=auxmain.data[0,:,:]*(kpc_per_pix**2)
+                        metal_mass_per_pix=auxmain.data[1,:,:]*(kpc_per_pix**2)
+                        
+                        sfrdens_per_pix=auxmain.data[2,:,:]/sfr_tau
+                        auxmain.data[2,:,:]=sfrdens_per_pix
+                        
+                        #sfr_per_pix=sfrdens_per_pix*(kpc_per_pix**2)
+                        
+                        #total_mstar=np.sum(stellar_mass_per_pix)
+                        #total_mgas=np.sum(gas_mass_per_pix)
+                        #total_mmet=np.sum(metal_mass_per_pix)
+                        #total_sfr=np.sum(sfr_per_pix)
+                        
+                        #sim=dirname.lower()
+                        #scalestr=auxfile.split('_')[4].split('-')[-1][-5:]
+                        #camstr=auxfile.split('_')[4].split('-')[1]
+                        #scalefloat=float(scalestr)
+                        #zfloat=(1.0/scalefloat) - 1.0
+                        
+                        
+                        #this is actually problematic because apparently the filenames aren't exact?
+                        #mvirdm=dat[b'Mvir_dm'][dat[b'scale']==scalefloat]
+                    
+                        auxfo.flush()
+                    else:
+                        print(auxoutfile, ' exists, skipping..')
+
+                        
+                    for fil in fildict[instrument]:
+                        if fil=='aux' or aux_only is True:
+                            continue
+                            
+                        outdir=os.path.join(output_dir,'vela',dirname.lower(),cam,obs,instrument,fil.lower(),'')
+
+
+
+                        new_filename='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_'+fil.lower()+'_'+genstr+'_sim-mw.fits'
+                        new_filename_ns='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_'+fil.lower()+'_'+genstr+'_sim-ns.fits'
+                        new_filename_smc='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_'+fil.lower()+'_'+genstr+'_sim-smc.fits'
+
+                        #bbhdu_ns=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
+
+                        sys.stdout.flush()
+                        
+                        if os.path.lexists(os.path.join(outdir,new_filename)):
+                            print(new_filename, ' exists, skipping.. ')
+                            continue
+                        else:
+                            bbhdu=vela_export_image(hdulist,int(cam[-2:]),filfil[fil])
+                            bbhdu_smc=vela_export_image(hdulist_smc,int(cam[-2:]),filfil[fil])
+                            ns_hdu=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
+                            print('saving.. ', new_filename)
+                            
+                        sys.stdout.flush()
+                            
+                        if not os.path.lexists(outdir):
+                            os.makedirs(outdir,exist_ok=True)
+                        
+                        target_file=os.path.join(imagedir,target_dir[7:]+'_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
+                        target_file_ns=os.path.join(imagedir+'_nonscatter',target_dir[7:]+'_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
+                        target_file_smc=os.path.join(imagedir+'_smc',target_dir[7:]+'_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
+                        
+                        if os.path.lexists(target_file) and os.path.lexists(target_file_ns) and os.path.lexists(target_file_smc):
+                            ni=1
+                        else:
+                            ni=0
+                            
+                        #ni=np.where(np.asarray(names)==target_file)[0]
+
+                        assert(ni==1)
+                        
+                        if ni==1:
+                            #tfo.extractall(path=outdir,members=marr[ni])
+                            shutil.copy2(target_file,outdir)
+                            os.rename(os.path.join(outdir,os.path.basename(target_file)),os.path.join(outdir,new_filename))
+                            #os.rmdir(os.path.join(outdir,os.path.dirname(target_file)))
+                            shutil.copy2(target_file_ns,outdir)
+                            os.rename(os.path.join(outdir,os.path.basename(target_file_ns)),os.path.join(outdir,new_filename_ns))
+                            shutil.copy2(target_file_smc,outdir)
+                            os.rename(os.path.join(outdir,os.path.basename(target_file_smc)),os.path.join(outdir,new_filename_smc))
+
+                            for tfn,thdu,typename,hl in zip([new_filename,new_filename_ns,new_filename_smc],[bbhdu,ns_hdu,bbhdu_smc],['MW','NONSCATTER','SMCbar'],[hdulist,hdulist,hdulist_smc]):
+                            
+                                with pyfits.open(os.path.join(outdir,tfn),mode='update') as hdus:
+                                    hdus.append(thdu)
+                                    outhdu=hdus[0]
+                                    outhdu.header['HLSPID']='vela'
+                                    outhdu.header['HLSPLEAD']='Gregory F. Snyder'
+                                    outhdu.header['HLSPNAME']='Vela-Sunrise Mock Images'
+                                    outhdu.header['HLSPVER']=genstr
+                                    outhdu.header['HLSPDOI']='10.17909/t9-ge0b-jm58'
+                                    outhdu.header['LICENSE']='CC BY 4.0'
+                                    outhdu.header['LICENURL']='https://creativecommons.org/licenses/by/4.0/'
+                                    outhdu.header['PROPOSID']='HST-AR#13887'
+                                    outhdu.header['REFERENC']='Simons et al. (2019)'
+                                    outhdu.header['REFDOI']='10.3847/1538-4357/ab07c9'
+                                    
+                                    outhdu.header['MISSION']=obs.upper()
+                                    outhdu.header['TELESCOP']=obs.upper()
+                                    outhdu.header['INSTR']=instrument.upper()
+                                    outhdu.header['INSTRUME']=instrument.upper()
+                                    outhdu.header['EXTNAME']='IMAGE_PSF'
+                                    outhdu.header['DUSTTYPE']=typename
+
+
+    
+    
+    return
+
+
 def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
                          camlist=cams, aux_only=False):
 
@@ -150,6 +349,7 @@ def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
                     if not os.path.lexists(auxdir):
                         os.makedirs(auxdir,exist_ok=True)
                     auxhdu=hdulist['CAMERA'+str(int(cam[-2:]))+'-AUX']
+       
                     auxoutfile=os.path.join(auxdir,'hlsp_vela_none_none_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_aux_v3_sim.fits')
                     if aux_only is False:
                         if not os.path.lexists(auxoutfile):

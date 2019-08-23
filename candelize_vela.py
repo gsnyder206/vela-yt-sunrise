@@ -29,6 +29,7 @@ import astropy.io.fits as pyfits
 import statmorph
 import datetime
 import setup_synthetic_images_mp as ssimp
+import vela_extract_images as vei
 
 
 def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max=None, galaxy=None,seg_filter_label='NC-F200W',magsb_limits=[23.0,25.0,27.0,29.0],camindices='All',do_idl=False,analyze=True,use_nonscatter=True,Np=2,smc=False):
@@ -37,7 +38,12 @@ def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max
 
     os.chdir(subdirpath)
 
-    bbfile_list = np.sort(np.asarray(glob.glob('broadbandz.fits*')))   #enable reading .fits.gz files
+    if smc is True:
+        smclab='smc'
+    else:
+        smclab=''
+        
+    bbfile_list = np.sort(np.asarray(glob.glob('broadbandz'+smclab+'.fits*')))   #enable reading .fits.gz files
     print(bbfile_list)
 
     if galaxy is not None:
@@ -288,8 +294,17 @@ if __name__=="__main__":
 
 
 
-    res = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=True,use_nonscatter=False,smc=False,Np=4)
-    res = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=True,use_nonscatter=True,smc=False,Np=4)
-    res = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=True,use_nonscatter=False,smc=True,Np=4)
+    res1 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=True,use_nonscatter=False,smc=False,Np=4)
+    res2 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=True,use_nonscatter=True,smc=False,Np=4)
+    res3 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=True,use_nonscatter=False,smc=True,Np=4)
+    #extract hlsp stuff here
 
+    vei.do_single_snap(genstr=sys.argv[1],output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP')
     
+    #now, tar ish up
+    subprocess.call(['tar','cf',res1[0]+'.tar',res1[0]])
+    subprocess.call(['rm','-rf',res1[0]])
+    subprocess.call(['tar','cf',res2[0]+'.tar',res2[0]])
+    subprocess.call(['rm','-rf',res2[0]])
+    subprocess.call(['tar','cf',res3[0]+'.tar',res3[0]])
+    subprocess.call(['rm','-rf',res3[0]])
