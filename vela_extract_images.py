@@ -266,8 +266,8 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                             os.makedirs(outdir)
                         
                         target_file=os.path.join(imagedir,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
-                        target_file_ns=os.path.join(imagedir_ns,sim+aname+'_sunrise_nonscatter'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
-                        target_file_smc=os.path.join(imagedir_smc,sim+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
+                        target_file_ns=os.path.join(imagedir_ns,sim+'_'+aname+'_sunrise_nonscatter'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
+                        target_file_smc=os.path.join(imagedir_smc,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
                         
                         if os.path.lexists(target_file) and os.path.lexists(target_file_ns) and os.path.lexists(target_file_smc):
                             ni=1
