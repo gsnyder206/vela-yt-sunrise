@@ -179,7 +179,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                 for cam in camlist:
                     auxdir=os.path.join(output_dir,'vela',dirname.lower(),cam)
                     if not os.path.lexists(auxdir):
-                        os.makedirs(auxdir,exist_ok=True)
+                        os.makedirs(auxdir)
                     auxhdu=hdulist['CAMERA'+str(int(cam[-2:]))+'-AUX']
                     auxoutfile=os.path.join(auxdir,'hlsp_vela_none_none_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_aux_'+genstr+'_sim.fits')
 
@@ -261,7 +261,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                         sys.stdout.flush()
                             
                         if not os.path.lexists(outdir):
-                            os.makedirs(outdir,exist_ok=True)
+                            os.makedirs(outdir)
                         
                         target_file=os.path.join(imagedir,target_dir[7:]+'_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
                         target_file_ns=os.path.join(imagedir_ns,target_dir[7:]+'_nonscatter'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
