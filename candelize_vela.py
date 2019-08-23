@@ -279,7 +279,7 @@ def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max
             raise
         except:
             print("Exception while processing broadband: ", bbfile)
-            print("Error:", sys.exc_info()[0])
+            print("Error:", sys.exc_info())
         else:
             print("Successfully processed broadband: ", bbfile)
 
