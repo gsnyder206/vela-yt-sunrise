@@ -5,12 +5,12 @@ import glob
 import shutil
 import tarfile
 import string
-import pandas
+#import pandas
 import astropy
 import astropy.cosmology
 import astropy.io.fits as pyfits
 import astropy.io.ascii as ascii
-import subprocess
+#import subprocess
 
 '''
 ['hst/wfc3_f275w', 'hst/wfc3_f336w', 'hst/acs_f435w',
