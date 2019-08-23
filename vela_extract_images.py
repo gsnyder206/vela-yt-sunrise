@@ -160,7 +160,8 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
     hdulist_smc=pyfits.open(bb_fits_smc)
 
     target_dir=os.path.basename(imagedir)
-
+    aname=target_dir.split('_')[2]
+    
     dirname=imagedir.split('_')[1]
     
     if True:
@@ -181,7 +182,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                     if not os.path.lexists(auxdir):
                         os.makedirs(auxdir)
                     auxhdu=hdulist['CAMERA'+str(int(cam[-2:]))+'-AUX']
-                    auxoutfile=os.path.join(auxdir,'hlsp_vela_none_none_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_aux_'+genstr+'_sim.fits')
+                    auxoutfile=os.path.join(auxdir,'hlsp_vela_none_none_'+dirname.lower()+'-'+cam+'-'+aname+'_aux_'+genstr+'_sim.fits')
 
                     if not os.path.lexists(auxoutfile):
                         auxhdu.writeto(auxoutfile,overwrite=True)
@@ -241,9 +242,9 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
 
 
 
-                        new_filename='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_'+fil.lower()+'_'+genstr+'_sim-mw.fits'
-                        new_filename_ns='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_'+fil.lower()+'_'+genstr+'_sim-ns.fits'
-                        new_filename_smc='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_'+fil.lower()+'_'+genstr+'_sim-smc.fits'
+                        new_filename='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+aname+'_'+fil.lower()+'_'+genstr+'_sim-mw.fits'
+                        new_filename_ns='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+aname+'_'+fil.lower()+'_'+genstr+'_sim-ns.fits'
+                        new_filename_smc='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+aname+'_'+fil.lower()+'_'+genstr+'_sim-smc.fits'
 
                         #bbhdu_ns=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
 
