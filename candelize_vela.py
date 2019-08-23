@@ -30,6 +30,7 @@ import statmorph
 import datetime
 import setup_synthetic_images_mp as ssimp
 import vela_extract_images as vei
+import traceback
 
 
 def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max=None, galaxy=None,seg_filter_label='NC-F200W',magsb_limits=[23.0,25.0,27.0,29.0],camindices='All',do_idl=False,analyze=True,use_nonscatter=True,Np=2,smc=False):
@@ -280,7 +281,7 @@ def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max
         except:
             print("Exception while processing broadband: ", bbfile)
             print("Error:", sys.exc_info())
-            print(sys.exc_info()[2].print_tb())
+            print(traceback.print_tb(sys.exc_info()[2]))
         else:
             print("Successfully processed broadband: ", bbfile)
 
