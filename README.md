@@ -4,3 +4,5 @@ Python/YT scripts for converting ART-Vela simulations into Sunrise runs, with ot
 Current active authors:  Raymond Simons (rsimons@jhu.edu)  and Greg Snyder (gsnyder@stsci.edu)
 
 Other primary authors:   Christopher Moody and Miguel Rocha  (UCSC)
+
+Publications using this pipeline: https://ui.adsabs.harvard.edu/abs/2019ApJ...874...59S
