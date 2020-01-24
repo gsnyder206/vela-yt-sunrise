@@ -354,7 +354,7 @@ if __name__ == "__main__":
             idx = np.argwhere(galprops_data['snap_files']==os.path.abspath(snapfile))[0][0]
 
             try:
-                    npix=galprops['image_npix'][idx]
+                    npix=galprops_data['image_npix'][idx]
             except:
                     print('Snapfile exists in galprops but data does not, skipping...')
                     continue
