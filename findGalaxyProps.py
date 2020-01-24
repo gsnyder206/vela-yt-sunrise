@@ -372,10 +372,11 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd):
         #in yt-3.2.3 it looks like 'gas' doesn't get xyz fields.  Use 'index' instead?
         try:
                 x, y, z = [gc_sphere[('gas', '%s'%s)] for s in 'xyz']
+                cell_volume = gc_sphere[('gas', 'cell_volume')]
         except:
                 x, y, z = [gc_sphere[('index', '%s'%s)] for s in 'xyz']
+                cell_volume = gc_sphere[('index', 'cell_volume')]
         
-        cell_volume = gc_sphere[('gas', 'cell_volume')]
 
         try:
                 #for VELA runs
