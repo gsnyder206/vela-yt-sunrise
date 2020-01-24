@@ -369,7 +369,12 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd):
         # Get angular momentum of gas
         gas_center = ds.arr(gas_maxdens_loc, 'kpc')
         gc_sphere =  ds.sphere(gas_center, ssphere_r)
-        x, y, z = [gc_sphere[('gas', '%s'%s)] for s in 'xyz'] 
+        #in yt-3.2.3 it looks like 'gas' doesn't get xyz fields.  Use 'index' instead?
+        try:
+                x, y, z = [gc_sphere[('gas', '%s'%s)] for s in 'xyz']
+        except:
+                x, y, z = [gc_sphere[('index', '%s'%s)] for s in 'xyz']
+        
         cell_volume = gc_sphere[('gas', 'cell_volume')]
 
         try:
