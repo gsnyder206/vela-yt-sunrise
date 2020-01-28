@@ -296,9 +296,9 @@ if __name__=="__main__":
 
 
 
-    res1 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=False,Np=8)
-    res2 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=True,smc=False,Np=8)
-    res3 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=True,Np=8)
+    res1 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=False,Np=4)
+    res2 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=True,smc=False,Np=4)
+    res3 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=True,Np=4)
     #extract hlsp stuff here
 
     vei.do_single_snap(genstr=sys.argv[1],output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP')
