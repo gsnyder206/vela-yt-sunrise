@@ -285,7 +285,7 @@ if __name__ == "__main__":
     #Pleiades values:
     nthreads = '28'  #cpu models have 12, 16, 20, 24, respectively
     model='bro'      #options are 'wes', 'san', 'ivy', 'has', 'bro', 'sky_ele', in increasing goodness and expense
-    queue='normal'   #options devel, debug, low, normal, long
+    queue='long'   #options devel, debug, low, normal, long
     notify='gsnyder@stsci.edu'
     walltime_limit='08:00:00'
 
