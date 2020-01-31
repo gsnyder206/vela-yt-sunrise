@@ -303,6 +303,8 @@ if __name__=="__main__":
 
     vei.do_single_snap(genstr=sys.argv[1],output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP')
     
+    #tar and compress HLSP contents here?
+
     #now, tar ish up
     subprocess.call(['tar','cf',res1[0]+'.tar',res1[0]])
     subprocess.call(['rm','-rf',res1[0]])
