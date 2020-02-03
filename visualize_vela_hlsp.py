@@ -61,7 +61,7 @@ def make_quant_stamp(quant,ax,text=''):
 
     return ax
 
-def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vela06',cam='cam00'):
+def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vela06',cam='cam00',single_aname=None):
 
 
 
@@ -74,6 +74,14 @@ def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vel
     
     for afn in auxes:
         aname=os.path.basename(afn).split('_')[4].split('-')[2]
+
+        if single_aname is not None:
+            if aname==single_aname:
+                print('processing single aname: ', single_aname)
+                pass
+            else:
+                continue
+        
         #genstr based on aux file name -- should be one for each, so this is OK
         genstr=os.path.basename(afn).split('_')[6]
         

@@ -10,6 +10,8 @@ import astropy
 import astropy.cosmology
 import astropy.io.fits as pyfits
 import astropy.io.ascii as ascii
+import visualize_vela_hlsp as vvh
+
 #import subprocess
 
 '''
@@ -312,7 +314,10 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                                     outhdu.header['DUSTTYPE']=typename
 
 
-    
+    for camst in camlist:
+        camst='cam'+'{:02d}'.format(i)
+        vvh.make_vela_stamps(bd=output_dir,sim=dirname.lower(),cam=camst,single_aname=aname)
+
     
     return
 
