@@ -10,6 +10,8 @@ import astropy
 import astropy.cosmology
 import astropy.io.fits as pyfits
 import astropy.io.ascii as ascii
+import subprocess
+
 
 if __name__=="__main__":
 
