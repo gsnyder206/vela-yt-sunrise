@@ -315,7 +315,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
 
 
     for camst in camlist:
-        camst='cam'+'{:02d}'.format(i)
+        #camst='cam'+'{:02d}'.format(i)
         vvh.make_vela_stamps(bd=output_dir,sim=dirname.lower(),cam=camst,single_aname=aname)
 
     
