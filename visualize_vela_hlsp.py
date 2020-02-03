@@ -1,11 +1,11 @@
 
 
 import astropy.io.fits as fits
-import make_color_image
 import os
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as pyplot
+import make_color_image
 import congrid
 import glob
 import numpy as np
