@@ -23,7 +23,7 @@ if __name__=="__main__":
     print(dirname)
     print(cams)
     
-    for camst in cams[0:3]:
+    for camst in cams:
         print('tarring ', camst)
         subprocess.call(['tar','cf',dirname+'_'+camst+'.tar',camst])
         subprocess.call(['rm','-rf',camst])
