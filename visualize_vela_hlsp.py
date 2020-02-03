@@ -4,6 +4,7 @@ import astropy.io.fits as fits
 import make_color_image
 import os
 import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as pyplot
 import congrid
 import glob
