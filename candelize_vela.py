@@ -31,6 +31,7 @@ import datetime
 import setup_synthetic_images_mp as ssimp
 import vela_extract_images as vei
 import traceback
+import visualize_vela_hlsp as vvh
 
 
 def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max=None, galaxy=None,seg_filter_label='NC-F200W',magsb_limits=[23.0,25.0,27.0,29.0],camindices='All',do_idl=False,analyze=True,use_nonscatter=True,Np=2,smc=False):
@@ -296,10 +297,26 @@ if __name__=="__main__":
 
 
 
-    res1 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=False,Np=4)
-    res2 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=True,smc=False,Np=4)
-    res3 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=True,Np=4)
-    #extract hlsp stuff here
+    try:
+        res1 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=False,Np=4)
+    except:
+        print('failure in candelization of broadbandz.fits, scatter')
+        continue
+        
+    try:
+        res2 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=True,smc=False,Np=4)
+    except:
+        print('failure in candelization of broadbandz.fits, nonscatter')
+        continue
+        
+    try:
+        res3 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=True,Np=4)
+    except:
+        print('failure in candelization of broadbandzsmc.fits, scatter')
+        continue
+
+    
+        #extract hlsp stuff here
 
     vei.do_single_snap(genstr=sys.argv[1],output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP')
     
@@ -312,3 +329,9 @@ if __name__=="__main__":
     subprocess.call(['rm','-rf',res2[0]])
     subprocess.call(['tar','cf',res3[0]+'.tar',res3[0]])
     subprocess.call(['rm','-rf',res3[0]])
+
+
+    ss=os.path.abspath('.').split('/')[-3].lower()
+    for i in range(25):
+        camst='cam'+'{:02d}'.format(i)
+        vvh.make_vela_stamps(bd='/nobackupp2/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim=ss,cam=camst)
