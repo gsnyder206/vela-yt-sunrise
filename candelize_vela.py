@@ -5,6 +5,7 @@ import string
 import sys
 import struct
 import matplotlib
+matplotlib.use('Agg')
 import numpy as np
 import scipy.ndimage
 import scipy.stats as ss

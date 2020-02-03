@@ -3,7 +3,7 @@
 import astropy.io.fits as fits
 import os
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Agg')  #apparently needed for old matplotlib/python on pleiades (didn't want to risk updating)
 import matplotlib.pyplot as pyplot
 import make_color_image
 import congrid
