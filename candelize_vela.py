@@ -1,6 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')
-import matplotlib.pyplot as pyplot
+import matplotlib.pyplot as pyplot  #apparently need to import pyplot immediately to get this to stick?
 
 import cProfile
 import pstats
