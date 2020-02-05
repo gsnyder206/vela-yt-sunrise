@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')  #apparently needed for old matplotlib/python on pleiades (didn't want to risk updating)
+import matplotlib.pyplot as pyplot
 import os
 import sys
 import numpy as np
