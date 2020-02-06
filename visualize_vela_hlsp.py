@@ -94,21 +94,8 @@ def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vel
         dd['mw']={}
         dd['ns']={}
         dd['smc']={}
-        for obs,ins,f in zip(obstrs,instrs,fstrs):
-            tfn=os.path.join(bd,'vela',sim,cam,obs,ins,f,'hlsp_vela_'+obs+'_'+ins+'_'+sim+'-'+cam+'-'+aname+'_'+f+'_'+genstr+'_sim-mw.fits')
-            tfn_ns=os.path.join(bd,'vela',sim,cam,obs,ins,f,'hlsp_vela_'+obs+'_'+ins+'_'+sim+'-'+cam+'-'+aname+'_'+f+'_'+genstr+'_sim-ns.fits')
-            tfn_smc=os.path.join(bd,'vela',sim,cam,obs,ins,f,'hlsp_vela_'+obs+'_'+ins+'_'+sim+'-'+cam+'-'+aname+'_'+f+'_'+genstr+'_sim-smc.fits')
 
-            print(tfn,tfn_ns,tfn_smc)
-            
-            tfo=fits.open(tfn)
-            tfo_ns=fits.open(tfn_ns)
-            tfo_smc=fits.open(tfn_smc)
-            dd['mw'][f]=tfo
-            dd['ns'][f]=tfo_ns
-            dd['smc'][f]=tfo_smc
-
-        dd['redshift']=dd['mw']['f606w'][0].header['REDSHIFT']
+        dd['redshift']=dd['mw']['f200w'][0].header['REDSHIFT']
         
         preview_dir=os.path.join(bd,'vela',sim,cam,'previews')
         if not os.path.lexists(preview_dir):
@@ -120,15 +107,36 @@ def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vel
 
         ax1=fig.add_subplot(2,3,1)
         make_quant_stamp(gasdens,ax1,text='gas mass')
+        ax4=fig.add_subplot(2,3,4)
+        make_quant_stamp(stardens+5000.0,ax4,text='star mass')
         
+        try:
+            for obs,ins,f in zip(obstrs,instrs,fstrs):
+                tfn=os.path.join(bd,'vela',sim,cam,obs,ins,f,'hlsp_vela_'+obs+'_'+ins+'_'+sim+'-'+cam+'-'+aname+'_'+f+'_'+genstr+'_sim-mw.fits')
+                tfn_ns=os.path.join(bd,'vela',sim,cam,obs,ins,f,'hlsp_vela_'+obs+'_'+ins+'_'+sim+'-'+cam+'-'+aname+'_'+f+'_'+genstr+'_sim-ns.fits')
+                tfn_smc=os.path.join(bd,'vela',sim,cam,obs,ins,f,'hlsp_vela_'+obs+'_'+ins+'_'+sim+'-'+cam+'-'+aname+'_'+f+'_'+genstr+'_sim-smc.fits')
+
+                print(tfn,tfn_ns,tfn_smc)
+            
+                tfo=fits.open(tfn)
+                tfo_ns=fits.open(tfn_ns)
+                tfo_smc=fits.open(tfn_smc)
+                dd['mw'][f]=tfo
+                dd['ns'][f]=tfo_ns
+                dd['smc'][f]=tfo_smc
+        except:
+            print("Could not open all expected files, skipping image previews, ", afn)
+            fig.savefig(preview_fn,dpi=600)
+            fig.close()
+            continue
+
+
         ax2=fig.add_subplot(2,3,2)
         make_combo_stamp(bd,sim,cam,aname,ax2,dd,key='IMAGE_PRISTINE',sigma_tuple=[0.0,0.0,0.0],dusttype='mw',text='starlight and dust')
         
         ax3=fig.add_subplot(2,3,3)
         make_combo_stamp(bd,sim,cam,aname,ax3,dd,key='IMAGE_PSF',sigma_tuple=[0.05,0.05,0.05],dusttype='mw',text='mock data')
 
-        ax4=fig.add_subplot(2,3,4)
-        make_quant_stamp(stardens+5000.0,ax4,text='star mass')
 
         
         ax5=fig.add_subplot(2,3,5)
@@ -146,7 +154,7 @@ def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vel
 
 
         fig.savefig(preview_fn,dpi=600)
-        
+        fig.close()
 
     
 

@@ -275,13 +275,23 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                         target_file_smc=os.path.join(imagedir_smc,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
                         
                         if os.path.lexists(target_file) and os.path.lexists(target_file_ns) and os.path.lexists(target_file_smc):
-                            ni=1
+                            ni=1 #all 3 exist
+                        elif os.path.lexists(target_file) or os.path.lexists(target_file_ns) or os.path.lexists(target_file_smc):
+                            ni=2 #1 or 2 exist
                         else:
-                            ni=0
+                            ni=0 #none exist
                             
                         #ni=np.where(np.asarray(names)==target_file)[0]
 
-                        assert(ni==1)
+                        #there's a case where the blue filters fail because of nans, etc -- grid mismatch
+                        #it's OK to keep the auxes and the rest of the filters if this happens
+                        if ni==0 or ni==2:
+                            print("Aux exists, but not all images.")
+                            if ni==0:
+                                print("All 3 missing, probably high-z/blue-filter failure, OK to continue.")
+                            if ni==2:
+                                print("1 or 2 missing, perhaps an issue in one of the bbz or bbzsmc runs.")
+                            continue
                         
                         if ni==1:
                             #tfo.extractall(path=outdir,members=marr[ni])
