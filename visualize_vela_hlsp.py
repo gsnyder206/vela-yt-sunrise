@@ -127,7 +127,7 @@ def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vel
         except:
             print("Could not open all expected files, skipping image previews, ", afn)
             fig.savefig(preview_fn,dpi=600)
-            fig.close()
+            pyplot.close(fig)
             continue
 
         dd['redshift']=dd['mw']['f200w'][0].header['REDSHIFT']
