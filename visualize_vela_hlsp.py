@@ -155,7 +155,7 @@ def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vel
 
 
         fig.savefig(preview_fn,dpi=600)
-        fig.close()
+        pyplot.close(fig)
 
     
 
