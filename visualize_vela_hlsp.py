@@ -95,7 +95,7 @@ def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vel
         dd['ns']={}
         dd['smc']={}
 
-        dd['redshift']=dd['mw']['f200w'][0].header['REDSHIFT']
+        
         
         preview_dir=os.path.join(bd,'vela',sim,cam,'previews')
         if not os.path.lexists(preview_dir):
@@ -130,7 +130,8 @@ def make_vela_stamps(bd='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP/',sim='vel
             fig.close()
             continue
 
-
+        dd['redshift']=dd['mw']['f200w'][0].header['REDSHIFT']
+        
         ax2=fig.add_subplot(2,3,2)
         make_combo_stamp(bd,sim,cam,aname,ax2,dd,key='IMAGE_PRISTINE',sigma_tuple=[0.0,0.0,0.0],dusttype='mw',text='starlight and dust')
         
