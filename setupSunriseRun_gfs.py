@@ -287,7 +287,7 @@ if __name__ == "__main__":
     model='bro'      #options are 'wes', 'san', 'ivy', 'has', 'bro', 'sky_ele', in increasing goodness and expense
     queue='long'   #options devel, debug, low, normal, long
     notify='gsnyder@stsci.edu'
-    walltime_limit='24:00:00'
+    walltime_limit='64:00:00'
 
     stub_dir = '/u/gfsnyder/sunrise_data/stub_files'
 
