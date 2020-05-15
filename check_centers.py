@@ -56,11 +56,12 @@ if __name__=="__main__":
 
     #measure distance with ceverino centers
     d_ckpch=np.zeros_like(a)
+    print('#scale     3D distance (kpc)')
     for i,(scale,tc_x,tc_y,tc_z) in enumerate(zip(a,x,y,z)):
         #match to dc_a
         dc_i=np.where(dc_a==scale)[0]
         if len(dc_i)==1:
-            print(scale,dc_x[dc_i],tc_x)
+            #print(scale,dc_x[dc_i],tc_x)
             d_ckpch[i]=((tc_x-dc_x[dc_i])**2 + (tc_y-dc_y[dc_i])**2 + (tc_z-dc_z[dc_i])**2)**(0.5)
             #print out distances versus scalefactor
-            print(str(scale),d_ckpch[i]*scale/0.70)
+            print('{:8.3f}     {:12.4f}'.format(str(scale),d_ckpch[i]*scale/0.70))
