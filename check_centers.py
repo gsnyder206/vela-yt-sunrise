@@ -55,13 +55,11 @@ if __name__=="__main__":
     #for a,dx in zip(dc_a,dc_x): print(a,dx)
 
     #measure distance with ceverino centers
-
-    for scale,truecen in zip(a,tc):
+    d_ckpch=np.zeros_like(a)
+    for i,(scale,truecen) in enumerate(zip(a,tc)):
         #match to dc_a
-        print(str(scale))
         dc_i=np.where(dc_a==scale)[0]
-        print(dc_i)
-
-
-
-    #print out distances versus scalefactor
+        if len(dc_i)==1:
+            d_ckpch[i]=((truecen[0]-dc_x[dc_i])**2 + (truecen[1]-dc_y[dc_i])**2 + (truecen[2]-dc_z[dc_i])**2)**(0.5)
+            #print out distances versus scalefactor
+            print(str(scale),d_ckpch[i]*scale/0.70)
