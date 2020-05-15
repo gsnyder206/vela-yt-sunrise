@@ -58,6 +58,7 @@ if __name__=="__main__":
 
     for scale,truecen in zip(a,tc):
         #match to dc_a
+        print(scale,truecen)
         dc_i=np.where(dc_a==scale)[0]
         print(dc_i)
 
