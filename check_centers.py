@@ -19,7 +19,7 @@ if __name__=="__main__":
     z=np.zeros_like(a)
 
     #convert galprops centers to comoving
-    for i,scale,cen in enumerate(zip(a,tc)):
+    for i,(scale,cen) in enumerate(zip(a,tc)):
         print('{:5.2f} {:10.3f}'.format(scale, cen[0]*(0.70)/scale))
         x[i]=cen[0]*0.70/scale
         y[i]=cen[1]*0.70/scale
