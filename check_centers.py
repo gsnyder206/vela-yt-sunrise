@@ -40,7 +40,7 @@ if __name__=="__main__":
         if line_sim==simname:
             this_lines.append(l)
             ss=l[23:28]
-            dc_a.append(ss)
+            dc_a.append(np.float64(ss))
             nums=l[-28:-1]
             dc_x.append(1000*np.float64(nums.split('   ')[0]))
             dc_y.append(1000*np.float64(nums.split('   ')[1]))
@@ -59,7 +59,7 @@ if __name__=="__main__":
     for scale,truecen in zip(a,tc):
         #match to dc_a
         print(str(scale))
-        dc_i=np.where(dc_a==str(scale))[0]
+        dc_i=np.where(dc_a==scale)[0]
         print(dc_i)
 
 
