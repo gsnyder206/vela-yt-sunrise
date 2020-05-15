@@ -64,4 +64,4 @@ if __name__=="__main__":
             #print(scale,dc_x[dc_i],tc_x)
             d_ckpch[i]=((tc_x-dc_x[dc_i])**2 + (tc_y-dc_y[dc_i])**2 + (tc_z-dc_z[dc_i])**2)**(0.5)
             #print out distances versus scalefactor
-            print('{:8.3f}     {:12.4f}'.format(str(scale),d_ckpch[i]*scale/0.70))
+            print('{:8.3f}     {:12.4f}'.format(scale,d_ckpch[i]*scale/0.70))
