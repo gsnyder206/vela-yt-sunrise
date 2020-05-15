@@ -31,15 +31,28 @@ if __name__=="__main__":
     dcfo=open(dcf)
     lines=dcfo.readlines()
     this_lines=[]
+    dc_x=[]
+    dc_y=[]
+    dc_z=[]
+    dc_a=[]
     for l in lines:
         line_sim=l[0:6]
         if line_sim==simname:
             this_lines.append(l)
-
-    print(this_lines)
-
+            ss=l[23:28]
+            dc_a.append(np.float64(ss))
+            nums=l[-28:-1]
+            dc_x.append(np.float64(nums.split('   ')[0]))
+            dc_y.append(np.float64(nums.split('   ')[1]))
+            dc_z.append(np.float64(nums.split('   ')[2]))
     dcfo.close()
 
+    dc_x=np.asarray(dc_x)
+    dc_y=np.asarray(dc_y)
+    dc_z=np.asarray(dc_z)
+    dc_a=np.asarray(dc_a)
+
+    for a,dx in zip(dc_a,dc_x): print(a,dx)
 
     #measure distance with ceverino centers
 
