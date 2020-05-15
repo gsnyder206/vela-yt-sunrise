@@ -56,10 +56,10 @@ if __name__=="__main__":
 
     #measure distance with ceverino centers
 
-    for scale,truecen in zip(z,tc):
+    for scale,truecen in zip(a,tc):
         #match to dc_a
-        dc_i=dc_a==scale
-        print(np.sum(dc_i))
+        dc_i=np.where(dc_a==scale)[0]
+        print(dc_i)
 
 
 
