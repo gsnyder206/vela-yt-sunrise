@@ -59,7 +59,7 @@ if __name__=="__main__":
     for scale,truecen in zip(a,tc):
         #match to dc_a
         print(scale,truecen)
-        dc_i=np.where(dc_a==string(scale))[0]
+        dc_i=np.where(dc_a==str(scale))[0]
         print(dc_i)
 
 
