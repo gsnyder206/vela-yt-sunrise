@@ -60,6 +60,7 @@ if __name__=="__main__":
         #match to dc_a
         dc_i=np.where(dc_a==scale)[0]
         if len(dc_i)==1:
+            print(scale,dc_x[dc_i],truecen[0])
             d_ckpch[i]=((truecen[0]-dc_x[dc_i])**2 + (truecen[1]-dc_y[dc_i])**2 + (truecen[2]-dc_z[dc_i])**2)**(0.5)
             #print out distances versus scalefactor
             print(str(scale),d_ckpch[i]*scale/0.70)
