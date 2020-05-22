@@ -76,7 +76,7 @@ if __name__=="__main__":
     print('#scale     3D distance (kpc)')
     for i,(scale,tc_x,tc_y,tc_z) in enumerate(zip(aname,x,y,z)):
         #match to dc_a
-        dc_i=np.where(dc_a==np.float64(scale[1:]))[0]
+        dc_i=np.where(dc_a==np.float64(scale[1:]))[0][0]
         print(scale, dc_i, tc_x, dc_x[dc_i])
         if len(dc_i)==1:
             #print(scale,dc_x[dc_i],tc_x)
