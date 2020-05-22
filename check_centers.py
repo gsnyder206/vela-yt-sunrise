@@ -38,6 +38,8 @@ if __name__=="__main__":
     dc_z=cdata['col5'][si]*1000
     dc_a=cdata['col1'][si]
 
+    print(dc_a)
+    
     ''' old version
     #read ceverino centers file and parse into arrays
     dcf='ceverino_centers_gen6.txt'
