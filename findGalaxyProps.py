@@ -413,217 +413,214 @@ if __name__ == "__main__":
 	#assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
 
 
-        if len(sys.argv)==2:
-            snaps = np.asarray([sys.argv[1]])
-        else:
-            snaps = np.sort(np.asarray(glob.glob("*.d")))
+    if len(sys.argv)==2:
+        snaps = np.asarray([sys.argv[1]])
+    else:
+        snaps = np.sort(np.asarray(glob.glob("*.d")))
 
 
 
-        print( "Calculating Galaxy Props for: ", snaps)
+    print( "Calculating Galaxy Props for: ", snaps)
 
-        abssnap = os.path.abspath(snaps[0])
-        assert os.path.lexists(abssnap)
+    abssnap = os.path.abspath(snaps[0])
+    assert os.path.lexists(abssnap)
 
-        dirname = os.path.dirname(abssnap)
-        simname = os.path.basename(dirname) #assumes directory name for simulation name
-        print( "Simulation name:  ", simname)
+    dirname = os.path.dirname(abssnap)
+    simname = os.path.basename(dirname) #assumes directory name for simulation name
+    print( "Simulation name:  ", simname)
 
-        genname = os.path.basename(os.path.dirname(dirname))
-        print( "Generation name:  ", genname)
-
-
-        particle_headers = []
-        particle_data = []
-        stars_data = []
-        new_snapfiles = []
-        for sn in snaps:
-                aname = sn.split('_')[-1].rstrip('.d')
-                particle_headers.append('PMcrd'+aname+'.DAT')
-                particle_data.append('PMcrs0'+aname+'.DAT')
-                stars_data.append('stars_'+aname+'.dat')
-                snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
-                yt_fig_dir = snap_dir+'/yt_projections'
-                print( "Sunrise directory: ", snap_dir)
-                if not os.path.lexists(snap_dir):
-                    os.mkdir(snap_dir)
-                if not os.path.lexists(yt_fig_dir):
-                    os.mkdir(yt_fig_dir)
-
-                newf = os.path.join(snap_dir,sn)
-                new_snapfiles.append(newf)
-                if not os.path.lexists(newf):
-                        os.symlink(os.path.abspath(sn),newf)
-                        os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
-                        os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
-                        os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
+    genname = os.path.basename(os.path.dirname(dirname))
+    print( "Generation name:  ", genname)
 
 
-        new_snapfiles = np.asarray(new_snapfiles)
-        galaxy_props = {}
-        fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
-                  'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor','image_npix',
-                  'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files','scale_string']
-        for field in fields:
-                if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
-                        galaxy_props[field] = np.array([])
-                else :
-                        galaxy_props[field] = []
+    particle_headers = []
+    particle_data = []
+    stars_data = []
+    new_snapfiles = []
+    for sn in snaps:
+        aname = sn.split('_')[-1].rstrip('.d')
+        particle_headers.append('PMcrd'+aname+'.DAT')
+        particle_data.append('PMcrs0'+aname+'.DAT')
+        stars_data.append('stars_'+aname+'.dat')
+        snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
+        yt_fig_dir = snap_dir+'/yt_projections'
+        print( "Sunrise directory: ", snap_dir)
+        if not os.path.lexists(snap_dir):
+            os.mkdir(snap_dir)
+        if not os.path.lexists(yt_fig_dir):
+            os.mkdir(yt_fig_dir)
 
-        ts = yt.DatasetSeries(new_snapfiles)
+        newf = os.path.join(snap_dir,sn)
+        new_snapfiles.append(newf)
+        if not os.path.lexists(newf):
+            os.symlink(os.path.abspath(sn),newf)
+            os.symlink(os.path.abspath(particle_headers[-1]),os.path.join(snap_dir,particle_headers[-1]))
+            os.symlink(os.path.abspath(particle_data[-1]),os.path.join(snap_dir,particle_data[-1]))
+            os.symlink(os.path.abspath(stars_data[-1]),os.path.join(snap_dir,stars_data[-1]))
 
 
-        galaxy_props['simname']=simname
-        galaxy_props['genname']=genname
-        galaxy_props['pixsize_kpc']=0.070
+    new_snapfiles = np.asarray(new_snapfiles)
+    galaxy_props = {}
+    fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
+				'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor','image_npix',
+            	'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files','scale_string']
+    for field in fields:
+        if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
+            galaxy_props[field] = np.array([])
+        else :
+            galaxy_props[field] = []
 
-        for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
-			print( "Getting galaxy props: ", ds._file_amr, snap_dir)
+    ts = yt.DatasetSeries(new_snapfiles)
 
-            aname=snap_dir.split('_')[1]
-            print(aname)
 
-            dd = ds.all_data()
-            ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
-            ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
-            print( ds.index.get_smallest_dx())
+    galaxy_props['simname']=simname
+    galaxy_props['genname']=genname
+    galaxy_props['pixsize_kpc']=0.070
 
-            #need to exit gracefully here if there's no stars.
-            try:
-                stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
-                assert stars_pos_x.shape[0] > 5
-            except AttributeError:
-                print( "No star particles found, skipping: ", ds._file_amr)
-				continue
-            except AssertionError:
-                print( "No star particles found, skipping: ", ds._file_amr)
+    for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
+		print( "Getting galaxy props: ", ds._file_amr, snap_dir)
+
+        aname=snap_dir.split('_')[1]
+        print(aname)
+
+        dd = ds.all_data()
+        ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
+        ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
+        print( ds.index.get_smallest_dx())
+
+        #need to exit gracefully here if there's no stars.
+        try:
+            stars_pos_x = dd['stars', 'particle_position_x'].in_units('kpc')
+            assert stars_pos_x.shape[0] > 5
+        except AttributeError:
+            print( "No star particles found, skipping: ", ds._file_amr)
+			continue
+        except AssertionError:
+            print( "No star particles found, skipping: ", ds._file_amr)
+            continue
+
+
+
+        print( 'Determining center...')
+        max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
+        print( '\tCenter = ', max_ndens_arr)
+
+
+
+        #find true_center here
+		genstring=galaxy_props['genname'].lower()
+		simstring=galaxy_props['simname'].upper()
+		scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
+
+    	dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
+    	cdata=ascii.read(dcf)
+		dc_sim=np.asarray(cdata['col2'])
+    	dc_x=np.asarray(cdata['col3']*1000)  #in comoving kpc/h
+    	dc_y=np.asarray(cdata['col4']*1000)
+    	dc_z=np.asarray(cdata['col5']*1000)
+    	dc_a=np.asarray(cdata['col1'])
+
+		'''
+        cname='vela_'+genstring+'_center_ids.txt'
+        center_catalog_file=os.path.join('/u/gfsnyder/vela_data/',cname)
+        center_data=ascii.read(center_catalog_file)
+        cd_sim=center_data['col1']
+        cd_scale=center_data['col2']
+        cd_pid=center_data['col3']
+		'''
+
+        match=np.logical_and(dc_sim==simstring,dc_a==np.float64(aname[1:]))
+        try:
+			assert(np.sum(match)==1)
+        except AssertionError:
+            if np.sum(match)==0:
+				print('No matches found in input center catalogs, skipping: ', ds._file_amr)
                 continue
+            else:
+                print('Weird error in center, more than 1 found in catalogs, skipping: ', ds._file_amr)
+            	continue
+
+        galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
+
+        galaxy_props['scale_string']=np.append(galaxy_props['scale_string'],aname)
+
+        galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 
+		#old PID catalog-style
+        #this_pid = cd_pid[match][0]
+        #the ID in this catalog is the index into the 'stars' particle array in YT
 
-            print( 'Determining center...')
-            max_ndens_arr = find_center(dd, ds, cen_pos = ds.domain_center.in_units('kpc')[0].value[()], units = 'kpc')
-            print( '\tCenter = ', max_ndens_arr)
+		'''
+        pos_x=dd['stars','particle_position_x'].in_units('kpc')
+        pos_y=dd['stars','particle_position_y'].in_units('kpc')
+        pos_z=dd['stars','particle_position_z'].in_units('kpc')
+        #pid=dd['stars','particle_index']
+        assert(pos_x.shape[0] > this_pid)
+        this_x=pos_x[this_pid]
+        this_y=pos_y[this_pid]
+        this_z=pos_z[this_pid]
+		'''
+		this_x=dc_x[match][0]*scale/0.70
+		this_y=dc_y[match][0]*scale/0.70
+		this_z=dc_z[match][0]*scale/0.70
 
+        true_center = np.asarray([this_x,this_y,this_z])
+        galaxy_props['true_center'].append(true_center)
 
+        #max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
+        true_center = ds.arr(true_center,'kpc')
 
-            #find true_center here
-			genstring=galaxy_props['genname'].lower()
-			simstring=galaxy_props['simname'].upper()
-			scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
-
-    		dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
-    		cdata=ascii.read(dcf)
-			dc_sim=np.asarray(cdata['col2'])
-    		dc_x=np.asarray(cdata['col3']*1000)  #in comoving kpc/h
-    		dc_y=np.asarray(cdata['col4']*1000)
-    		dc_z=np.asarray(cdata['col5']*1000)
-    		dc_a=np.asarray(cdata['col1'])
-
-			'''
-            cname='vela_'+genstring+'_center_ids.txt'
-            center_catalog_file=os.path.join('/u/gfsnyder/vela_data/',cname)
-            center_data=ascii.read(center_catalog_file)
-            cd_sim=center_data['col1']
-            cd_scale=center_data['col2']
-            cd_pid=center_data['col3']
-			'''
-
-            match=np.logical_and(dc_sim==simstring,dc_a==np.float64(aname[1:]))
-            try:
-				assert(np.sum(match)==1)
-            except AssertionError:
-                if np.sum(match)==0:
-					print('No matches found in input center catalogs, skipping: ', ds._file_amr)
-                    continue
-                else:
-                    print('Weird error in center, more than 1 found in catalogs, skipping: ', ds._file_amr)
-                	continue
-
-            galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
-
-            galaxy_props['scale_string']=np.append(galaxy_props['scale_string'],aname)
-
-            galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
-
-
-			#old PID catalog-style
-            #this_pid = cd_pid[match][0]
-            #the ID in this catalog is the index into the 'stars' particle array in YT
-
-			'''
-            pos_x=dd['stars','particle_position_x'].in_units('kpc')
-            pos_y=dd['stars','particle_position_y'].in_units('kpc')
-            pos_z=dd['stars','particle_position_z'].in_units('kpc')
-            #pid=dd['stars','particle_index']
-
-            assert(pos_x.shape[0] > this_pid)
-            this_x=pos_x[this_pid]
-            this_y=pos_y[this_pid]
-            this_z=pos_z[this_pid]
-			'''
-			this_x=dc_x[match][0]*scale/0.70
-			this_y=dc_y[match][0]*scale/0.70
-			this_z=dc_z[match][0]*scale/0.70
-
-            true_center = np.asarray([this_x,this_y,this_z])
-            galaxy_props['true_center'].append(true_center)
-
-            #max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
-            true_center = ds.arr(true_center,'kpc')
-
-            print( '\tTrue Center = ', true_center)
+        print( '\tTrue Center = ', true_center)
 
 
 
 
 
 
-            #Generate Sphere Selection
-            print( 'Determining virial radius...')
-            #rvir = find_rvirial(dd, ds, max_ndens_arr)
-            rvir = find_rvirial(dd, ds, true_center)
-
-            print( '\tRvir = ', rvir)
-			hc_sphere = ds.sphere(true_center, rvir)
-
-
-            galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
-            galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
-            galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
+        #Generate Sphere Selection
+        print( 'Determining virial radius...')
+        #rvir = find_rvirial(dd, ds, max_ndens_arr)
+        rvir = find_rvirial(dd, ds, true_center)
+        print( '\tRvir = ', rvir)
+		hc_sphere = ds.sphere(true_center, rvir)
 
 
-            #Find Galaxy Properties
-            galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd)
-
-            print('Found galaxy properties: ', galaxy_props)
-
-            #Making Figures
-            #if False:
-            # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=([10,10,10],'Mpc'), width = (25.,'Mpc')).save('test.png')
-            # p = yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr), width = (8.,'kpc'))
-            # p.save('projection_z.png')
-            # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (40.,'kpc')).save('testproj_2nd_pass_3_z.png')
-            # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (30, 'kpc')).save(yt_fig_dir+'/max_ndens_cen_30kpc.png')
-            # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (1, 'Mpc')).save(yt_fig_dir+'/max_ndens_cen_1Mpc.png')
-
-            # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(galaxy_props['stars_com'][0],'kpc'),  width = (10, 'kpc')).save('max_ndens_arr.png')
-            # L = ds.arr([0,1./sqrt(2),1./sqrt(2)], 'kpc')
+        galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
+        galaxy_props['rvir'] = np.append(galaxy_props['rvir'], rvir.value[()])
+        galaxy_props['Mvir_dm'] = np.append(galaxy_props['Mvir_dm'], hc_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum().value[()])
 
 
-            # yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), width = (10, 'kpc')).save('off_axis_projection.png')
+        #Find Galaxy Properties
+        galaxy_props = find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd)
 
-            # t0 = time.time()
-            # yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), depth = (1, "Mpc"), width = (25, "kpc")).save('off_axis_projection_2.png')
-            # t1 = time.time()
-            # print 'Took %.2f minutes'%((t1-t0)/60.)
+        print('Found galaxy properties: ', galaxy_props)
 
-            del (hc_sphere)
-            sys.stdout.flush()
+        #Making Figures
+        #if False:
+        # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=([10,10,10],'Mpc'), width = (25.,'Mpc')).save('test.png')
+        # p = yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr), width = (8.,'kpc'))
+        # p.save('projection_z.png')
+        # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (40.,'kpc')).save('testproj_2nd_pass_3_z.png')
+        # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (30, 'kpc')).save(yt_fig_dir+'/max_ndens_cen_30kpc.png')
+        # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(max_ndens_arr),  width = (1, 'Mpc')).save(yt_fig_dir+'/max_ndens_cen_1Mpc.png')
+        # yt.ProjectionPlot(ds, 'z', ('gas', 'density'), center=(galaxy_props['stars_com'][0],'kpc'),  width = (10, 'kpc')).save('max_ndens_arr.png')
+        # L = ds.arr([0,1./sqrt(2),1./sqrt(2)], 'kpc')
 
 
-        # Save galaxy props file
-        galaxy_props_file = simname+'_galprops.npy'
-        print( '\nSuccessfully computed galaxy properties')
-        print( 'Saving galaxy properties to ', galaxy_props_file)
-        np.save(galaxy_props_file, galaxy_props)
+        # yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), width = (10, 'kpc')).save('off_axis_projection.png')
+
+        # t0 = time.time()
+        # yt.OffAxisProjectionPlot(ds, L, ('gas', 'density'), center=(max_ndens_arr), depth = (1, "Mpc"), width = (25, "kpc")).save('off_axis_projection_2.png')
+        # t1 = time.time()
+        # print 'Took %.2f minutes'%((t1-t0)/60.)
+
+        del (hc_sphere)
+        sys.stdout.flush()
+
+
+    # Save galaxy props file
+    galaxy_props_file = simname+'_galprops.npy'
+    print( '\nSuccessfully computed galaxy properties')
+    print( 'Saving galaxy properties to ', galaxy_props_file)
+    np.save(galaxy_props_file, galaxy_props)
