@@ -72,7 +72,7 @@ if __name__=="__main__":
     #for a,dx in zip(dc_a,dc_x): print(a,dx)
 
     #measure distance with ceverino centers
-    d_ckpch=np.zeros_like(a)
+    d_ckpch=np.zeros_like(aname)
     print('#scale     3D distance (kpc)')
     for i,(scale,tc_x,tc_y,tc_z) in enumerate(zip(aname,x,y,z)):
         #match to dc_a
