@@ -508,10 +508,8 @@ if __name__ == "__main__":
 
 
                 #find true_center here
-
-
-                genstring=galaxy_props['genname'].lower()
-                simstring=galaxy_props['simname'].upper()
+				genstring=galaxy_props['genname'].lower()
+				simstring=galaxy_props['simname'].upper()
 				scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
 
     			dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
