@@ -16,7 +16,7 @@ if __name__=="__main__":
     pd=np.load(pf).all()
     tc=pd['true_center']  #in physical kpc, a list of arrays
     print(tc)
-    a=pd['scale']
+    a=np.float64(pd['scale_string'])
     x=np.zeros_like(a)
     y=np.zeros_like(a)
     z=np.zeros_like(a)
