@@ -9,7 +9,7 @@ if __name__=="__main__":
     #identify simulation
     pf=glob.glob('*_galprops.npy')[0]
     simname=pf[0:6]
-    genname=os.path.basename(os.path.dirname(os.abspath('.')))
+    genname=os.path.basename(os.path.dirname(os.path.abspath('.')))
     print(simname)
     print(genname)
 
