@@ -20,6 +20,7 @@ if __name__=="__main__":
     x=np.zeros_like(a)
     y=np.zeros_like(a)
     z=np.zeros_like(a)
+    print(a)
 
     #convert galprops centers to comoving kpc/h
     for i,(scale,cen) in enumerate(zip(a,tc)):
