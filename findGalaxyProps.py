@@ -18,90 +18,90 @@ import astropy.io.ascii as ascii
 #reload(yt)
 
 def find_center(dd, ds, units = 'kpc', cen_pos = 10.e3, bin_width = 4.e3, del_pos = 20):
-	'''
-	find the center using the number density
-	all lengths are in kpc
-	returns ndarray of max_ndens_arr = ([cenx, ceny, cenz])
-	'''
-	units = 'kpc'
-	stars_pos_x = dd['stars', 'particle_position_x'].in_units(units)
-	stars_pos_y = dd['stars', 'particle_position_y'].in_units(units)
-	stars_pos_z = dd['stars', 'particle_position_z'].in_units(units)
+    '''
+    find the center using the number density
+    all lengths are in kpc
+    returns ndarray of max_ndens_arr = ([cenx, ceny, cenz])
+    '''
+    units = 'kpc'
+    stars_pos_x = dd['stars', 'particle_position_x'].in_units(units)
+    stars_pos_y = dd['stars', 'particle_position_y'].in_units(units)
+    stars_pos_z = dd['stars', 'particle_position_z'].in_units(units)
 
-	star_pos = [stars_pos_x.value, stars_pos_y.value, stars_pos_z.value]
+    star_pos = [stars_pos_x.value, stars_pos_y.value, stars_pos_z.value]
 
-	min_pos = cen_pos - bin_width
-	max_pos = cen_pos + bin_width
-	bins = [arange(min_pos,max_pos,del_pos), arange(min_pos,max_pos,del_pos), arange(min_pos,max_pos,del_pos)]
-
-
-
-	H, edges = histogramdd(star_pos, bins = bins)
-	max_ndens_index = unravel_index(H.argmax(), H.shape)
-
-	max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2.,
-						   (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
-						   (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
-
-	max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
+    min_pos = cen_pos - bin_width
+    max_pos = cen_pos + bin_width
+    bins = [arange(min_pos,max_pos,del_pos), arange(min_pos,max_pos,del_pos), arange(min_pos,max_pos,del_pos)]
 
 
 
-	#end of First pass
-	print('\tDone with coarse pass searching for center, moving to fine pass')
+    H, edges = histogramdd(star_pos, bins = bins)
+    max_ndens_index = unravel_index(H.argmax(), H.shape)
+
+    max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2.,
+                           (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
+                           (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
+
+    max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
 
 
-	bin_width = 40
-	del_pos = 0.5
 
-	min_pos_x = float(max_ndens_arr[0]) - bin_width
-	max_pos_x = float(max_ndens_arr[0]) + bin_width
-
-	min_pos_y = float(max_ndens_arr[1]) - bin_width
-	max_pos_y = float(max_ndens_arr[1]) + bin_width
-
-	min_pos_z = float(max_ndens_arr[2]) - bin_width
-	max_pos_z = float(max_ndens_arr[2]) + bin_width
+    #end of First pass
+    print('\tDone with coarse pass searching for center, moving to fine pass')
 
 
-	bins = [arange(min_pos_x,max_pos_x,del_pos), arange(min_pos_y,max_pos_y,del_pos), arange(min_pos_z,max_pos_z,del_pos)]
+    bin_width = 40
+    del_pos = 0.5
 
-	H, edges = histogramdd(star_pos, bins = bins)
-	max_ndens_index = unravel_index(H.argmax(), H.shape)
+    min_pos_x = float(max_ndens_arr[0]) - bin_width
+    max_pos_x = float(max_ndens_arr[0]) + bin_width
 
-	max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2.,
-						   (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
-						   (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
+    min_pos_y = float(max_ndens_arr[1]) - bin_width
+    max_pos_y = float(max_ndens_arr[1]) + bin_width
 
-	max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
+    min_pos_z = float(max_ndens_arr[2]) - bin_width
+    max_pos_z = float(max_ndens_arr[2]) + bin_width
 
 
-	return max_ndens_arr
+    bins = [arange(min_pos_x,max_pos_x,del_pos), arange(min_pos_y,max_pos_y,del_pos), arange(min_pos_z,max_pos_z,del_pos)]
+
+    H, edges = histogramdd(star_pos, bins = bins)
+    max_ndens_index = unravel_index(H.argmax(), H.shape)
+
+    max_ndens_loc = array([(edges[0][max_ndens_index[0]] + edges[0][max_ndens_index[0]+1])/2.,
+                           (edges[1][max_ndens_index[1]] + edges[1][max_ndens_index[1]+1])/2.,
+                           (edges[2][max_ndens_index[2]] + edges[2][max_ndens_index[2]+1])/2.])
+
+    max_ndens_arr = ds.arr([max_ndens_loc[0], max_ndens_loc[1], max_ndens_loc[2]], units)
+
+
+    return max_ndens_arr
 
 def find_rvirial(dd, ds, center, start_rad = 0, delta_rad_coarse = 20, delta_rad_fine = 1, rad_units = 'kpc'):
-	vir_check = 0
-	r0 = ds.arr(start_rad, rad_units)
-	critical_density = cosmo.critical_density(ds.current_redshift).value   #is in g/cm^3
-	max_ndens_arr=center
+    vir_check = 0
+    r0 = ds.arr(start_rad, rad_units)
+    critical_density = cosmo.critical_density(ds.current_redshift).value   #is in g/cm^3
+    max_ndens_arr=center
 
-	while True:
-		r0_prev = r0
-		r0 = r0_prev + ds.arr(delta_rad_coarse, rad_units)
-		v_sphere = ds.sphere(max_ndens_arr, r0)
-		dark_mass 	= v_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum()
-		rho_internal = dark_mass.in_units('g')/((r0.in_units('cm'))**3.*(pi*4/3.))
-		if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
-			#now run fine test
-			print('\tNow running fine search on the virial radius')
-			r0 = r0_prev
-			while True:
-				r0 += ds.arr(delta_rad_fine, rad_units)
-				v_sphere = ds.sphere(max_ndens_arr, r0)
-				dark_mass 	= v_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum()
-				rho_internal = dark_mass.in_units('g')/((r0.in_units('cm'))**3.*(pi*4/3.))
-				if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
-					rvir = r0
-					return rvir
+    while True:
+        r0_prev = r0
+        r0 = r0_prev + ds.arr(delta_rad_coarse, rad_units)
+        v_sphere = ds.sphere(max_ndens_arr, r0)
+        dark_mass     = v_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum()
+        rho_internal = dark_mass.in_units('g')/((r0.in_units('cm'))**3.*(pi*4/3.))
+        if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
+            #now run fine test
+            print('\tNow running fine search on the virial radius')
+            r0 = r0_prev
+            while True:
+                r0 += ds.arr(delta_rad_fine, rad_units)
+                v_sphere = ds.sphere(max_ndens_arr, r0)
+                dark_mass     = v_sphere[('darkmatter', 'particle_mass')].in_units('Msun').sum()
+                rho_internal = dark_mass.in_units('g')/((r0.in_units('cm'))**3.*(pi*4/3.))
+                if rho_internal < 200*ds.arr(critical_density,'g')/ds.arr(1.,'cm')**3.:
+                    rvir = r0
+                    return rvir
 
 def find_hist_center(positions, masses):
     '''
@@ -399,18 +399,18 @@ def find_galaxyprops(galaxy_props, ds, hc_sphere, max_ndens_arr,scale,dd):
 
 
 if __name__ == "__main__":
-	#Should read these in from an initialization file
-	#gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
+    #Should read these in from an initialization file
+    #gen_name, gal_name, snap_name, snaps  = 'VELA_v2', 'VELA27', 'VELA27_a0.370', '../data/VELA27_v2/a0.370/10MpcBox_csf512_a0.370.d'
 
-	#snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
+    #snap_dir = '/Volumes/wd/yt_pipeline/Runs/%s/%s/%s'%(gen_name, gal_name, snap_name+'_sunrise')
 
-	#if not os.path.isdir(snap_dir):
-	#	os.system('mkdir '+'/Volumes/wd/yt_pipeline/Runs/%s/%s'%(gen_name, gal_name))
-	#	os.system('mkdir '+snap_dir)
-	#	os.system('mkdir '+snap_dir+'/input')
+    #if not os.path.isdir(snap_dir):
+    #    os.system('mkdir '+'/Volumes/wd/yt_pipeline/Runs/%s/%s'%(gen_name, gal_name))
+    #    os.system('mkdir '+snap_dir)
+    #    os.system('mkdir '+snap_dir+'/input')
 
 
-	#assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
+    #assert os.path.exists(snap_dir), 'Snapshot directory %s not found'%snap_dir
 
 
     if len(sys.argv)==2:
@@ -462,8 +462,8 @@ if __name__ == "__main__":
     new_snapfiles = np.asarray(new_snapfiles)
     galaxy_props = {}
     fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
-				'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor','image_npix',
-            	'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files','scale_string']
+                'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor','image_npix',
+                'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files','scale_string']
     for field in fields:
         if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
             galaxy_props[field] = np.array([])
@@ -478,10 +478,9 @@ if __name__ == "__main__":
     galaxy_props['pixsize_kpc']=0.070
 
     for ds,snap_dir in zip(reversed(ts),np.flipud(new_snapfiles)):
-		print( "Getting galaxy props: ", ds._file_amr, snap_dir)
-		aname=snap_dir.split('_')[1]
-		print(aname)
-
+        print( "Getting galaxy props: ", ds._file_amr, snap_dir)
+        aname=snap_dir.split('_')[1]
+        print(aname)
         dd = ds.all_data()
         ds.domain_right_edge = ds.arr(ds.domain_right_edge,'code_length')
         ds.domain_left_edge  = ds.arr(ds.domain_left_edge,'code_length')
@@ -493,7 +492,7 @@ if __name__ == "__main__":
             assert stars_pos_x.shape[0] > 5
         except AttributeError:
             print( "No star particles found, skipping: ", ds._file_amr)
-			continue
+            continue
         except AssertionError:
             print( "No star particles found, skipping: ", ds._file_amr)
             continue
@@ -507,37 +506,37 @@ if __name__ == "__main__":
 
 
         #find true_center here
-		genstring=galaxy_props['genname'].lower()
-		simstring=galaxy_props['simname'].upper()
-		scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
+        genstring=galaxy_props['genname'].lower()
+        simstring=galaxy_props['simname'].upper()
+        scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
 
-    	dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
-    	cdata=ascii.read(dcf)
-		dc_sim=np.asarray(cdata['col2'])
-    	dc_x=np.asarray(cdata['col3']*1000)  #in comoving kpc/h
-    	dc_y=np.asarray(cdata['col4']*1000)
-    	dc_z=np.asarray(cdata['col5']*1000)
-    	dc_a=np.asarray(cdata['col1'])
+        dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
+        cdata=ascii.read(dcf)
+        dc_sim=np.asarray(cdata['col2'])
+        dc_x=np.asarray(cdata['col3']*1000)  #in comoving kpc/h
+        dc_y=np.asarray(cdata['col4']*1000)
+        dc_z=np.asarray(cdata['col5']*1000)
+        dc_a=np.asarray(cdata['col1'])
 
-		'''
+        '''
         cname='vela_'+genstring+'_center_ids.txt'
         center_catalog_file=os.path.join('/u/gfsnyder/vela_data/',cname)
         center_data=ascii.read(center_catalog_file)
         cd_sim=center_data['col1']
         cd_scale=center_data['col2']
         cd_pid=center_data['col3']
-		'''
+        '''
 
         match=np.logical_and(dc_sim==simstring,dc_a==np.float64(aname[1:]))
         try:
-			assert(np.sum(match)==1)
+            assert(np.sum(match)==1)
         except AssertionError:
             if np.sum(match)==0:
-				print('No matches found in input center catalogs, skipping: ', ds._file_amr)
+                print('No matches found in input center catalogs, skipping: ', ds._file_amr)
                 continue
             else:
                 print('Weird error in center, more than 1 found in catalogs, skipping: ', ds._file_amr)
-            	continue
+                continue
 
         galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
 
@@ -546,11 +545,11 @@ if __name__ == "__main__":
         galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 
-		#old PID catalog-style
+        #old PID catalog-style
         #this_pid = cd_pid[match][0]
         #the ID in this catalog is the index into the 'stars' particle array in YT
 
-		'''
+        '''
         pos_x=dd['stars','particle_position_x'].in_units('kpc')
         pos_y=dd['stars','particle_position_y'].in_units('kpc')
         pos_z=dd['stars','particle_position_z'].in_units('kpc')
@@ -559,10 +558,10 @@ if __name__ == "__main__":
         this_x=pos_x[this_pid]
         this_y=pos_y[this_pid]
         this_z=pos_z[this_pid]
-		'''
-		this_x=dc_x[match][0]*scale/0.70
-		this_y=dc_y[match][0]*scale/0.70
-		this_z=dc_z[match][0]*scale/0.70
+        '''
+        this_x=dc_x[match][0]*scale/0.70
+        this_y=dc_y[match][0]*scale/0.70
+        this_z=dc_z[match][0]*scale/0.70
 
         true_center = np.asarray([this_x,this_y,this_z])
         galaxy_props['true_center'].append(true_center)
@@ -582,7 +581,7 @@ if __name__ == "__main__":
         #rvir = find_rvirial(dd, ds, max_ndens_arr)
         rvir = find_rvirial(dd, ds, true_center)
         print( '\tRvir = ', rvir)
-		hc_sphere = ds.sphere(true_center, rvir)
+        hc_sphere = ds.sphere(true_center, rvir)
 
 
         galaxy_props['stars_maxndens'].append(max_ndens_arr.value)
