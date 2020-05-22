@@ -76,10 +76,10 @@ if __name__=="__main__":
     print('#scale     3D distance (kpc)')
     for i,(scale,tc_x,tc_y,tc_z) in enumerate(zip(aname,x,y,z)):
         #match to dc_a
-        dc_i=np.where(dc_a==np.float64(scale[1:]))[0][0]
+        dc_i=np.where(dc_a==np.float64(scale[1:]))[0]
         print(scale, dc_i, tc_x, dc_x[dc_i])
         if len(dc_i)==1:
             #print(scale,dc_x[dc_i],tc_x)
-            d_ckpch[i]=((tc_x-dc_x[dc_i])**2 + (tc_y-dc_y[dc_i])**2 + (tc_z-dc_z[dc_i])**2)**(0.5)
+            d_ckpch[i]=((tc_x-dc_x[dc_i[0]])**2 + (tc_y-dc_y[dc_i[0]])**2 + (tc_z-dc_z[dc_i[0]])**2)**(0.5)
             #print out distances versus scalefactor
             print('{:8.3f}     {:12.4f}'.format(np.float64(scale[1:]),d_ckpch[i]*np.float64(scale[1:])/0.70))
