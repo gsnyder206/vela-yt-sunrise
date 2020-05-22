@@ -39,7 +39,7 @@ if __name__=="__main__":
     dc_a=cdata['col1'][si]
 
     print(dc_a)
-    
+
     ''' old version
     #read ceverino centers file and parse into arrays
     dcf='ceverino_centers_gen6.txt'
@@ -77,6 +77,7 @@ if __name__=="__main__":
     for i,(scale,tc_x,tc_y,tc_z) in enumerate(zip(a,x,y,z)):
         #match to dc_a
         dc_i=np.where(dc_a==scale)[0]
+        print(scale, dc_i)
         if len(dc_i)==1:
             #print(scale,dc_x[dc_i],tc_x)
             d_ckpch[i]=((tc_x-dc_x[dc_i])**2 + (tc_y-dc_y[dc_i])**2 + (tc_z-dc_z[dc_i])**2)**(0.5)
