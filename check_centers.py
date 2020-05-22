@@ -1,14 +1,17 @@
 import os
 import glob
 import numpy as np
-
+import astropy
+import astropy.io.ascii as ascii
 
 if __name__=="__main__":
     #identify galprops file, read it
     #identify simulation
     pf=glob.glob('*_galprops.npy')[0]
     simname=pf[0:6]
+    genname=os.path.basename(os.path.dirname(os.abspath('.')))
     print(simname)
+    print(genname)
 
     pd=np.load(pf).all()
     tc=pd['true_center']  #in physical kpc, a list of arrays
@@ -18,13 +21,24 @@ if __name__=="__main__":
     y=np.zeros_like(a)
     z=np.zeros_like(a)
 
-    #convert galprops centers to comoving kpc
+    #convert galprops centers to comoving kpc/h
     for i,(scale,cen) in enumerate(zip(a,tc)):
         print('{:5.2f} {:10.3f}'.format(scale, cen[0]*(0.70)/scale))
         x[i]=cen[0]*0.70/scale
         y[i]=cen[1]*0.70/scale
         z[i]=cen[2]*0.70/scale
 
+
+
+    dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genname.lower()+'_formatted.txt'
+    cdata=ascii.read(dcf)
+    si=np.where(cdata[1]==simname)
+    dc_x=cdata[2][si]*1000  #in comoving kpc/h
+    dc_y=cdata[3][si]*1000
+    dc_z=cdata[4][si]*1000
+    dc_a=cdata[0][si]
+
+    ''' old version
     #read ceverino centers file and parse into arrays
     dcf='ceverino_centers_gen6.txt'
     #VELA01/profileSpGe_Reca0.200.dat:# (xc,yc,zc)[Mpc h-1 comoving]=    5.1572    5.0681    4.3615
@@ -51,6 +65,7 @@ if __name__=="__main__":
     dc_y=np.asarray(dc_y)
     dc_z=np.asarray(dc_z)
     dc_a=np.asarray(dc_a)
+    '''
 
     #for a,dx in zip(dc_a,dc_x): print(a,dx)
 
