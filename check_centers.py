@@ -16,15 +16,15 @@ if __name__=="__main__":
     pd=np.load(pf).all()
     tc=pd['true_center']  #in physical kpc, a list of arrays
     print(tc)
-    a=np.float64(pd['scale_string'])
+    aname=pd['scale_string']
     x=np.zeros_like(a)
     y=np.zeros_like(a)
     z=np.zeros_like(a)
     print(a)
 
     #convert galprops centers to comoving kpc/h
-    for i,(scale,cen) in enumerate(zip(a,tc)):
-        print('{:5.2f} {:10.3f}'.format(scale, cen[0]*(0.70)/scale))
+    for i,(scale,cen) in enumerate(zip(aname,tc)):
+        print('{:5.2f} {:10.3f}'.format(np.float64(scale[1:]), cen[0]*(0.70)/np.float64(scale[1:])))
         x[i]=cen[0]*0.70/scale
         y[i]=cen[1]*0.70/scale
         z[i]=cen[2]*0.70/scale
@@ -75,12 +75,12 @@ if __name__=="__main__":
     #measure distance with ceverino centers
     d_ckpch=np.zeros_like(a)
     print('#scale     3D distance (kpc)')
-    for i,(scale,tc_x,tc_y,tc_z) in enumerate(zip(a,x,y,z)):
+    for i,(scale,tc_x,tc_y,tc_z) in enumerate(zip(aname,x,y,z)):
         #match to dc_a
-        dc_i=np.where(dc_a==scale)[0]
+        dc_i=np.where(dc_a==np.float64(scale[1:]))[0]
         print(scale, dc_i)
         if len(dc_i)==1:
             #print(scale,dc_x[dc_i],tc_x)
             d_ckpch[i]=((tc_x-dc_x[dc_i])**2 + (tc_y-dc_y[dc_i])**2 + (tc_z-dc_z[dc_i])**2)**(0.5)
             #print out distances versus scalefactor
-            print('{:8.3f}     {:12.4f}'.format(scale,d_ckpch[i]*scale/0.70))
+            print('{:8.3f}     {:12.4f}'.format(np.float64(scale[1:]),d_ckpch[i]*np.float64(scale[1:])/0.70))
