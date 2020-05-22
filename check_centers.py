@@ -26,7 +26,7 @@ if __name__=="__main__":
         z[i]=cen[2]*0.70/scale
 
     #read ceverino centers file and parse into arrays
-    dcf='/u/gfsnyder/vela_data/ceverino_centers_gen6.txt'
+    dcf='ceverino_centers_gen6.txt'
     #VELA01/profileSpGe_Reca0.200.dat:# (xc,yc,zc)[Mpc h-1 comoving]=    5.1572    5.0681    4.3615
     dcfo=open(dcf)
     lines=dcfo.readlines()
