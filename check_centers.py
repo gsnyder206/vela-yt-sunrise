@@ -24,9 +24,9 @@ if __name__=="__main__":
     #convert galprops centers to comoving kpc/h
     for i,(scale,cen) in enumerate(zip(aname,tc)):
         print('{:5.2f} {:10.3f}'.format(np.float64(scale[1:]), cen[0]*(0.70)/np.float64(scale[1:])))
-        x[i]=cen[0]*0.70/scale
-        y[i]=cen[1]*0.70/scale
-        z[i]=cen[2]*0.70/scale
+        x[i]=cen[0]*0.70/np.float64(scale[1:])
+        y[i]=cen[1]*0.70/np.float64(scale[1:])
+        z[i]=cen[2]*0.70/np.float64(scale[1:])
 
 
 
