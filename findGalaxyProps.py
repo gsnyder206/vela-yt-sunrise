@@ -513,6 +513,17 @@ if __name__ == "__main__":
                 genstring=galaxy_props['genname'].lower()
                 simstring=galaxy_props['simname'].upper()
 
+				scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
+
+    			dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
+    			cdata=ascii.read(dcf)
+				dc_sim=np.asarray(cdata['col2'])
+    			dc_x=np.asarray(cdata['col3']*1000)  #in comoving kpc/h
+    			dc_y=np.asarray(cdata['col4']*1000)
+    			dc_z=np.asarray(cdata['col5']*1000)
+    			dc_a=np.asarray(cdata['col1'])
+
+				'''
                 cname='vela_'+genstring+'_center_ids.txt'
 
                 center_catalog_file=os.path.join('/u/gfsnyder/vela_data/',cname)
@@ -522,8 +533,9 @@ if __name__ == "__main__":
                 cd_sim=center_data['col1']
                 cd_scale=center_data['col2']
                 cd_pid=center_data['col3']
+				'''
 
-                match=np.logical_and(cd_sim==simstring,cd_scale==np.float64(aname[1:]))
+                match=np.logical_and(dc_sim==simstring,dc_a==np.float64(aname[1:]))
                 try:
                         assert(np.sum(match)==1)
                 except AssertionError:
@@ -534,9 +546,6 @@ if __name__ == "__main__":
                                 print('Weird error in center, more than 1 found in catalogs, skipping: ', ds._file_amr)
                                 continue
 
-
-
-                scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
                 galaxy_props['scale'] = np.append(galaxy_props['scale'], scale)
 
                 galaxy_props['scale_string']=np.append(galaxy_props['scale_string'],aname)
@@ -544,11 +553,11 @@ if __name__ == "__main__":
                 galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
 
-
-                this_pid = cd_pid[match][0]
+				#old PID catalog-style
+                #this_pid = cd_pid[match][0]
                 #the ID in this catalog is the index into the 'stars' particle array in YT
 
-
+				'''
                 pos_x=dd['stars','particle_position_x'].in_units('kpc')
                 pos_y=dd['stars','particle_position_y'].in_units('kpc')
                 pos_z=dd['stars','particle_position_z'].in_units('kpc')
@@ -559,6 +568,10 @@ if __name__ == "__main__":
                 this_x=pos_x[this_pid]
                 this_y=pos_y[this_pid]
                 this_z=pos_z[this_pid]
+				'''
+				this_x=dc_x[match][0]*scale/0.70
+				this_y=dc_y[match][0]*scale/0.70
+				this_z=dc_z[match][0]*scale/0.70
 
                 true_center = np.asarray([this_x,this_y,this_z])
                 galaxy_props['true_center'].append(true_center)
