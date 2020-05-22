@@ -33,10 +33,10 @@ if __name__=="__main__":
     dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genname.lower()+'_formatted.txt'
     cdata=ascii.read(dcf)
     si=np.where(cdata['col2']==simname)
-    dc_x=cdata['col3'][si]*1000  #in comoving kpc/h
-    dc_y=cdata['col4'][si]*1000
-    dc_z=cdata['col5'][si]*1000
-    dc_a=cdata['col1'][si]
+    dc_x=np.asarray(cdata['col3'][si]*1000)  #in comoving kpc/h
+    dc_y=np.asarray(cdata['col4'][si]*1000)
+    dc_z=np.asarray(cdata['col5'][si]*1000)
+    dc_a=np.asarray(cdata['col1'][si])
 
     print(dc_a)
 
