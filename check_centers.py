@@ -17,10 +17,9 @@ if __name__=="__main__":
     tc=pd['true_center']  #in physical kpc, a list of arrays
     print(tc)
     aname=pd['scale_string']
-    x=np.zeros_like(a)
-    y=np.zeros_like(a)
-    z=np.zeros_like(a)
-    print(a)
+    x=np.zeros_like(aname)
+    y=np.zeros_like(aname)
+    z=np.zeros_like(aname)
 
     #convert galprops centers to comoving kpc/h
     for i,(scale,cen) in enumerate(zip(aname,tc)):
