@@ -510,7 +510,12 @@ if __name__ == "__main__":
         simstring=galaxy_props['simname'].upper()
         scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
 
-        dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
+        dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Mandelker_centers_'+genstring.lower()+'_formatted.txt'
+        if not os.path.lexists(dcf):
+            dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
+
+        galaxy_props['centerfile']=dcf
+
         cdata=ascii.read(dcf)
         dc_sim=np.asarray(cdata['col2'])
         dc_x=np.asarray(cdata['col3']*1000)  #in comoving kpc/h
