@@ -509,6 +509,7 @@ if __name__ == "__main__":
         genstring=galaxy_props['genname'].lower()
         simstring=galaxy_props['simname'].upper()
         scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
+        scale_exact=1.0/(ds.current_redshift + 1.0)
 
         dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Mandelker_centers_'+genstring.lower()+'_formatted.txt'
         if not os.path.lexists(dcf):
@@ -564,9 +565,9 @@ if __name__ == "__main__":
         this_y=pos_y[this_pid]
         this_z=pos_z[this_pid]
         '''
-        this_x=dc_x[match][0]*scale/0.70
-        this_y=dc_y[match][0]*scale/0.70
-        this_z=dc_z[match][0]*scale/0.70
+        this_x=dc_x[match][0]*scale_exact/0.70
+        this_y=dc_y[match][0]*scale_exact/0.70
+        this_z=dc_z[match][0]*scale_exact/0.70
 
         true_center = np.asarray([this_x,this_y,this_z])
         galaxy_props['true_center'].append(true_center)
