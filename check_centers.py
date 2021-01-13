@@ -16,7 +16,11 @@ if __name__=="__main__":
     pd=np.load(pf).all()
     tc=pd['true_center']  #in physical kpc, a list of arrays
     #print(tc)
-    print(pd['centerfile'])
+    try:
+        print(pd['centerfile'])
+    except:
+        print('No centerfile key in this galprops file.')
+
     aname=pd['scale_string']
     x=np.ndarray(shape=aname.shape, dtype=np.float64)
     y=np.ndarray(shape=aname.shape, dtype=np.float64)
