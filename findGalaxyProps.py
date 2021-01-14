@@ -463,7 +463,7 @@ if __name__ == "__main__":
     galaxy_props = {}
     fields = ['scale', 'stars_total_mass', 'stars_com', 'stars_maxdens', 'stars_maxndens', 'stars_hist_center',
                 'stars_rhalf', 'stars_mass_profile', 'stars_L', 'true_center', 'fov_kpc', 'fov_rhalf_factor','image_npix',
-                'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files','scale_string']
+                'gas_total_mass', 'gas_maxdens', 'gas_L', 'rvir', 'Mvir_dm', 'stars_center','snap_files','scale_string','scale_exact','current_redshift']
     for field in fields:
         if field in ['scale', 'stars_total_mass', 'stars_rhalf', 'gas_total_mass' ]:
             galaxy_props[field] = np.array([])
@@ -510,6 +510,9 @@ if __name__ == "__main__":
         simstring=galaxy_props['simname'].upper()
         scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
         scale_exact=1.0/(ds.current_redshift + 1.0)
+
+        galaxy_props['scale_exact']=np.append(galaxy_props['scale_exact'], scale_exact)
+        galaxy_props['current_redshift']=np.append(galaxy_props['current_redshift'], ds.current_redshift)
 
         dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Mandelker_centers_'+genstring.lower()+'_formatted.txt'
         if not os.path.lexists(dcf):

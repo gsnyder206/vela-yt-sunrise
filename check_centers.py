@@ -15,6 +15,7 @@ if __name__=="__main__":
 
     pd=np.load(pf).all()
     tc=pd['true_center']  #in physical kpc, a list of arrays
+    scale_exact=pd['scale_exact']  #vector of exact scale factor floats
     #print(tc)
     try:
         print(pd['centerfile'])
@@ -27,11 +28,11 @@ if __name__=="__main__":
     z=np.ndarray(shape=aname.shape, dtype=np.float64)
 
     #convert galprops centers to comoving kpc/h
-    for i,(scale,cen) in enumerate(zip(aname,tc)):
-        print('{:5.2f} {:10.3f}'.format(np.float64(scale[1:]), cen[0]*(0.70)/np.float64(scale[1:])))
-        x[i]=cen[0]*0.70/np.float64(scale[1:])
-        y[i]=cen[1]*0.70/np.float64(scale[1:])
-        z[i]=cen[2]*0.70/np.float64(scale[1:])
+    for i,(aname,cen,scale) in enumerate(zip(aname,tc,scale_exact)):
+        print('{:5.2f} {:10.3f}'.format(np.float64(scale), cen[0]*(0.70)/np.float64(scale[1:])))
+        x[i]=cen[0]*0.70/np.float64(scale)
+        y[i]=cen[1]*0.70/np.float64(scale)
+        z[i]=cen[2]*0.70/np.float64(scale)
 
 
 
@@ -79,12 +80,12 @@ if __name__=="__main__":
     #measure distance with ceverino centers
     d_ckpch=np.ndarray(shape=aname.shape, dtype=np.float64)
     print('#scale     3D distance (kpc)')
-    for i,(scale,tc_x,tc_y,tc_z) in enumerate(zip(aname,x,y,z)):
+    for i,(aname,scale,tc_x,tc_y,tc_z) in enumerate(zip(aname,scale_exact,x,y,z)):
         #match to dc_a
-        dc_i=np.where(dc_a==np.float64(scale[1:]))[0]
+        dc_i=np.where(dc_a==np.float64(aname[1:]))[0]
         #print(scale, dc_i, tc_x, dc_x[dc_i])
         if len(dc_i)==1:
             #print(scale,dc_x[dc_i],tc_x)
             d_ckpch[i]=((tc_x-dc_x[dc_i[0]])**2 + (tc_y-dc_y[dc_i[0]])**2 + (tc_z-dc_z[dc_i[0]])**2)**(0.5)
             #print out distances versus scalefactor
-            print('{:8.3f}     {:12.4f}'.format(np.float64(scale[1:]),d_ckpch[i]*np.float64(scale[1:])/0.70))
+            print('{:8.3f}     {:12.4f}'.format(np.float64(scale),d_ckpch[i]*np.float64(scale)/0.70))
