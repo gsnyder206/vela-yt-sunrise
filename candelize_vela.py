@@ -304,20 +304,24 @@ def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max
 
 if __name__=="__main__":
 
-
+    try:
+        assert(sys.argv[2]=='limit')
+        ci=[0,1,2]
+    except:
+        ci='All'
 
     try:
-        res1 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=False,Np=4)
+        res1 = process_snapshot(subdirpath='.',camindices=ci, clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=False,Np=4)
     except:
         print('failure in candelization of broadbandz.fits, scatter')
 
     try:
-        res2 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=True,smc=False,Np=4)
+        res2 = process_snapshot(subdirpath='.',camindices=ci, clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=True,smc=False,Np=4)
     except:
         print('failure in candelization of broadbandz.fits, nonscatter')
 
     try:
-        res3 = process_snapshot(subdirpath='.',clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=True,Np=4)
+        res3 = process_snapshot(subdirpath='.',camindices=ci, clobber=False,seg_filter_label='NC-F200W',magsb_limits=[25.0,28.0],do_idl=False,analyze=False,use_nonscatter=False,smc=True,Np=4)
     except:
         print('failure in candelization of broadbandzsmc.fits, scatter')
 
