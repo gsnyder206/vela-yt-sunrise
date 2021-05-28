@@ -1,6 +1,6 @@
 import matplotlib
 matplotlib.use('Agg')  #apparently needed for old matplotlib/python on pleiades (didn't want to risk updating)
-import matplotlib.pyplot as pyplot   
+import matplotlib.pyplot as pyplot
 import os
 import sys
 import numpy as np
@@ -61,7 +61,7 @@ filfil={'F275W':'hst/wfc3_f275w', 'F336W':'hst/wfc3_f336w', 'F435W':'hst/acs_f43
 
 insdict={'hst':['wfc3','acs'],
          'jwst':['nircam','miri'],
-         'wfirst':['wfi'],
+         'roman':['wfi'],
          'aux':['aux']}
 
 cams=['cam00','cam01','cam02','cam03','cam04','cam05','cam06','cam07','cam08','cam09',
@@ -83,7 +83,7 @@ filfil={'F336W':'hst/wfc3_f336w', 'F435W':'hst/acs_f435w',
         'F184':'wfirst/wfi_f184','R062':'wfirst/wfi_r062',
         'F115W':'jwst/nircam_f115w', 'F150W':'jwst/nircam_f150w', 'F200W':'jwst/nircam_f200w',
         'F277W':'jwst/nircam_f277w', 'F356W':'jwst/nircam_f356w', 'F444W':'jwst/nircam_f444w',
-        'F770W':'jwst/miri_F770W', 
+        'F770W':'jwst/miri_F770W',
         'F1500W':'jwst/miri_F1500W','aux':'aux'}
 
 
@@ -98,28 +98,28 @@ def vela_export_image(hdulist,camnum,filtername,label='',nonscatter=False):
     #hdulist=fits.open(bbfile)
     fils=hdulist['FILTERS'].data['filter']
     fi=np.where(fils==filtername)[0][0]
-    
+
     efl=hdulist['FILTERS'].data['lambda_eff']
-    
+
     efl_microns=1.0e6 * efl[fi]
 
     if not np.isfinite(efl_microns):
         return None
-    
+
     if nonscatter is False:
         key='CAMERA'+'{}'.format(camnum)+'-BROADBAND'
     else:
         key='CAMERA'+'{}'.format(camnum)+'-BROADBAND-NONSCATTER'
 
-        
+
 
     camdata=hdulist[key].data[fi,:,:]
-    
+
     #convert to nJy
     redshift=hdulist['BROADBAND'].header['redshift']
     pixsize_kpc=hdulist[key].header['CD1_1']
     pixsize_arcsec=pixsize_kpc/(illcos.kpc_proper_per_arcmin(redshift).value/60.0)
-    
+
     sq_arcsec_per_sr = 42545170296.0
     c = 3.0e8
 
@@ -145,19 +145,19 @@ def vela_export_image(hdulist,camnum,filtername,label='',nonscatter=False):
 
     outhdu.header['FILTER']=filtername
     outhdu.header['CAMERA']=(camnum,'Sunrise camera number')
-    
+
     return outhdu
 
 
 #utility to help with integrating pleiades pipeline
-def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False, output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP',genstr='v3-2'):
+def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP',genstr='v3-2'):
 
     #assume run within /images/ subdirectory?
 
     imagedir=glob.glob('images_*_sunrise_mw')[0]
     imagedir_ns=glob.glob('images_*_sunrise_nonscatter')[0]
     imagedir_smc=glob.glob('images_*_sunrise_smc')[0]
-    
+
     bb_fits='broadbandz.fits'
     bb_fits_smc='broadbandzsmc.fits'
 
@@ -167,9 +167,9 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
     target_dir=os.path.basename(imagedir)
     aname=target_dir.split('_')[2]
     sim=target_dir.split('_')[1]
-    
+
     dirname=imagedir.split('_')[1]
-    
+
     if True:
         for obs in obslist:
             for instrument in insdict[obs]:
@@ -208,42 +208,42 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
 
                         sfr_tau = 1.2e7 #12 Myr, from Ceverino et al. 2015.  SFR values are actually SFR*Tau, so must divide by this factor to get true SFR values
 
-                    
+
                         auxmain=auxfo[1]
                         kpc_per_pix=auxmain.header['CD1_1']
                         stellar_mass_per_pix=auxmain.data[4,:,:]*(kpc_per_pix**2)
                         gas_mass_per_pix=auxmain.data[0,:,:]*(kpc_per_pix**2)
                         metal_mass_per_pix=auxmain.data[1,:,:]*(kpc_per_pix**2)
-                        
+
                         sfrdens_per_pix=auxmain.data[2,:,:]/sfr_tau
                         auxmain.data[2,:,:]=sfrdens_per_pix
-                        
+
                         #sfr_per_pix=sfrdens_per_pix*(kpc_per_pix**2)
-                        
+
                         #total_mstar=np.sum(stellar_mass_per_pix)
                         #total_mgas=np.sum(gas_mass_per_pix)
                         #total_mmet=np.sum(metal_mass_per_pix)
                         #total_sfr=np.sum(sfr_per_pix)
-                        
+
                         #sim=dirname.lower()
                         #scalestr=auxfile.split('_')[4].split('-')[-1][-5:]
                         #camstr=auxfile.split('_')[4].split('-')[1]
                         #scalefloat=float(scalestr)
                         #zfloat=(1.0/scalefloat) - 1.0
-                        
-                        
+
+
                         #this is actually problematic because apparently the filenames aren't exact?
                         #mvirdm=dat[b'Mvir_dm'][dat[b'scale']==scalefloat]
-                    
+
                         auxfo.flush()
                     else:
                         print(auxoutfile, ' exists, skipping..')
 
-                        
+
                     for fil in fildict[instrument]:
                         if fil=='aux' or aux_only is True:
                             continue
-                            
+
                         outdir=os.path.join(output_dir,'vela',dirname.lower(),cam,obs,instrument,fil.lower(),'')
 
 
@@ -255,7 +255,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                         #bbhdu_ns=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
 
                         sys.stdout.flush()
-                        
+
                         if os.path.lexists(os.path.join(outdir,new_filename)):
                             print(new_filename, ' exists, skipping.. ')
                             continue
@@ -264,23 +264,23 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                             bbhdu_smc=vela_export_image(hdulist_smc,int(cam[-2:]),filfil[fil])
                             ns_hdu=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
                             print('saving.. ', new_filename)
-                            
+
                         sys.stdout.flush()
-                            
+
                         if not os.path.lexists(outdir):
                             os.makedirs(outdir)
-                        
+
                         target_file=os.path.join(imagedir,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
                         target_file_ns=os.path.join(imagedir_ns,sim+'_'+aname+'_sunrise_nonscatter'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
                         target_file_smc=os.path.join(imagedir_smc,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
-                        
+
                         if os.path.lexists(target_file) and os.path.lexists(target_file_ns) and os.path.lexists(target_file_smc):
                             ni=1 #all 3 exist
                         elif os.path.lexists(target_file) or os.path.lexists(target_file_ns) or os.path.lexists(target_file_smc):
                             ni=2 #1 or 2 exist
                         else:
                             ni=0 #none exist
-                            
+
                         #ni=np.where(np.asarray(names)==target_file)[0]
 
                         #there's a case where the blue filters fail because of nans, etc -- grid mismatch
@@ -292,7 +292,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                             if ni==2:
                                 print("1 or 2 missing, perhaps an issue in one of the bbz or bbzsmc runs.")
                             continue
-                        
+
                         if ni==1:
                             #tfo.extractall(path=outdir,members=marr[ni])
                             shutil.copy2(target_file,outdir)
@@ -304,7 +304,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                             os.rename(os.path.join(outdir,os.path.basename(target_file_smc)),os.path.join(outdir,new_filename_smc))
 
                             for tfn,thdu,typename,hl in zip([new_filename,new_filename_ns,new_filename_smc],[bbhdu,ns_hdu,bbhdu_smc],['MW','NONSCATTER','SMCbar'],[hdulist,hdulist,hdulist_smc]):
-                            
+
                                 with pyfits.open(os.path.join(outdir,tfn),mode='update') as hdus:
                                     hdus.append(thdu)
                                     outhdu=hdus[0]
@@ -318,7 +318,7 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
                                     outhdu.header['PROPOSID']='HST-AR#13887'
                                     outhdu.header['REFERENC']='Simons et al. (2019)'
                                     outhdu.header['REFDOI']='10.3847/1538-4357/ab07c9'
-                                    
+
                                     outhdu.header['MISSION']=obs.upper()
                                     outhdu.header['TELESCOP']=obs.upper()
                                     outhdu.header['INSTR']=instrument.upper()
@@ -331,17 +331,17 @@ def do_single_snap(obslist=['hst','jwst','wfirst'],camlist=cams, aux_only=False,
         #camst='cam'+'{:02d}'.format(i)
         vvh.make_vela_stamps(bd=output_dir,sim=dirname.lower(),cam=camst,single_aname=aname)
 
-    
+
     return
 
 
-def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
+def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','roman'],
                          camlist=cams, aux_only=False):
 
     imagedirs=np.sort(np.asarray(glob.glob(dirname+'/*_sunrise/images/images_*_sunrise')))
 
 
-    
+
     for idir in imagedirs:
         print(idir)
 
@@ -353,7 +353,7 @@ def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
         hdulist=pyfits.open(target_bb_fits)
 
         target_dir=os.path.basename(idir)
-            
+
         for obs in obslist:
             for instrument in insdict[obs]:
                 if instrument is 'wfc3':
@@ -371,7 +371,7 @@ def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
                     if not os.path.lexists(auxdir):
                         os.makedirs(auxdir,exist_ok=True)
                     auxhdu=hdulist['CAMERA'+str(int(cam[-2:]))+'-AUX']
-       
+
                     auxoutfile=os.path.join(auxdir,'hlsp_vela_none_none_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_aux_v3_sim.fits')
                     if aux_only is False:
                         if not os.path.lexists(auxoutfile):
@@ -382,7 +382,7 @@ def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
                     for fil in fildict[instrument]:
                         if fil=='aux' or aux_only is True:
                             continue
-                            
+
                         outdir=os.path.join('HLSP','vela',dirname.lower(),cam,obs,instrument,fil.lower(),'')
 
 
@@ -391,26 +391,26 @@ def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
                         #bbhdu_ns=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
 
                         sys.stdout.flush()
-                        
+
                         if os.path.lexists(os.path.join(outdir,new_filename)):
                             print(new_filename, ' exists, skipping.. ')
                             continue
                         else:
                             bbhdu=vela_export_image(hdulist,int(cam[-2:]),filfil[fil])
                             print('saving.. ', new_filename)
-                            
+
                         sys.stdout.flush()
-                            
+
                         if not os.path.lexists(outdir):
                             os.makedirs(outdir,exist_ok=True)
-                        
+
                         target_file=os.path.join(idir,target_dir[7:]+'_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
 
                         if os.path.lexists(target_file):
                             ni=1
                         else:
                             ni=0
-                            
+
                         #ni=np.where(np.asarray(names)==target_file)[0]
 
                         if ni==1:
@@ -434,8 +434,8 @@ def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
                                 outhdu.header['INSTR']=instrument.upper()
                                 outhdu.header['INSTRUME']=instrument.upper()
                                 outhdu.header['EXTNAME']='IMAGE_PSF'
-                                    
-                        elif ni==0 and obs=='wfirst':
+
+                        elif ni==0 and obs=='roman':
                             bbhdu.writeto(os.path.join(outdir,new_filename),overwrite=True)
                             with pyfits.open(os.path.join(outdir,new_filename),mode='update') as hdus:
                                 outhdu=hdus[0]
@@ -451,9 +451,9 @@ def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','wfirst'],
                                 outhdu.header['TELESCOP']=obs.upper()
                                 outhdu.header['INSTR']=instrument.upper()
                                 outhdu.header['INSTRUME']=instrument.upper()
-                                
+
     return
-    
+
 
 
 def extract_jwst_from_vela(dirname='VELA01'):
@@ -510,13 +510,13 @@ def phot_from_vela(jd="stamps_VELA01"):
 
     outf.close()
 
-    return 
+    return
 
 def untar_vela(dirname='VELA01'):
     tarfiles=np.sort(np.asarray(glob.glob(os.path.abspath(dirname+'/*_sunrise/images/images*.tar'))))
 
     cwd=os.path.abspath(os.curdir)
-    
+
     for tf in tarfiles:
         dd=os.path.dirname(tf)
         os.chdir(dd)
@@ -524,7 +524,7 @@ def untar_vela(dirname='VELA01'):
         sys.stdout.flush()
         subprocess.call(['tar', 'xf', os.path.basename(tf)])
         os.chdir(cwd)
-        
+
     return
 
 
@@ -555,28 +555,28 @@ def parse_vela_files(dirname='VELA01'):
 
     #create manifest of all FITS files /vela/vela??/etc and catalog of basic parameters
     #link with galprops info?? a la luvoir sims
-    
+
     #file, sim, redshift, camera, telescope, instrument, filter, pristine apparent mag, stellar mass? , halo mass?
     #add the new mag to the pristine header?
 
     image_files=np.sort(np.asarray(glob.glob(os.path.join('HLSP','vela',dirname.lower(),'*/*/*/*/*.fits'))))
 
     aux_files=np.sort(np.asarray(glob.glob(os.path.join('HLSP','vela',dirname.lower(),'*/*.fits'))))
-    
+
     catfile=os.path.abspath(os.path.join('HLSP','vela','catalogs','hlsp_vela_multi_multi_'+dirname.lower()+'_multi'+'_v3'+'_cat.txt'))
     #                        new_filename='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_'+fil.lower()+'_v3'+'_sim.fits'
     auxcatfile=os.path.abspath(os.path.join('HLSP','vela','catalogs','hlsp_vela_multi_multi_'+dirname.lower()+'_multi'+'_v3'+'_auxcat.txt'))
 
     print(catfile)
     print(auxcatfile)
-    
+
     datf=os.path.join(dirname,dirname+'_galprops.npy')
     dat=np.load(datf,encoding='bytes').all()
 
-    
+
     aux_tfo=open(auxcatfile,'w')
     aux_tfo.write('sim z scale cam mstar mgas mmet sfr mvir_dm path\n')
-    
+
 
     sfr_tau = 1.2e7 #12 Myr, from Ceverino et al. 2015.  SFR values are actually SFR*Tau, so must divide by this factor to get true SFR values
 
@@ -601,12 +601,12 @@ def parse_vela_files(dirname='VELA01'):
         stellar_mass_per_pix=auxmain.data[4,:,:]*(kpc_per_pix**2)
         gas_mass_per_pix=auxmain.data[0,:,:]*(kpc_per_pix**2)
         metal_mass_per_pix=auxmain.data[1,:,:]*(kpc_per_pix**2)
-        
+
         sfrdens_per_pix=auxmain.data[2,:,:]/sfr_tau
         auxmain.data[2,:,:]=sfrdens_per_pix
-        
+
         sfr_per_pix=sfrdens_per_pix*(kpc_per_pix**2)
-        
+
         total_mstar=np.sum(stellar_mass_per_pix)
         total_mgas=np.sum(gas_mass_per_pix)
         total_mmet=np.sum(metal_mass_per_pix)
@@ -629,15 +629,15 @@ def parse_vela_files(dirname='VELA01'):
             aux_tfo.write(writestr)
         except:
             print('weird problem with mvirdm?')
-            
+
         aux_tfo.flush()
         sys.stdout.flush()
-        
-        
+
+
     aux_tfo.close()
-    
+
     aux_table=ascii.read(auxcatfile)
-    
+
     cat_tfo=open(catfile,'w')
     cat_tfo.write('sim z scale cam mission instrument filter flux_njy abmag mstar mgas mmet sfr mvir_dm path\n')
 
@@ -647,20 +647,20 @@ def parse_vela_files(dirname='VELA01'):
         #update HLSP reference
         fo=pyfits.open(imfile,mode='update')
         fo[0].header['REFERENC']='Simons et al. 2019'
-        
+
         #measure and add pristine apparent magnitude?
         try:
             imhdu=fo['IMAGE_PRISTINE']
         except:
             fo.flush()
             continue
-        
+
         imdata=imhdu.data
         assert(imhdu.header['IMUNIT']=='nanoJanskies')
         total_flux_njy=np.sum(imdata)
         imhdu.header['FLUX_NJY']=total_flux_njy
         mag_val=np.nan
-        
+
         if total_flux_njy > 0.0:
             pristine_ab_apparent_mag=-2.5*np.log10((total_flux_njy*1.0e-9)/3631.0)
             imhdu.header['ABMAG']=(pristine_ab_apparent_mag,'pristine AB apparent mag')
@@ -673,7 +673,7 @@ def parse_vela_files(dirname='VELA01'):
         camstr=bn.split('_')[4].split('-')[1]
         scalefloat=float(scalestr)
         zfloat=(1.0/scalefloat)-1.0
-        
+
         filtername=imhdu.header['FILTER']
         '''
         if filtername=='hst/wfc3_f336w' or filtername=='hst/acs_f435w' or filtername=='hst/acs_f814w' or filtername=='hst/wfc3_f160w' or filtername=='jwst/nircam_f200w' or filtername=='jwst/nircam_f444w' or filtername=='jwst/miri_f770w':
@@ -684,14 +684,14 @@ def parse_vela_files(dirname='VELA01'):
         '''
         #fo.flush()
 
-        
+
         mvirdm=dat[b'Mvir_dm'][dat[b'scale']==scalefloat]
 
         try:
             thing=mvirdm[0]
         except:
             continue
-            
+
         aux_index=np.logical_and(aux_table['scale']==scalefloat, aux_table['cam']==camstr)
         assert(np.sum(aux_index)==1)
         total_mstar=aux_table['mstar'][aux_index].data[0]
@@ -699,24 +699,24 @@ def parse_vela_files(dirname='VELA01'):
         total_mmet=aux_table['mmet'][aux_index].data[0]
         total_sfr=aux_table['sfr'][aux_index].data[0]
         aux_mvirdm=aux_table['mvir_dm'][aux_index].data[0]
-        
+
         assert(np.abs((aux_mvirdm-mvirdm[0])/mvirdm[0])<1.0e-4)
 
         mission=bn.split('_')[2]
         instr=bn.split('_')[3]
         filname=bn.split('_')[5]
-        
+
         #output catalog value
         catstr='{:10s} {:12.8f} {:10s} {:10s} {:10s} {:10s} {:10s} {:15.6e} {:12.6f} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:75s}\n'.format(sim,zfloat,scalestr,camstr,mission,instr,filname,
                                                                                                                                                  total_flux_njy,mag_val,total_mstar,total_mgas,total_mmet,total_sfr,mvirdm[0],imfile[5:])
-        
+
         cat_tfo.write(catstr)
         cat_tfo.flush()
         sys.stdout.flush()
-        
+
 
     cat_tfo.close()
-        
+
     return
 
 
@@ -724,13 +724,13 @@ def retar_vela_files(dirname='VELA01'):
 
     hlsp_sim_dir=os.path.join('HLSP','vela',dirname.lower())
     print(hlsp_sim_dir)
-    
+
     cwd=os.path.abspath(os.curdir)
     os.chdir(hlsp_sim_dir)
 
     print('Tarring.. ',  hlsp_sim_dir)
 
-    obslist=['hst','jwst','wfirst','aux']
+    obslist=['hst','jwst','roman','aux']
     for obs in obslist:
         for instrument in insdict[obs]:
             for filname in fildict[instrument]:
@@ -746,7 +746,7 @@ def retar_vela_files(dirname='VELA01'):
                 print(tarfilename)
                 print(imagefiles[0:25])
                 print(imagefiles.shape)
-                
+
                 tfo=tarfile.open(tarfilename,mode='a')
                 i=0
                 for imf in imagefiles:
@@ -755,12 +755,12 @@ def retar_vela_files(dirname='VELA01'):
                     tfo.add(imf)
                     if i % 50==0:
                         sys.stdout.flush()
-                        
+
                 tfo.close()
-                
-                
+
+
     os.chdir(cwd)
-    return    
+    return
 
 
 
@@ -768,13 +768,13 @@ def retar_vela_files_by_filter():
 
     hlsp_sim_dir=os.path.join('HLSP','vela')
     print(hlsp_sim_dir)
-    
+
     cwd=os.path.abspath(os.curdir)
     os.chdir(hlsp_sim_dir)
 
     print('Tarring.. ',  hlsp_sim_dir)
 
-    obslist=['hst','jwst','wfirst']
+    obslist=['hst','jwst','roman']
     for obs in obslist:
         for instrument in insdict[obs]:
             for filname in fildict[instrument]:
@@ -789,7 +789,7 @@ def retar_vela_files_by_filter():
                 print(imagefiles.shape)
 
                 sys.stdout.flush()
-                
+
                 tfo=tarfile.open(tarfilename,mode='a')
                 i=0
                 for imf in imagefiles:
@@ -798,37 +798,37 @@ def retar_vela_files_by_filter():
                     tfo.add(imf)
                     if i % 100==0:
                         sys.stdout.flush()
-                        
+
                 tfo.close()
                 sys.stdout.flush()
-                
-                
+
+
     os.chdir(cwd)
-    return    
+    return
 
 if __name__=="__main__":
 
     vdir= np.sort(np.asarray(glob.glob('VELA??')))
 
     #untar_vela(dirname='VELA02')
-    
+
     #extract_st_from_vela(dirname='VELA03',aux_only=True)
-    
+
     #parse_vela_files(dirname='VELA03')
-    
+
     #parse_vela_files(dirname='VELA02')
     #parse_vela_files(dirname='VELA03')
 
-    
-    
+
+
     #retar_vela_files(dirname='VELA01')
 
     #retar_vela_files_by_filter()
 
 
     #append_nonscatters(dirname='VELA01') ??
-    
-    
+
+
     for vd in vdir:
         retar_vela_files(dirname=vd)
 
@@ -837,9 +837,7 @@ if __name__=="__main__":
 
 
 #        parse_vela_files(dirname=vd)
-        
+
         #untar_vela(dirname=vd)
-        
+
         #extract_st_from_vela(dirname=vd)
-
-

@@ -9,8 +9,8 @@ import matplotlib.colors as pycolors
 import matplotlib.cm as cm
 import matplotlib.patches as patches
 import numpy as np
-import cPickle
-import asciitable
+#import cPickle
+#import asciitable
 import scipy.ndimage
 import scipy.stats as ss
 import scipy.signal
@@ -24,7 +24,7 @@ import make_fake_wht
 import gzip
 import tarfile
 import shutil
-import cosmocalc
+#import cosmocalc
 import congrid
 import astropy.io.ascii as ascii
 
@@ -45,16 +45,16 @@ if __name__=="__main__":
 
     for i,fits in enumerate(ncpsfs):
         hdulist = pyfits.open(fits)
-        det_samp = hdulist['DET_SAMP'].data
-        psfc = det_samp.shape[0]/2
-        st = truncs[i] #limit to the center 80 pixels
+        det_samp = hdulist['OVERSAMP'].data
+        psfc = np.int64(det_samp.shape[0]/2)
+        st = truncs[i]*4 #limit to the center 80 pixels
+        print(psfc,st)
         det_samp_center = det_samp[psfc-st:psfc+st,psfc-st:psfc+st]
-        
-        orig_header = hdulist['DET_SAMP'].header
+
+        orig_header = hdulist['OVERSAMP'].header
 
         newhdu = pyfits.PrimaryHDU(det_samp_center, header=orig_header)
         newlist = pyfits.HDUList([newhdu])
-        newlist.writeto(outpsfs[i], clobber=True)
+        newlist.writeto('oversamp_'+outpsfs[i], clobber=True)
         res = pyfits.open(outpsfs[i])
         res.info()
-
