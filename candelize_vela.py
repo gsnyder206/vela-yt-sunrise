@@ -29,7 +29,7 @@ from astropy.convolution import Gaussian2DKernel
 from astropy.visualization.mpl_normalize import ImageNormalize
 from astropy.visualization import *
 import astropy.io.fits as pyfits
-import statmorph
+import statmorph_gfs
 import datetime
 import setup_synthetic_images_mp as ssimp
 import vela_extract_images as vei
@@ -91,7 +91,7 @@ def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max
     filters_to_analyze=['hst/wfc3_f336w',
                         'hst/acs_f435w','hst/acs_f606w','hst/acs_f814w',
                         'hst/wfc3_f125w','hst/wfc3_f160w',
-                        'wfirst/wfi_r062','wfirst/wfi_z087','wfirst/wfi_y106','wfirst/wfi_j129','wfirst/wfi_w146','wfirst/wfi_h158','wfirst/wfi_f184',
+                        'wfirst/wfi_r062','wfirst/wfi_z087','wfirst/wfi_y106','wfirst/wfi_w146','wfirst/wfi_f184',
                         'jwst/nircam_f115w',
                         'jwst/nircam_f150w',
                         'jwst/nircam_f200w',
@@ -101,7 +101,7 @@ def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max
                         'jwst/miri_F770W',
                         'jwst/miri_F1500W']
 
-    skip_filter_boolean=[False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False]
+    skip_filter_boolean=[False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False]
 
 
 
