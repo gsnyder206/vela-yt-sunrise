@@ -110,10 +110,10 @@ def process_snapshot(subdirpath='.',mockimage_parameters=None,clobber=False, max
     pixsize_arcsec = [0.03,
                       0.03,0.03,0.03,
                       0.06,0.06,
-                      0.055,0.055,0.055,0.055,0.055,
-                      0.032,0.032,0.032,
-                      0.065,0.065,0.065,
-                      0.11,0.11]
+                      0.06,0.06,0.06,0.06,0.06,
+                      0.03,0.03,0.03,
+                      0.03,0.03,0.03,
+                      0.12,0.12]
 
     filter_labels = ['WFC3-F336W',
                      'ACS-F435W','ACS-F606W','ACS-F814W',
