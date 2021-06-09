@@ -259,15 +259,15 @@ def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, 
     if True:
         for obs in obslist:
             for instrument in insdict[obs]:
-                if instrument is 'wfc3':
+                if instrument == 'wfc3':
                     instrumentfind='WFC3'
-                elif instrument is 'acs':
+                elif instrument == 'acs':
                     instrumentfind='ACS'
-                elif instrument is 'nircam':
+                elif instrument == 'nircam':
                     instrumentfind='NC'
-                elif instrument is 'miri':
+                elif instrument == 'miri':
                     instrumentfind='MIRI'
-                elif instrument is 'wfi':
+                elif instrument == 'wfi':
                     instrumentfind='WFI'
                 for cam in camlist:
                     auxdir=os.path.join(output_dir,'vela',dirname.lower(),cam)
