@@ -468,15 +468,15 @@ def extract_st_from_vela(dirname='VELA01',obslist=['hst','jwst','roman'],
 
         for obs in obslist:
             for instrument in insdict[obs]:
-                if instrument is 'wfc3':
+                if instrument == 'wfc3':
                     instrumentfind='WFC3'
-                elif instrument is 'acs':
+                elif instrument == 'acs':
                     instrumentfind='ACS'
-                elif instrument is 'nircam':
+                elif instrument == 'nircam':
                     instrumentfind='NC'
-                elif instrument is 'miri':
+                elif instrument == 'miri':
                     instrumentfind='MIRI'
-                elif instrument is 'wfidrm15':
+                elif instrument == 'wfidrm15':
                     instrumentfind='WFI_DRM15'
                 for cam in camlist:
                     auxdir=os.path.join('HLSP','vela',dirname.lower(),cam)
