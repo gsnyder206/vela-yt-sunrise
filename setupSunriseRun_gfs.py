@@ -53,7 +53,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 	sf.close()
-	print '\t\tSuccessfully generated %s'%filename
+	print('\t\tSuccessfully generated %s'%filename)
 
 	return
 
@@ -89,7 +89,7 @@ def generate_mcrx_configs(run_dir, snap_dir, filename, stub_name, stub_name_smc,
 
 	mf.close()
 
-	print '\t\tSuccessfully generated %s'%filename
+	print('\t\tSuccessfully generated %s'%filename)
 
 
         mfs = open(run_dir+'/'+filename.replace('mcrx','mcrxsmc'),'w+')
@@ -120,7 +120,7 @@ def generate_mcrx_configs(run_dir, snap_dir, filename, stub_name, stub_name_smc,
 
 	mfs.close()
 
-	print '\t\tSuccessfully generated %s'%filename.replace('mcrx','mcrxsmc')
+	print('\t\tSuccessfully generated %s'%filename.replace('mcrx','mcrxsmc'))
 
 
 	return
@@ -159,7 +159,7 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 
 
 
-	print '\t\tSuccessfully generated %s'%filename
+	print('\t\tSuccessfully generated %s'%filename)
 
 	return
 
@@ -184,7 +184,7 @@ def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galp
 
 
 
-	print '\t\tSuccessfully generated %s'%filename
+	print('\t\tSuccessfully generated %s'%filename)
 
 	return
 
@@ -230,7 +230,7 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 
 	bsubf.close()
 
-	print '\t\tSuccessfully generated %s'%filename
+	print('\t\tSuccessfully generated %s'%filename)
 
 
 
@@ -266,7 +266,7 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
 
 	bsubf.close()
 
-	print '\t\tSuccessfully generated %s'%filename
+	print('\t\tSuccessfully generated %s'%filename)
 
 
 
@@ -294,14 +294,14 @@ if __name__ == "__main__":
     #list_of_types = ['images','ifu','grism']
     list_of_types = ['images']
 
-    print "Generating Sunrise Runs for: ", snaps
+    print("Generating Sunrise Runs for: ", snaps)
 
     abssnap = os.path.abspath(snaps[0])
     assert os.path.lexists(abssnap)
 
     dirname = os.path.dirname(abssnap)
     simname = os.path.basename(dirname) #assumes directory name for simulation name
-    print "Simulation name:  ", simname
+    print("Simulation name:  ", simname)
 
     smf_images = open('submit_sunrise_images_gfs.sh','w')
     smf_ifu = open('submit_sunrise_ifu_gfs.sh','w')
@@ -315,7 +315,7 @@ if __name__ == "__main__":
 
         snap_dir = os.path.join(simname+'_'+aname+'_sunrise')
 
-        print "Sunrise directory: ", snap_dir
+        print("Sunrise directory: ", snap_dir)
         assert os.path.lexists(snap_dir)
 
         newf = os.path.join(snap_dir,sn)
@@ -339,16 +339,16 @@ if __name__ == "__main__":
 
         #Clean exit for galaxies with no prop file
         if os.path.lexists(fits_file) and os.path.lexists(cam_file):
-            print prop_file
-            print os.path.lexists(prop_file)
+            print(prop_file)
+            print(os.path.lexists(prop_file))
             assert os.path.lexists(prop_file), 'Prop file %s not found'%prop_file
             assert os.path.lexists(fits_file), 'Fits file %s not found'%fits_file
             assert os.path.lexists(info_file), 'Info file %s not found'%info_file
             assert os.path.lexists(cam_file), 'Cam file %s not found'%cam_file
 
 
-            print '\tFits file name: %s'%fits_file
-            print '\tInfo file name: %s\n'%info_file
+            print('\tFits file name: %s'%fits_file)
+            print('\tInfo file name: %s\n'%info_file)
 
             galprops_data = np.load(prop_file)[()]
             idx = np.argwhere(galprops_data['snap_files']==os.path.abspath(snapfile))[0][0]
@@ -369,7 +369,7 @@ if __name__ == "__main__":
 
                 shutil.copy2(prop_file,run_dir)
 
-                print '\tGenerating sfrhist.config file for %s...'%run_type
+                print('\tGenerating sfrhist.config file for %s...'%run_type)
                 sfrhist_fn   = 'sfrhist.config'
                 sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
 
@@ -379,7 +379,7 @@ if __name__ == "__main__":
                                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, idx = idx)
 
 
-                print '\tGenerating mcrx.config file for %s...'%run_type
+                print('\tGenerating mcrx.config file for %s...'%run_type)
                 mcrx_fn   = 'mcrx.config'
                 mcrx_stub = os.path.join(stub_dir,'mcrx_base.stub')
 
@@ -393,7 +393,7 @@ if __name__ == "__main__":
 
 
                 if run_type == 'images':
-                        print '\tGenerating broadband.config file for %s...'%run_type
+                        print('\tGenerating broadband.config file for %s...'%run_type)
                         broadband_fn   = 'broadband.config'
                         broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
 
@@ -401,7 +401,7 @@ if __name__ == "__main__":
                                                          stub_name = broadband_stub,
                                                          galprops_data = galprops_data, idx = idx)
                 if run_type == 'grism':
-                        print '\tGenerating broadband.config file for %s...'%run_type
+                        print('\tGenerating broadband.config file for %s...'%run_type)
                         broadband_fn   = 'broadband.config'
                         broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
 
@@ -413,7 +413,7 @@ if __name__ == "__main__":
 
 
 
-                print '\tGenerating sunrise.qsub file for %s...'%run_type
+                print('\tGenerating sunrise.qsub file for %s...'%run_type)
                 qsub_fn   = 'sunrise.qsub'
                 final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn,
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
