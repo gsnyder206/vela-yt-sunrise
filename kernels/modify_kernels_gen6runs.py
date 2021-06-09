@@ -30,14 +30,26 @@ target_pix_sizes=[0.03,
                     0.03,0.03,0.03,
                     0.12,0.12]
 
+fnamelist=['F336W',
+    'F435W','F606W','F814W',
+    'F125W','F160W',
+    'R062','Z087','Y106','W149','F184',
+    'F115W','F150W','F200W',
+    'F277W','F356W','F444W',
+    'F770W','F1500W']
+
 
 out_dir='gen6runs'
 if not os.path.lexists(out_dir):
     os.makedirs(out_dir)
 
-for pf,new_size in zip(psf_names,target_pix_sizes):
+
+psflist=fits.HDUList()
+
+
+for pf,new_size,fname in zip(psf_names,target_pix_sizes,fnamelist):
     out_name=os.path.basename(pf)
-    print(out_name,new_size)
+    print(out_name,new_size,fname)
     fo=fits.open(pf)
     #print(fo.info())
     try:
@@ -70,3 +82,9 @@ for pf,new_size in zip(psf_names,target_pix_sizes):
     newfo.writeto(os.path.join(out_dir,out_name),overwrite=True)
 
     fo.close()
+
+    new_hdu.header['EXTNAME']=fname
+    psflist.append(new_hdu)
+
+
+psflist.writeto(os.path.join(out_dir,'vela_gen6_psfs.fits'),overwrite=True)

@@ -15,6 +15,9 @@ import astropy.io.fits as pyfits
 import astropy.io.ascii as ascii
 import visualize_vela_hlsp as vvh
 
+from PIL import Image
+from astropy.convolution import *
+
 #import subprocess
 
 '''
@@ -72,19 +75,21 @@ fildict={'wfc3':['F336W','F125W','F160W'],
          'acs':['F435W','F606W','F814W'],
          'nircam':['F115W','F150W','F200W','F277W','F356W','F444W'],
          'miri':['F770W','F1500W'],
-         'wfi':['R062','Z087','Y106','J129','W146','H158','F184'],
+         'wfi':['R062','Z087','Y106','W149','F184'],
          'aux':['aux']}
 
 filfil={'F336W':'hst/wfc3_f336w', 'F435W':'hst/acs_f435w',
         'F606W':'hst/acs_f606w', 'F814W':'hst/acs_f814w',
         'F125W':'hst/wfc3_f125w', 'F160W':'hst/wfc3_f160w',
         'Z087':'wfirst/wfi_z087', 'Y106':'wfirst/wfi_y106',
-        'J129':'wfirst/wfi_j129', 'W146':'wfirst/wfi_w146', 'H158':'wfirst/wfi_h158',
+        'J129':'wfirst/wfi_j129', 'W149':'wfirst/wfi_w146', 'H158':'wfirst/wfi_h158',
         'F184':'wfirst/wfi_f184','R062':'wfirst/wfi_r062',
         'F115W':'jwst/nircam_f115w', 'F150W':'jwst/nircam_f150w', 'F200W':'jwst/nircam_f200w',
         'F277W':'jwst/nircam_f277w', 'F356W':'jwst/nircam_f356w', 'F444W':'jwst/nircam_f444w',
         'F770W':'jwst/miri_F770W',
         'F1500W':'jwst/miri_F1500W','aux':'aux'}
+
+
 
 
 ilh = 0.704
@@ -111,6 +116,10 @@ def vela_export_image(hdulist,camnum,filtername,label='',nonscatter=False):
     else:
         key='CAMERA'+'{}'.format(camnum)+'-BROADBAND-NONSCATTER'
 
+    paramkey='CAMERA'+'{}'.format(camnum)+'-PARAMETERS'
+    paramhdu=hdulist[paramkey]
+    param_header=paramhdu.header
+    param_header['PIXSR']=paramhdu.data[0,0]
 
 
     camdata=hdulist[key].data[fi,:,:]
@@ -146,17 +155,88 @@ def vela_export_image(hdulist,camnum,filtername,label='',nonscatter=False):
     outhdu.header['FILTER']=filtername
     outhdu.header['CAMERA']=(camnum,'Sunrise camera number')
 
-    return outhdu
+
+
+
+    return outhdu,param_header
+
+
+
+def create_psf_image(thdu,psf_hdu,fil):
+
+    #confirm that this PSF makes sense for this filter
+    psf_filter=psf_hdu.header['EXTNAME']
+    assert(fil==psf_filter)
+
+    #re-bin pristine image to PSF pixel scale, preserving units
+    psf_pixscale=psf_hdu.header['PIXSCALE']
+
+    pristine_image=thdu.data
+    pristine_image_pixscale=thdu.header['PIXSIZE']
+
+
+    #verify image lacks NANS???
+
+
+
+    np_orig=pristine_image.shape[0]
+
+    np_new=np_orig*pristine_image_pixscale/psf_pixscale
+    np_new_int=np.int64(np_new)
+
+    orig_fov = np_orig*pristine_image_pixscale
+    new_fov = np_new_int*psf_pixscale
+    diff = (orig_fov-new_fov)/2.0
+
+    box_arcsec=(diff,diff,orig_fov-diff,orig_fov-diff)
+    box=(diff/pristine_image_pixscale,diff/pristine_image_pixscale,(orig_fov-diff)/pristine_image_pixscale,(orig_fov-diff)/pristine_image_pixscale)
+
+    #multiply by pixel scale ratio squared in order to preserve total flux
+    rebinned_image=Image.fromarray(pristine_image).resize(size=(np_new_int, np_new_int),box=box)*(psf_pixscale/pristine_image_pixscale)**2
+
+    #confirm fluxes are the same?
+    #print(np.sum(pristine_image),np.sum(rebinned_image)*(psf_pixscale/pristine_image_pixscale)**2)
+
+
+    #convolve with PSF
+    psf_convolved_image = convolve_fft(rebinned_image,psf_hdu.data,boundary='fill',fill_value=0.0,normalize_kernel=True)
+
+    #demand that PSF has the right units, or preserve total flux?
+    #or just double check
+
+    final_flux = np.sum(psf_convolved_image)
+    original_flux = np.sum(pristine_image)
+
+    if original_flux > 0.0:
+        assert(np.abs(original_flux - final_flux)/original_flux < 0.05 )
+
+
+
+    psf_image_hdu = pyfits.PrimaryHDU(psf_convolved_image)
+
+    #update header to be similar to pristine image
+
+    psf_image_hdu.header['redshift']=thdu.header['redshift']
+    psf_image_hdu.header['IMUNIT']=thdu.header['IMUNIT']
+    psf_image_hdu.header['PIXSCALE']=psf_pixscale
+    psf_image_hdu.header['FILTER']=thdu.header['FILTER']
+    psf_image_hdu.header['FILKEY']=(fil,'short filter key')
+    psf_image_hdu.header['CAMERA']=thdu.header['CAMERA']
+
+
+    return psf_image_hdu
 
 
 #utility to help with integrating pleiades pipeline
-def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP',genstr='v3-2'):
+def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, output_dir='/nobackup/gfsnyder/VELA_sunrise/Outputs/HLSP',genstr='v3-2',
+                                psf_file='/home/gfsnyder/PythonCode/vela-yt-sunrise/kernels/gen6runs/vela_gen6_psfs.fits',
+                                filter_dir='/home/gfsnyder/sunrise_data/sunrise_filters/'):
 
     #assume run within /images/ subdirectory?
 
-    imagedir=glob.glob('images_*_sunrise_mw')[0]
-    imagedir_ns=glob.glob('images_*_sunrise_nonscatter')[0]
-    imagedir_smc=glob.glob('images_*_sunrise_smc')[0]
+    #imagedir=glob.glob('images_*_sunrise_mw')[0]
+    #imagedir_ns=glob.glob('images_*_sunrise_nonscatter')[0]
+    #imagedir_smc=glob.glob('images_*_sunrise_smc')[0]
 
     bb_fits='broadbandz.fits'
     bb_fits_smc='broadbandzsmc.fits'
@@ -164,11 +244,17 @@ def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, 
     hdulist=pyfits.open(bb_fits)
     hdulist_smc=pyfits.open(bb_fits_smc)
 
-    target_dir=os.path.basename(imagedir)
-    aname=target_dir.split('_')[2]
-    sim=target_dir.split('_')[1]
+    #target_dir=os.path.basename(imagedir)
+    sundir=os.path.basename(os.path.dirname(os.path.abspath('.')))
 
-    dirname=imagedir.split('_')[1]
+    aname=sundir.split('_')[1]
+    sim=sundir.split('_')[0]
+
+    dirname=sim#sundir.split('_')[1]
+
+    shutil.copy2(psf_file,'.')
+
+    psfhdulist=pyfits.open(psf_file)
 
     if True:
         for obs in obslist:
@@ -246,8 +332,6 @@ def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, 
 
                         outdir=os.path.join(output_dir,'vela',dirname.lower(),cam,obs,instrument,fil.lower(),'')
 
-
-
                         new_filename='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+aname+'_'+fil.lower()+'_'+genstr+'_sim-mw.fits'
                         new_filename_ns='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+aname+'_'+fil.lower()+'_'+genstr+'_sim-ns.fits'
                         new_filename_smc='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+aname+'_'+fil.lower()+'_'+genstr+'_sim-smc.fits'
@@ -260,9 +344,9 @@ def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, 
                             print(new_filename, ' exists, skipping.. ')
                             continue
                         else:
-                            bbhdu=vela_export_image(hdulist,int(cam[-2:]),filfil[fil])
-                            bbhdu_smc=vela_export_image(hdulist_smc,int(cam[-2:]),filfil[fil])
-                            ns_hdu=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
+                            bbhdu,param_header=vela_export_image(hdulist,int(cam[-2:]),filfil[fil])
+                            bbhdu_smc,param_header_smc=vela_export_image(hdulist_smc,int(cam[-2:]),filfil[fil])
+                            ns_hdu,param_header_ns=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
                             print('saving.. ', new_filename)
 
                         sys.stdout.flush()
@@ -270,61 +354,89 @@ def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, 
                         if not os.path.lexists(outdir):
                             os.makedirs(outdir)
 
-                        target_file=os.path.join(imagedir,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
-                        target_file_ns=os.path.join(imagedir_ns,sim+'_'+aname+'_sunrise_nonscatter'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
-                        target_file_smc=os.path.join(imagedir_smc,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
 
-                        if os.path.lexists(target_file) and os.path.lexists(target_file_ns) and os.path.lexists(target_file_smc):
-                            ni=1 #all 3 exist
-                        elif os.path.lexists(target_file) or os.path.lexists(target_file_ns) or os.path.lexists(target_file_smc):
-                            ni=2 #1 or 2 exist
-                        else:
-                            ni=0 #none exist
+                        input_psf_hdu = psfhdulist[fil]
+                        psf_hdu=pyfits.ImageHDU(input_psf_hdu.data,header=input_psf_hdu.header)
+
+                        filter_file=os.path.join(filter_dir,filfil[fil])
+                        filter_data = ascii.read(filter_file)
+                        #filter wavelengths are in angstroms  (confirm?)
+                        filter_lambda_conversion = hdulist['BROADBAND'].header['filter_lambda_conversion']  #factor to bring filter lambda to meters
+                        assert(filter_lambda_conversion == 1.0e-10)
+
+                        filter_data.columns[0].name='wavelength_angstroms'
+                        filter_data.columns[1].name='normalized_throughput'
+                        filter_hdu=pyfits.BinTableHDU(filter_data)
+                        filter_hdu.header['EXTNAME']='SUNRISE_FILTER'
+                        filter_hdu.header['FILTER']=filfil[fil]
+                        filter_hdu.header['FILKEY']=fil
+
+                        #target_file=os.path.join(imagedir,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
+                        #target_file_ns=os.path.join(imagedir_ns,sim+'_'+aname+'_sunrise_nonscatter'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
+                        #target_file_smc=os.path.join(imagedir_smc,sim+'_'+aname+'_sunrise_'+cam+'_'+instrumentfind+'-'+fil+'_SB00.fits')
+
+
+                        #above would have failed if all bbhdus don't exist
+                        #if os.path.lexists(target_file) and os.path.lexists(target_file_ns) and os.path.lexists(target_file_smc):
+                        #    ni=1 #all 3 exist
+                        #elif os.path.lexists(target_file) or os.path.lexists(target_file_ns) or os.path.lexists(target_file_smc):
+                        #    ni=2 #1 or 2 exist
+                        #else:
+                        #    ni=0 #none exist
 
                         #ni=np.where(np.asarray(names)==target_file)[0]
 
                         #there's a case where the blue filters fail because of nans, etc -- grid mismatch
                         #it's OK to keep the auxes and the rest of the filters if this happens
-                        if ni==0 or ni==2:
-                            print("Aux exists, but not all images.")
-                            if ni==0:
-                                print("All 3 missing, probably high-z/blue-filter failure, OK to continue.")
-                            if ni==2:
-                                print("1 or 2 missing, perhaps an issue in one of the bbz or bbzsmc runs.")
-                            continue
+                        #if ni==0 or ni==2:
+                        #    print("Aux exists, but not all images.")
+                        #    if ni==0:
+                        #        print("All 3 missing, probably high-z/blue-filter failure, OK to continue.")
+                        #    if ni==2:
+                        #        print("1 or 2 missing, perhaps an issue in one of the bbz or bbzsmc runs.")
+                        #    continue
 
-                        if ni==1:
+                        if True:
                             #tfo.extractall(path=outdir,members=marr[ni])
-                            shutil.copy2(target_file,outdir)
-                            os.rename(os.path.join(outdir,os.path.basename(target_file)),os.path.join(outdir,new_filename))
+                            #shutil.copy2(target_file,outdir)
+                            #os.rename(os.path.join(outdir,os.path.basename(target_file)),os.path.join(outdir,new_filename))
                             #os.rmdir(os.path.join(outdir,os.path.dirname(target_file)))
-                            shutil.copy2(target_file_ns,outdir)
-                            os.rename(os.path.join(outdir,os.path.basename(target_file_ns)),os.path.join(outdir,new_filename_ns))
-                            shutil.copy2(target_file_smc,outdir)
-                            os.rename(os.path.join(outdir,os.path.basename(target_file_smc)),os.path.join(outdir,new_filename_smc))
+                            #shutil.copy2(target_file_ns,outdir)
+                            #os.rename(os.path.join(outdir,os.path.basename(target_file_ns)),os.path.join(outdir,new_filename_ns))
+                            #shutil.copy2(target_file_smc,outdir)
+                            #os.rename(os.path.join(outdir,os.path.basename(target_file_smc)),os.path.join(outdir,new_filename_smc))
 
-                            for tfn,thdu,typename,hl in zip([new_filename,new_filename_ns,new_filename_smc],[bbhdu,ns_hdu,bbhdu_smc],['MW','NONSCATTER','SMCbar'],[hdulist,hdulist,hdulist_smc]):
+                            for tfn,thdu,typename,hl,pheader in zip([new_filename,new_filename_ns,new_filename_smc],[bbhdu,ns_hdu,bbhdu_smc],['MW','NONSCATTER','SMCbar'],[hdulist,hdulist,hdulist_smc],[param_header,param_header_ns,param_header_smc]):
 
-                                with pyfits.open(os.path.join(outdir,tfn),mode='update') as hdus:
-                                    hdus.append(thdu)
-                                    outhdu=hdus[0]
-                                    outhdu.header['HLSPID']='vela'
-                                    outhdu.header['HLSPLEAD']='Gregory F. Snyder'
-                                    outhdu.header['HLSPNAME']='Vela-Sunrise Mock Images'
-                                    outhdu.header['HLSPVER']=genstr
-                                    outhdu.header['HLSPDOI']='10.17909/t9-ge0b-jm58'
-                                    outhdu.header['LICENSE']='CC BY 4.0'
-                                    outhdu.header['LICENURL']='https://creativecommons.org/licenses/by/4.0/'
-                                    outhdu.header['PROPOSID']='HST-AR#13887'
-                                    outhdu.header['REFERENC']='Simons et al. (2019)'
-                                    outhdu.header['REFDOI']='10.3847/1538-4357/ab07c9'
+                                #has to make sure to catch NaNs or situations where filter is too blue!
+                                psf_image_hdu = create_psf_image(thdu,psf_hdu,fil)
 
-                                    outhdu.header['MISSION']=obs.upper()
-                                    outhdu.header['TELESCOP']=obs.upper()
-                                    outhdu.header['INSTR']=instrument.upper()
-                                    outhdu.header['INSTRUME']=instrument.upper()
-                                    outhdu.header['EXTNAME']='IMAGE_PSF'
-                                    outhdu.header['DUSTTYPE']=typename
+
+                                psf_image_hdu.header['HLSPID']='vela'
+                                psf_image_hdu.header['HLSPLEAD']='Gregory F. Snyder'
+                                psf_image_hdu.header['HLSPNAME']='Vela-Sunrise Mock Images'
+                                psf_image_hdu.header['HLSPVER']=genstr
+                                psf_image_hdu.header['HLSPDOI']='10.17909/t9-ge0b-jm58'
+                                psf_image_hdu.header['LICENSE']='CC BY 4.0'
+                                psf_image_hdu.header['LICENURL']='https://creativecommons.org/licenses/by/4.0/'
+                                psf_image_hdu.header['PROPOSID']='HST-AR#13887'
+                                psf_image_hdu.header['REFERENC']='Simons et al. (2019)'
+                                psf_image_hdu.header['REFDOI']='10.3847/1538-4357/ab07c9'
+
+                                psf_image_hdu.header['MISSION']=obs.upper()
+                                psf_image_hdu.header['TELESCOP']=obs.upper()
+                                psf_image_hdu.header['INSTR']=instrument.upper()
+                                psf_image_hdu.header['INSTRUME']=instrument.upper()
+                                psf_image_hdu.header['EXTNAME']='IMAGE_PSF'
+                                psf_image_hdu.header['DUSTTYPE']=typename
+
+                                #put camera parameters on pristine HDU (makes more sense)
+                                camera_param_cards = pheader.cards[13:]
+                                for card in camera_param_cards:
+                                    thdu.header.append(card)
+
+                                outhdulist=pyfits.HDUList([psf_image_hdu,thdu,psf_hdu,filter_hdu])
+                                outhdulist.writeto(os.path.join(outdir,tfn),overwrite=True)
 
 
     for camst in camlist:
