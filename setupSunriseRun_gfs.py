@@ -122,7 +122,7 @@ def generate_mcrx_configs(run_dir, snap_dir, filename, stub_name, stub_name_smc,
 
 	print '\t\tSuccessfully generated %s'%filename.replace('mcrx','mcrxsmc')
 
-        
+
 	return
 
 
@@ -131,7 +131,7 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
         shutil.copy2('/u/gfsnyder/sunrise_data/sunrise_filters.tar',run_dir)
-        
+
 	bf = open(run_dir+'/'+filename.replace('broadband','broadbandzsmc'),'w+')
 
 	redshift = 1./galprops_data['scale'][idx] - 1
@@ -198,9 +198,9 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
 	bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
 	bsubf.write('#PBS -l select=1:ncpus='+ncpus+':model='+model+'\n')   #selects cpu model and number (sunrise uses 1 node)
 	bsubf.write('#PBS -l walltime='+walltime+'\n')    #hh:mm:ss before job is killed
-	bsubf.write('#PBS -q '+queue+'\n')       #selects queue to submit to 
+	bsubf.write('#PBS -q '+queue+'\n')       #selects queue to submit to
 	bsubf.write('#PBS -N sunrise_'+run_type+'\n')     #selects job name
-	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
+	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address
 	bsubf.write('#PBS -m abe\n')  #set notification types (abe=abort, begin, end)
 	bsubf.write('#PBS -o '+run_dir+'/sunrise_pbs.out\n')  #save standard output here
 	bsubf.write('#PBS -e '+run_dir+'/sunrise_pbs.err\n')  #save standard error here
@@ -244,9 +244,9 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
 	bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
 	bsubf.write('#PBS -l select=1:ncpus=4:model=ivy\n')   #selects cpu model and number (sunrise uses 1 node)
 	bsubf.write('#PBS -l walltime=8:00:00\n')    #hh:mm:ss before job is killed
-	bsubf.write('#PBS -q normal\n')       #selects queue to submit to 
+	bsubf.write('#PBS -q normal\n')       #selects queue to submit to
 	bsubf.write('#PBS -N candelize_'+run_type+'\n')     #selects job name
-	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
+	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address
 	bsubf.write('#PBS -m abe\n')  #set notification types (abe=abort, begin, end)
 	bsubf.write('#PBS -o '+run_dir+'/candelize_pbs.out\n')  #save standard output here
 	bsubf.write('#PBS -e '+run_dir+'/candelize_pbs.err\n')  #save standard error here
@@ -260,9 +260,9 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
                 genstr='v6'
         else:
                 assert(False)
-                
+
 	if run_type=='images':
-                bsubf.write(os.path.expandvars('python $VELAYTSUNRISE_CODE/candelize_vela.py '+genstr+'\n'))
+                bsubf.write(os.path.expandvars('python $VELAYTSUNRISE_CODE/run_vei.py '+genstr+'\n'))
 
 	bsubf.close()
 
@@ -293,7 +293,7 @@ if __name__ == "__main__":
 
     #list_of_types = ['images','ifu','grism']
     list_of_types = ['images']
-    
+
     print "Generating Sunrise Runs for: ", snaps
 
     abssnap = os.path.abspath(snaps[0])
@@ -307,7 +307,7 @@ if __name__ == "__main__":
     smf_ifu = open('submit_sunrise_ifu_gfs.sh','w')
     smf_grism = open('submit_sunrise_grism_gfs.sh','w')
     smf_candelize = open('submit_sunrise_candelize_gfs.sh','w')
-    
+
     new_snapfiles = []
 
     for sn in snaps:
@@ -336,7 +336,7 @@ if __name__ == "__main__":
 
         prop_file = os.path.abspath(simname+'_galprops.npy')
 
-        
+
         #Clean exit for galaxies with no prop file
         if os.path.lexists(fits_file) and os.path.lexists(cam_file):
             print prop_file
@@ -346,7 +346,7 @@ if __name__ == "__main__":
             assert os.path.lexists(info_file), 'Info file %s not found'%info_file
             assert os.path.lexists(cam_file), 'Cam file %s not found'%cam_file
 
-            
+
             print '\tFits file name: %s'%fits_file
             print '\tInfo file name: %s\n'%info_file
 
@@ -358,7 +358,7 @@ if __name__ == "__main__":
             except:
                     print('Snapfile exists in galprops but data does not, skipping...')
                     continue
-            
+
 
 
             for run_type in list_of_types:
@@ -373,9 +373,9 @@ if __name__ == "__main__":
                 sfrhist_fn   = 'sfrhist.config'
                 sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
 
-                
-                generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, 
-                                        stub_name = sfrhist_stub,  fits_file = fits_file, 
+
+                generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn,
+                                        stub_name = sfrhist_stub,  fits_file = fits_file,
                                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, idx = idx)
 
 
@@ -385,28 +385,28 @@ if __name__ == "__main__":
 
                 mcrx_stub_smc = os.path.join(stub_dir,'mcrx_base_smc.stub')
 
-                
-                generate_mcrx_configs(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
+
+                generate_mcrx_configs(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn,
                                       stub_name = mcrx_stub,stub_name_smc=mcrx_stub_smc,
                                       galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file, idx = idx)
 
 
 
-                if run_type == 'images': 
+                if run_type == 'images':
                         print '\tGenerating broadband.config file for %s...'%run_type
                         broadband_fn   = 'broadband.config'
                         broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
 
-                        generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
-                                                         stub_name = broadband_stub, 
+                        generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn,
+                                                         stub_name = broadband_stub,
                                                          galprops_data = galprops_data, idx = idx)
-                if run_type == 'grism': 
+                if run_type == 'grism':
                         print '\tGenerating broadband.config file for %s...'%run_type
                         broadband_fn   = 'broadband.config'
                         broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
 
-                        generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
-                                                        stub_name = broadband_stub, 
+                        generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn,
+                                                        stub_name = broadband_stub,
                                                         galprops_data = galprops_data, idx = idx)
 
 
@@ -414,16 +414,16 @@ if __name__ == "__main__":
 
 
                 print '\tGenerating sunrise.qsub file for %s...'%run_type
-                qsub_fn   = 'sunrise.qsub'		
-                final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
+                qsub_fn   = 'sunrise.qsub'
+                final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn,
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
-                can_qsub_fn   = 'candelize.qsub'		
-                can_final_fn = generate_candelize_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = can_qsub_fn, 
+                can_qsub_fn   = 'candelize.qsub'
+                can_final_fn = generate_candelize_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = can_qsub_fn,
                                          galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
-                
+
                 submitline = 'qsub '+final_fn
                 can_submitline = 'qsub '+can_final_fn
-                
+
                 if run_type=='images':
                         smf_images.write(submitline+'\n')
                         smf_candelize.write(can_submitline+'\n')
@@ -437,47 +437,3 @@ if __name__ == "__main__":
     smf_ifu.close()
     smf_grism.close()
     smf_candelize.close()
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
