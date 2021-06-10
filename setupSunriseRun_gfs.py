@@ -262,6 +262,7 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
                 assert(False)
 
 	if run_type=='images':
+				bsubf.write('conda activate vela-mocks\n')
                 bsubf.write(os.path.expandvars('python $VELAYTSUNRISE_CODE/run_vei.py '+genstr+'\n'))
 
 	bsubf.close()
