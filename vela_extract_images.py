@@ -207,11 +207,14 @@ def create_psf_image(thdu,psf_hdu,fil):
     final_flux = np.sum(psf_convolved_image)
     original_flux = np.sum(pristine_image)
 
+    difference_flag = 0
+
     if original_flux > 0.0:
 
-        if not np.abs(original_flux - final_flux)/original_flux < 0.05:
-            print(final_flux, original_flux)
-            assert(False)
+        if (np.abs(original_flux - final_flux)/original_flux > 0.05) and np.abs(original_flux - final_flux) > 1.0 :
+            print('large difference in psf versus input flux: ', final_flux, original_flux)
+            #set flag if big difference.
+            difference_flag = 1
 
 
 
@@ -227,6 +230,9 @@ def create_psf_image(thdu,psf_hdu,fil):
     psf_image_hdu.header['FILKEY']=(fil,'short filter key')
     psf_image_hdu.header['CAMERA']=thdu.header['CAMERA']
 
+    psf_image_hdu.header['ORIGFLUX']=(original_flux,thdu.header['IMUNIT'])
+    psf_image_hdu.header['PSFFLUX']=(final_flux,thdu.header['IMUNIT'])
+    psf_image_hdu.header['PSFFLAG']=(difference_flag,'1 = diff greater than 1 nJy and 5 percent')
 
     return psf_image_hdu
 
