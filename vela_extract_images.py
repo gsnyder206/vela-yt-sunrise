@@ -109,7 +109,7 @@ def vela_export_image(hdulist,camnum,filtername,label='',nonscatter=False):
     efl_microns=1.0e6 * efl[fi]
 
     if not np.isfinite(efl_microns):
-        return None
+        return None, None
 
     if nonscatter is False:
         key='CAMERA'+'{}'.format(camnum)+'-BROADBAND'
@@ -347,6 +347,11 @@ def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, 
                             bbhdu,param_header=vela_export_image(hdulist,int(cam[-2:]),filfil[fil])
                             bbhdu_smc,param_header_smc=vela_export_image(hdulist_smc,int(cam[-2:]),filfil[fil])
                             ns_hdu,param_header_ns=vela_export_image(hdulist,int(cam[-2:]),filfil[fil],nonscatter=True)
+
+                            if bbhdu==None or bbhdu_smc==None or ns_hdu==None:
+                                print(new_filename, ' infinite effective lambda, probably bluer than lyman limit, skipping..')
+                                continue
+
                             print('saving.. ', new_filename)
 
                         sys.stdout.flush()
@@ -435,7 +440,7 @@ def do_single_snap(obslist=['hst','jwst','roman'],camlist=cams, aux_only=False, 
                                 for card in camera_param_cards:
                                     thdu.header.append(card)
 
-                                outhdulist=pyfits.HDUList([psf_image_hdu,thdu,psf_hdu,filter_hdu])
+                                outhdulist=pyfits.HDUList([psf_image_hdu,thdu,psf_hdu,filter_hdu,hl['BROADBAND'],hl['MCRX'],hl['SFRHIST']])
                                 outhdulist.writeto(os.path.join(outdir,tfn),overwrite=True)
 
 
