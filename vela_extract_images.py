@@ -208,7 +208,11 @@ def create_psf_image(thdu,psf_hdu,fil):
     original_flux = np.sum(pristine_image)
 
     if original_flux > 0.0:
-        assert(np.abs(original_flux - final_flux)/original_flux < 0.05 )
+
+        if not np.abs(original_flux - final_flux)/original_flux < 0.05:
+            print(final_flux, original_flux)
+            assert(False)
+
 
 
 
