@@ -81,9 +81,9 @@ fildict={'wfc3':['F336W','F125W','F160W'],
 filfil={'F336W':'hst/wfc3_f336w', 'F435W':'hst/acs_f435w',
         'F606W':'hst/acs_f606w', 'F814W':'hst/acs_f814w',
         'F125W':'hst/wfc3_f125w', 'F160W':'hst/wfc3_f160w',
-        'Z087':'wfirst/wfi_z087', 'Y106':'wfirst/wfi_y106',
-        'J129':'wfirst/wfi_j129', 'W149':'wfirst/wfi_w146', 'H158':'wfirst/wfi_h158',
-        'F184':'wfirst/wfi_f184','R062':'wfirst/wfi_r062',
+        'Z087':'roman/wfi_z087', 'Y106':'roman/wfi_y106',
+        'J129':'roman/wfi_j129', 'W149':'roman/wfi_w146', 'H158':'roman/wfi_h158',
+        'F184':'roman/wfi_f184','R062':'roman/wfi_r062',
         'F115W':'jwst/nircam_f115w', 'F150W':'jwst/nircam_f150w', 'F200W':'jwst/nircam_f200w',
         'F277W':'jwst/nircam_f277w', 'F356W':'jwst/nircam_f356w', 'F444W':'jwst/nircam_f444w',
         'F770W':'jwst/miri_F770W',
@@ -108,6 +108,7 @@ def vela_export_image(hdulist,camnum,filtername,label='',nonscatter=False):
 
     efl_microns=1.0e6 * efl[fi]
 
+    #this catches scenario where filter is beyond Lyman limit -- ends up with image full of NaNs -- don't let them past this point.
     if not np.isfinite(efl_microns):
         return None, None
 
