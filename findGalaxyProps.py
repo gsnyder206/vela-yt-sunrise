@@ -511,8 +511,6 @@ if __name__ == "__main__":
         scale = np.float64(aname[1:]) #round(1.0/(ds.current_redshift+1.0),3)
         scale_exact=1.0/(ds.current_redshift + 1.0)
 
-        galaxy_props['scale_exact']=np.append(galaxy_props['scale_exact'], scale_exact)
-        galaxy_props['current_redshift']=np.append(galaxy_props['current_redshift'], ds.current_redshift)
 
         dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Mandelker_centers_'+genstring.lower()+'_formatted.txt'
         if not os.path.lexists(dcf):
@@ -552,6 +550,10 @@ if __name__ == "__main__":
         galaxy_props['scale_string']=np.append(galaxy_props['scale_string'],aname)
 
         galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
+
+        galaxy_props['scale_exact']=np.append(galaxy_props['scale_exact'], scale_exact)
+        
+        galaxy_props['current_redshift']=np.append(galaxy_props['current_redshift'], ds.current_redshift)
 
 
         #old PID catalog-style
