@@ -36,7 +36,7 @@ if __name__=="__main__":
 
 
 
-    dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genname.lower()+'_formatted.txt'
+    dcf=pd['centerfile'] #'/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genname.lower()+'_formatted.txt'
     cdata=ascii.read(dcf)
     si=np.where(cdata['col2']==simname)
     dc_x=np.asarray(cdata['col3'][si]*1000)  #in comoving kpc/h
