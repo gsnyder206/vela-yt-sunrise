@@ -28,7 +28,7 @@ if __name__=="__main__":
     z=np.ndarray(shape=aname.shape, dtype=np.float64)
 
     #convert galprops centers to comoving kpc/h
-    for i,(aname,cen,scale) in enumerate(zip(aname,tc,scale_exact)):
+    for i,(aname_i,cen,scale) in enumerate(zip(aname,tc,scale_exact)):
         print('{:5.2f} {:10.3f}'.format(np.float64(scale), cen[0]*(0.70)/np.float64(scale)))
         x[i]=cen[0]*0.70/np.float64(scale)
         y[i]=cen[1]*0.70/np.float64(scale)
@@ -80,9 +80,9 @@ if __name__=="__main__":
     #measure distance with ceverino centers
     d_ckpch=np.ndarray(shape=aname.shape, dtype=np.float64)
     print('#scale     3D distance (kpc)')
-    for i,(aname,scale,tc_x,tc_y,tc_z) in enumerate(zip(aname,scale_exact,x,y,z)):
+    for i,(aname_i,scale,tc_x,tc_y,tc_z) in enumerate(zip(aname,scale_exact,x,y,z)):
         #match to dc_a
-        dc_i=np.where(dc_a==np.float64(aname[1:]))[0]
+        dc_i=np.where(dc_a==np.float64(aname_i[1:]))[0]
         #print(scale, dc_i, tc_x, dc_x[dc_i])
         if len(dc_i)==1:
             #print(scale,dc_x[dc_i],tc_x)
