@@ -262,8 +262,8 @@ def write_qsub_exporters(snapname,qsubfn,aname,args):
     qsfo.write('#PBS -e sunrise_export_'+aname+'pbs.err\n')
     qsfo.write('#PBS -V\n\n')
 
-    qsfo.write('export PATH=$PBS_O_PATH')
-    qsfo.write('which python')
+    qsfo.write('export PATH=$PBS_O_PATH\n')
+    qsfo.write('which python\n\n')
 
     qsfo.write('python $VELAYTSUNRISE_CODE/'+code+' '+os.path.basename(snapname)+' --format='+str(args['format'])+' > export_test_'+aname+'.out 2> export_test_'+aname+'.err\n')
     qsfo.close()
