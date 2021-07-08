@@ -6,7 +6,7 @@ import astropy.io.ascii as ascii
 
 if __name__=="__main__":
 
-    input_folders=np.sort(np.asarray(glob.glob('/Users/gsnyder/Dropbox/AR-Disks/Vela/gen6_centers/*')))
+    input_folders=np.sort(np.asarray(glob.glob('/Users/gsnyder/Dropbox/AR-Disks/Vela/2021_March_Centers/gen6_centers/*')))
 
     nmfo=open('Mandelker_centers_gen6_formatted.txt','w')
 
