@@ -58,7 +58,7 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
 
 
     aux_tfo=open(auxcatfile,'w')
-    aux_tfo.write('sim z scale cam mstar mgas mmet sfr mvir_dm path\n')
+    aux_tfo.write('gen sim z scale cam mstar mgas mmet sfr mvir_dm path\n')
 
 
     #sfr_tau = 1.2e7 #12 Myr, from Ceverino et al. 2015.  SFR values are actually SFR*Tau, so must divide by this factor to get true SFR values
@@ -106,7 +106,7 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
         #this is actually problematic because apparently the filenames aren't exact?
         mvirdm=dat[b'Mvir_dm'][dat[b'scale']==scalefloat]
 
-        auxfo.flush()
+        #auxfo.flush()
 
         try:
             writestr='{:10s} {:10s} {:15.8f} {:10s} {:10s} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:75s}\n'.format(gendir, sim,zfloat,scalestr,camstr,total_mstar,total_mgas,total_mmet,total_sfr,mvirdm[0],auxfile[5:])
