@@ -135,8 +135,10 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
         #measure and add pristine apparent magnitude?
         try:
             imhdu=fo['IMAGE_PRISTINE']
+        except KeyError as ke:
+            imhdu=fo['IMAGE_PRISTINE_NONSCATTER']
         except:
-            fo.flush()
+            cat_tfo.flush()
             continue
 
         imdata=imhdu.data
