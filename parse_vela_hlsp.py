@@ -38,6 +38,11 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
     #                        new_filename='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'-'+cam+'-'+target_dir[14:-8]+'_'+fil.lower()+'_v3'+'_sim.fits'
     auxcatfile=os.path.abspath(os.path.join('HLSP','vela','catalogs','hlsp_vela_multi_multi_'+dirname.lower()+'_multi'+'_'+genstr+'_auxcat.txt'))
 
+    catdir=os.path.join('HLSP','vela','catalogs')
+
+    if not os.path.lexists(catdir):
+        os.makedirs(catdir)
+
     print(catfile)
     print(auxcatfile)
 
