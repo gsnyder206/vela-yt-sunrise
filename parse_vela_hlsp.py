@@ -13,10 +13,10 @@ import astropy
 import astropy.cosmology
 import astropy.io.fits as pyfits
 import astropy.io.ascii as ascii
-import visualize_vela_hlsp as vvh
+#import visualize_vela_hlsp as vvh
 
-from PIL import Image
-from astropy.convolution import *
+#from PIL import Image
+#from astropy.convolution import *
 
 
 def parse_vela_files(dirname='VELA01',genstr='v6'):
@@ -46,7 +46,7 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
     elif genstr=='v3-2':
         gendir='Gen3'
 
-    propsdir=os.path.join('/nobackup/gfsnyder/VELA_sunrise/Runs/', gendir,dirname.lower())
+    propsdir=os.path.join('/nobackup/gfsnyder/VELA_sunrise/Runs/', gendir,dirname.upper())
 
     datf=os.path.join(propsdir,dirname+'_galprops.npy')
     dat=np.load(datf,encoding='bytes').all()
