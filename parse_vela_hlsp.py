@@ -123,7 +123,7 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
     aux_table=ascii.read(auxcatfile)
 
     cat_tfo=open(catfile,'w')
-    cat_tfo.write('gen sim z scalestr cam mission instrument filter flux_njy abmag mstar mgas mmet sfr mvir_dm path\n')
+    cat_tfo.write('gen sim z scalestr cam mission instrument filter dustmodel flux_njy abmag mstar mgas mmet sfr mvir_dm path\n')
 
     for imfile in image_files:
         print(imfile[5:])
@@ -192,8 +192,10 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
         instr=bn.split('_')[3]
         filname=bn.split('_')[5]
 
+        duststr=bn[:-5].split('_')[-1][4:]
+
         #output catalog value
-        catstr='{:10s} {:10s} {:12.8f} {:10s} {:10s} {:10s} {:10s} {:10s} {:15.6e} {:12.6f} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:75s}\n'.format(gendir, sim,zfloat,scalestr,camstr,mission,instr,filname,
+        catstr='{:10s} {:10s} {:12.8f} {:10s} {:10s} {:10s} {:10s} {:10s} {:10s} {:15.6e} {:12.6f} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:75s}\n'.format(gendir, sim,zfloat,scalestr,camstr,mission,instr,filname,duststr.upper(),
                                                                                                                                                  total_flux_njy,mag_val,total_mstar,total_mgas,total_mmet,total_sfr,mvirdm[0],imfile[5:])
 
         cat_tfo.write(catstr)
