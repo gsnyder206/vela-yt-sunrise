@@ -49,7 +49,7 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
     propsdir=os.path.join('/nobackup/gfsnyder/VELA_sunrise/Runs/', gendir,dirname.upper())
 
     datf=os.path.join(propsdir,dirname+'_galprops.npy')
-    dat=np.load(datf,encoding='bytes').all()
+    dat=np.load(datf).all()
 
 
     aux_tfo=open(auxcatfile,'w')
