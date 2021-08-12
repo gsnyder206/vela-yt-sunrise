@@ -11,6 +11,8 @@ import astropy.cosmology
 import astropy.io.fits as pyfits
 import astropy.io.ascii as ascii
 
+import vela_extract_images as vei
+
 
 def retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw'):
 
@@ -28,8 +30,8 @@ def retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw'):
 
     obslist=['hst','jwst','roman','aux']
     for obs in obslist:
-        for instrument in insdict[obs]:
-            for filname in fildict[instrument]:
+        for instrument in vei.insdict[obs]:
+            for filname in vei.fildict[instrument]:
                 lfil=filname.lower()
                 print(obs,instrument,lfil)
                 if lfil=='aux':
@@ -63,5 +65,3 @@ if __name__=="__main__":
     retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw')
     retar_vela_files_by_filter_and_dust(genstr='v6',duststr='ns')
     retar_vela_files_by_filter_and_dust(genstr='v6',duststr='smc')
-
-    
