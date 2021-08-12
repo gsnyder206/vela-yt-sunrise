@@ -64,3 +64,10 @@ if __name__=="__main__":
     retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw')
     retar_vela_files_by_filter_and_dust(genstr='v6',duststr='ns')
     retar_vela_files_by_filter_and_dust(genstr='v6',duststr='smc')
+
+    try:
+        retar_vela_files_by_filter_and_dust(genstr='v3-2',duststr='mw')
+        retar_vela_files_by_filter_and_dust(genstr='v3-2',duststr='ns')
+        retar_vela_files_by_filter_and_dust(genstr='v3-2',duststr='smc')
+    except:
+        continue
