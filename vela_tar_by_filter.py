@@ -57,7 +57,6 @@ def retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw'):
                 tfo.close()
 
 
-    os.chdir(cwd)
     return
 
 

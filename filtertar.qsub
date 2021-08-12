@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -S /bin/bash
-#PBS -l select=1:ncpus=1:model=ivy
+#PBS -l select=1:ncpus=20:model=ivy
 #PBS -l walltime=08:00:00
 #PBS -q normal
 #PBS -N filtertar
@@ -13,3 +13,5 @@
 #PBS -V
 
 python $GFS_PYTHON_CODE/vela-yt-sunrise/vela_tar_by_filter.py
+
+pigz -9 -p 16 hlsp_*.tar
