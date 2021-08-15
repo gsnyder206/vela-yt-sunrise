@@ -13,4 +13,3 @@
 #PBS -V
 
 python $GFS_PYTHON_CODE/vela-yt-sunrise/tar_hlsp_by_camera.py
-

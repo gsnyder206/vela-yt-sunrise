@@ -25,4 +25,4 @@ if __name__=="__main__":
 
     for camst in cams:
         print('untarring ', camst)
-        subprocess.call(['tar','xf',camst+'.tar'])
+        subprocess.call(['tar','xf',camst])
