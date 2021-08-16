@@ -130,7 +130,7 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
 
         #update HLSP reference
         fo=pyfits.open(imfile)
-        fo[0].header['REFERENC']='Simons et al. 2019'
+        #fo[0].header['REFERENC']='Simons et al. 2019'
 
         #measure and add pristine apparent magnitude?
         try:
