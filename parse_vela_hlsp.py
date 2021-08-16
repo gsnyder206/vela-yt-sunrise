@@ -129,7 +129,7 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
         print(imfile[5:])
 
         #update HLSP reference
-        fo=pyfits.open(imfile,mode='update')
+        fo=pyfits.open(imfile)
         fo[0].header['REFERENC']='Simons et al. 2019'
 
         #measure and add pristine apparent magnitude?
@@ -144,12 +144,12 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
         imdata=imhdu.data
         assert(imhdu.header['IMUNIT']=='nanoJanskies')
         total_flux_njy=np.sum(imdata)
-        imhdu.header['FLUX_NJY']=total_flux_njy
+        #imhdu.header['FLUX_NJY']=total_flux_njy
         mag_val=np.nan
 
         if total_flux_njy > 0.0:
             pristine_ab_apparent_mag=-2.5*np.log10((total_flux_njy*1.0e-9)/3631.0)
-            imhdu.header['ABMAG']=(pristine_ab_apparent_mag,'pristine AB apparent mag')
+            #imhdu.header['ABMAG']=(pristine_ab_apparent_mag,'pristine AB apparent mag')
             mag_val=pristine_ab_apparent_mag
 
 
@@ -195,6 +195,8 @@ def parse_vela_files(dirname='VELA01',genstr='v6'):
         filname=bn.split('_')[5]
 
         duststr=bn[:-5].split('_')[-1][4:]
+
+        fo.close()
 
         #output catalog value
         catstr='{:10s} {:10s} {:12.8f} {:10s} {:10s} {:10s} {:10s} {:10s} {:10s} {:15.6e} {:12.6f} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:15.6e} {:75s}\n'.format(gendir, sim,zfloat,scalestr,camstr,mission,instr,filname,duststr.upper(),
