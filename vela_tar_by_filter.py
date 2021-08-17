@@ -35,10 +35,10 @@ def retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw'):
                 lfil=filname.lower()
                 print(obs,instrument,lfil)
                 if lfil=='aux':
-                    imagefiles=np.sort(np.asarray(glob.glob('cam*/*.fits')))
+                    imagefiles=np.sort(np.asarray(glob.glob('cam*/*_'+genstr+'_sim.fits')))
                     tarfilename='hlsp_vela_none_none_'+dirname.lower()+'_'+lfil+'_'+genstr+'_sim.tar'
                 else:
-                    imagefiles=np.sort(np.asarray(glob.glob('cam*/'+obs+'/'+instrument+'/'+lfil+'/*-'+duststr+'.fits')))
+                    imagefiles=np.sort(np.asarray(glob.glob('cam*/'+obs+'/'+instrument+'/'+lfil+'/*_'+genstr+'_sim-'+duststr+'.fits')))
                     tarfilename='hlsp_vela_'+obs+'_'+instrument+'_'+dirname.lower()+'_'+lfil+'_'+genstr+'_sim-'+duststr+'.tar'
 
                 print(tarfilename)
