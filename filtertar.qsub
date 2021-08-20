@@ -1,8 +1,8 @@
 #!/bin/bash
 #PBS -S /bin/bash
 #PBS -l select=1:ncpus=20:model=has
-#PBS -l walltime=12:00:00
-#PBS -q long
+#PBS -l walltime=8:00:00
+#PBS -q normal
 #PBS -N filtertar
 #PBS -M gsnyder@stsci.edu
 #PBS -m abe
