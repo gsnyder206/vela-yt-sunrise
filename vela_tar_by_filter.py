@@ -65,9 +65,12 @@ def retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw'):
 
 
 if __name__=="__main__":
-    retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw')
-    retar_vela_files_by_filter_and_dust(genstr='v6',duststr='ns')
-    retar_vela_files_by_filter_and_dust(genstr='v6',duststr='smc')
+    try:
+        retar_vela_files_by_filter_and_dust(genstr='v6',duststr='mw')
+        retar_vela_files_by_filter_and_dust(genstr='v6',duststr='ns')
+        retar_vela_files_by_filter_and_dust(genstr='v6',duststr='smc')
+    except:
+        pass
 
     try:
         retar_vela_files_by_filter_and_dust(genstr='v3-2',duststr='mw')
