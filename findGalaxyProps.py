@@ -514,7 +514,7 @@ if __name__ == "__main__":
 
         dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Mandelker_centers_'+genstring.lower()+'_formatted.txt'
         if not os.path.lexists(dcf):
-            dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted.txt'
+            dcf='/u/gfsnyder/PythonCode/vela-yt-sunrise/Ceverino_centers_'+genstring.lower()+'_formatted_fix03.txt'
 
         galaxy_props['centerfile']=dcf
 
@@ -552,7 +552,7 @@ if __name__ == "__main__":
         galaxy_props['snap_files'] = np.append(galaxy_props['snap_files'],ds._file_amr)
 
         galaxy_props['scale_exact']=np.append(galaxy_props['scale_exact'], scale_exact)
-        
+
         galaxy_props['current_redshift']=np.append(galaxy_props['current_redshift'], ds.current_redshift)
 
 
