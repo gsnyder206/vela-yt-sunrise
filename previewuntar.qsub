@@ -1,0 +1,15 @@
+#!/bin/bash
+#PBS -S /bin/bash
+#PBS -l select=1:ncpus=20:model=has
+#PBS -l walltime=8:00:00
+#PBS -q normal
+#PBS -N previewuntar
+#PBS -M gsnyder@stsci.edu
+#PBS -m abe
+#PBS -o filtertar_pbs.out
+#PBS -e filtertar_pbs.err
+#PBS -kod
+#PBS -ked
+#PBS -V
+
+python $GFS_PYTHON_CODE/vela-yt-sunrise/previews_from_hlsp.py v6
