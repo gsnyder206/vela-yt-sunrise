@@ -191,7 +191,7 @@ if __name__=="__main__":
         tarfodd['smc'][f]=tarfo_smc
 
 
-    run_from_aux(genname,simname,aux_tfo,tarfodd)
+    run_from_aux(genname,simname,aux_tfo,tarfodd,limit=None)
 
     aux_tfo.close()
 
