@@ -6,8 +6,8 @@
 #PBS -N previewuntar
 #PBS -M gsnyder@stsci.edu
 #PBS -m abe
-#PBS -o filtertar_pbs.out
-#PBS -e filtertar_pbs.err
+#PBS -o previewuntar_pbs.out
+#PBS -e previewuntar_pbs.err
 #PBS -kod
 #PBS -ked
 #PBS -V
