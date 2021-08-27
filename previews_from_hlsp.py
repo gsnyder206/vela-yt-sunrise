@@ -67,6 +67,8 @@ def make_vela_stamps_hlsp(aux_fo_i,tarfodd,sim='vela06',cam='cam00',single_aname
     gasdens=aux_fo_i['CAMERA'+auxn+'-AUX'].data[0,:,:]
     sfrdens=aux_fo_i['CAMERA'+auxn+'-AUX'].data[1,:,:]
 
+    bd='.'
+
     dd={}
     dd['mw']={}
     dd['ns']={}
