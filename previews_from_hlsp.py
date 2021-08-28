@@ -24,7 +24,7 @@ obstrs=['hst','hst','hst','hst','hst','hst','jwst','jwst','jwst','roman']
 instrs=['wfc3','acs','acs','acs','wfc3','wfc3','nircam','nircam','nircam','wfi']
 fstrs=['f336w','f435w','f606w','f814w','f125w','f160w','f277w','f200w','f444w','w149']
 
-def run_from_aux(genname,simname,aux_tfo,tarfodd,limit=20):
+def run_from_aux(genname,simname,aux_tfo,tarfodd,limit=20,singlecam='cam20'):
 
     i=0
     tarinfo=1
@@ -37,6 +37,12 @@ def run_from_aux(genname,simname,aux_tfo,tarfodd,limit=20):
         camname = auxn.split('_')[-4].split('-')[-2]
 
         print(aname, camname, auxn)
+
+
+        if camname != singlecam:
+            print('skipping..')
+            continue
+
 
         aux_i = aux_tfo.extractfile(tarinfo)
         aux_fo_i = fits.open(aux_i,mode='readonly')
