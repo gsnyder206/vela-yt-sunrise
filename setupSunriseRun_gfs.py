@@ -243,7 +243,7 @@ def generate_candelize_qsub(run_dir, snap_dir, filename, galprops_data, run_type
 	bsubf.write('#!/bin/bash\n')
 	bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
 	bsubf.write('#PBS -l select=1:ncpus=4:model=ivy\n')   #selects cpu model and number (sunrise uses 1 node)
-	bsubf.write('#PBS -l walltime=8:00:00\n')    #hh:mm:ss before job is killed
+	bsubf.write('#PBS -l walltime=2:00:00\n')    #hh:mm:ss before job is killed
 	bsubf.write('#PBS -q normal\n')       #selects queue to submit to
 	bsubf.write('#PBS -N candelize_'+run_type+'\n')     #selects job name
 	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address
